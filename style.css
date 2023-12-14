@@ -33,12 +33,8 @@ h3 {
 }
 
 /* We set the display to none for our pre-loaded images to prevent them from showing up until we need them */
-/*
-#player, 
-#layer1, #layer2, #layer3, #layer4, #layer5,
-#enemy_fly, #enemy_plant, #enemy_spider_big,
-#fire, #boom
+
+#skeleton_Walk,#skeleton_Attack_1,#skeleton_Dead,#skeleton_Hurt,#skeleton_Idle,#skeleton_Jump,#skeleton_Run
 {
     display: none;
 }
-*/
