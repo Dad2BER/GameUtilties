@@ -13,8 +13,6 @@ export class Skeleton {
     
     update(deltaTime) {
         this.currentSprite.update(deltaTime);
-        //Trying to avoid flashing when switching sprites
-        this.spriteList.forEach (sprite => {sprite.changeLocation(this.currentSprite.x, this.currentSprite.y);})
     }
     
     draw(context, drawHitBox) {
@@ -27,8 +25,7 @@ export class Skeleton {
         let flip = this.currentSprite.flipHorizontal;
         this.currentSprite = this.spriteList[newState];
         this.currentSprite.restartArnimation();
-        this.currentSprite.x = X;
-        this.currentSprite.y = Y;
+        this.currentSprite.changeLocation(X, Y);
         this.currentSprite.flipHorizontal = flip;
         let speed = 0;
         switch(newState) {
