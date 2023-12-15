@@ -15,7 +15,7 @@ export class MyGame extends Game {
             skeleton.update(deltaTime);
         });
         this.player.handleInput(this.InputHandler.keys)
-        this.player.update(timeStamp);       
+        this.player.update(deltaTime);       
         this.draw(this.ctx);
         return true;
     }

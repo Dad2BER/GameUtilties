@@ -1,6 +1,6 @@
 export class Sprite {
     
-    constructor(spriteSheetImageID, x, y, spriteWidth, spriteHeight, numberFrames, fps) {
+    constructor(spriteSheetImageID, x, y, spriteWidth, spriteHeight, numberFrames, fps, loop) {
         this.image = document.getElementById(spriteSheetImageID); //Image sheet to be used for this sprite
         this.maxFrames = numberFrames-1;
         this.width = spriteWidth; //Width of one sprite frame
@@ -15,9 +15,21 @@ export class Sprite {
         this.fps = fps; //How many frames per second should display (how fast is the animation)
         this.frameInterval = 1000/this.fps; //Based on the fps, we can determin how much time to leave between frames
         this.frameTimer = 0; //Need to keep track of how long we have been on this frame
+        
+        //handle movement variables as pixels per frame
+        this.vx = 0;
+        this.vy = 0;
+        
+        this.loop = loop;
+        this.animationFinished = false;
 
         this.flipHorizontal = false;
         console.log(this);
+    }
+
+    restartArnimation() {
+        this.frameX = 0;
+        this.animationFinished = false;
     }
 
     //Move the sprite to a new world location
@@ -32,8 +44,16 @@ export class Sprite {
         //Sprite Animation
         if (this.frameTimer > this.frameInterval) { //If we have spent enough time on this frame, move to the next
             this.frameTimer = 0;
-            if (this.frameX < this.maxFrames) { this.frameX++;}
-            else {this.frameX = 0;}
+            this.changeLocation(this.x+this.vx, this.y + this.vy);
+            if (this.frameX < this.maxFrames) { 
+                this.frameX++;
+            }
+            else if (this.loop) {
+                this.restartArnimation();
+            }
+            else {
+                this.animationFinished = true;
+            }
         } else {
             this.frameTimer += deltaTime;
         }

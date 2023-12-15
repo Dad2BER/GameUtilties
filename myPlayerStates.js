@@ -1,3 +1,4 @@
+import { Player } from "./myPlayer.js";
 import { states, direction } from "./skeleton.js";
 
 class playerState {
@@ -13,6 +14,9 @@ export class idle extends playerState {
 
     handleInput(input) {
         if (input.includes('ArrowLeft') || input.includes('ArrowRight')) {
+            if ((input.includes('ArrowLeft') && this.player.facing == direction.RIGHT) || (input.includes('ArrowRight') && this.player.facing == direction.LEFT) ) {
+                this.player.flipHorizontalDirection();
+            }
             this.player.setState(states.WALK);
         }
     }
@@ -61,7 +65,7 @@ export class jumping extends playerState {
     constructor(player) { super('jumping', player); }
 
     handleInput(input) {
-        if(!input.includes('space')) {
+        if(!input.includes(' ') && this.player.currentSprite.animationFinished) {
             if(input.includes('ArrowLeft') || input.includes('ArrowRight')) { this.player.setState(states.RUN); }
             else this.player.setState(states.IDLE);
         }

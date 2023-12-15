@@ -13,25 +13,39 @@ export class Skeleton {
     
     update(deltaTime) {
         this.currentSprite.update(deltaTime);
+        //Trying to avoid flashing when switching sprites
+        this.spriteList.forEach (sprite => {sprite.changeLocation(this.currentSprite.x, this.currentSprite.y);})
     }
     
     draw(context, drawHitBox) {
         this.currentSprite.draw(context, drawHitBox);
     }
     
-    setSprite(newState){
+    setState(newState){
         let X = this.currentSprite.x;
         let Y = this.currentSprite.y;
         let flip = this.currentSprite.flipHorizontal;
         this.currentSprite = this.spriteList[newState];
-        this.currentSprite.frameX = 0;
+        this.currentSprite.restartArnimation();
         this.currentSprite.x = X;
         this.currentSprite.y = Y;
-        this.flipHorizontal = flip;
+        this.currentSprite.flipHorizontal = flip;
+        let speed = 0;
+        switch(newState) {
+            case states.WALK: speed = 5; break;
+            case states.RUN: speed = 10; break;
+            case states.JUMP: speed = 10; break;
+            default: speed = 0;
+        }
+        if (this.facing === direction.LEFT) { 
+            speed *= -1; 
+        }
+        this.currentSprite.vx = speed;
     }
     
     flipHorizontalDirection() {
         this.facing = this.facing==direction.LEFT ? direction.RIGHT : direction.LEFT;
         this.currentSprite.flipHorizontal = !this.currentSprite.flipHorizontal;
+        this.currentSprite.vx *= -1;
     }
 }

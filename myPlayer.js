@@ -14,9 +14,9 @@ export class Player extends Skeleton {
     }
 
     setState(newState) {
-        this.setSprite(newState);
+        super.setState(newState);
+        //this.setSprite(newState);
         this.currentState = this.states[newState];
-        console.log("New State: " + this.currentState);
     }
 }
 
