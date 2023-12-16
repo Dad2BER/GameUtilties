@@ -6,7 +6,6 @@ export class Player extends Skeleton {
         super(x,y);
         this.states = [new idle(this), new walking(this), new running(this), new jumping(this), new hurt(this), new dead(this), new meleeAttack(this) ]
         this.currentState = this.states[0];
-        console.log(this);
     }
     
     handleInput(input) {

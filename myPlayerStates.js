@@ -1,5 +1,6 @@
 import { Player } from "./myPlayer.js";
-import { states, direction } from "./skeleton.js";
+import { states } from "./skeleton.js";
+import { direction } from "./sprite_classes/directionSprite.js";
 
 class playerState {
     constructor(state, player) {
@@ -7,16 +8,29 @@ class playerState {
         this.player = player;
     }
 
+    handleInput(input) {
+        let facing = this.player.getDirection();
+        let targetFacing = direction.LEFT;
+        if (input.includes('ArrowLeft') ) targetFacing = direction.LEFT;
+        else if (input.includes('ArrowRight')) targetFacing = direction.RIGHT;
+        else if (input.includes('ArrowUp')) targetFacing = direction.UP;
+        else if (input.includes('ArrowDown')) targetFacing = direction.DOWN;
+        if (targetFacing != this.player.getDirection()) {
+            this.player.setDirection(targetFacing);
+        }
+    }
+
+    containsMovementKeys(input) {
+        return input.includes('ArrowLeft') || input.includes('ArrowRight') || input.includes('ArrowDown') || input.includes('ArrowUp');
+    }
 }
 
 export class idle extends playerState { 
     constructor(player) { super('IDLE', player); }
 
     handleInput(input) {
-        if (input.includes('ArrowLeft') || input.includes('ArrowRight')) {
-            if ((input.includes('ArrowLeft') && this.player.facing == direction.RIGHT) || (input.includes('ArrowRight') && this.player.facing == direction.LEFT) ) {
-                this.player.flipHorizontalDirection();
-            }
+        super.handleInput(input);
+        if (this.containsMovementKeys(input)) {
             this.player.setState(states.WALK);
         }
     }
@@ -26,16 +40,14 @@ export class walking extends playerState {
     constructor(player) { super('WALKING', player); }
     
     handleInput(input) {
-        if ((input.includes('ArrowLeft') && this.player.facing == direction.RIGHT) || (input.includes('ArrowRight') && this.player.facing == direction.LEFT) ) {
-            this.player.flipHorizontalDirection();
-        }
-        else if (input.includes('r') && (input.includes('ArrowLeft') || input.includes('ArrowRight'))) {
+        super.handleInput(input);
+        if (input.includes('r') && this.containsMovementKeys(input)) {
             this.player.setState(states.RUN);
         }
         else if (input.includes(' ')) {
             this.player.setState(states.JUMP);
         }
-        else if (!input.includes('ArrowLeft') && !input.includes('ArrowRight')) {
+        else if (!this.containsMovementKeys(input)) {
             this.player.setState(states.IDLE);
         }
     }
@@ -45,17 +57,14 @@ export class running extends playerState {
     constructor(player) { super('RUNNING', player); }
     
     handleInput(input) {
-        if ((input.includes('ArrowLeft') && this.player.facing == direction.RIGHT) ||
-            (input.includes('ArrowRight') && this.player.facing == direction.LEFT) ) {
-            this.player.flipHorizontalDirection();
-        }
-        else if (input.includes('w') && (input.includes('ArrowLeft') || input.includes('ArrowRight'))) {
+        super.handleInput(input);
+        if (input.includes('w') && this.containsMovementKeys(input)) {
             this.player.setState(states.WALK);
         }
         else if (input.includes(' ')) {
             this.player.setState(states.JUMP);
         }
-        else if (!input.includes('ArrowLeft') && !input.includes('ArrowRight')) {
+        else if (!this.containsMovementKeys(input)) {
             this.player.setState(states.IDLE);
         }
     }
@@ -65,8 +74,9 @@ export class jumping extends playerState {
     constructor(player) { super('jumping', player); }
 
     handleInput(input) {
+        super.handleInput(input);
         if(!input.includes(' ') && this.player.currentSprite.animationFinished) {
-            if(input.includes('ArrowLeft') || input.includes('ArrowRight')) { this.player.setState(states.RUN); }
+            if(this.containsMovementKeys(input)) { this.player.setState(states.RUN); }
             else this.player.setState(states.IDLE);
         }
     }
@@ -82,4 +92,8 @@ export class dead extends playerState {
 
 export class meleeAttack extends playerState {
     constructor(player) { super("MELEE", player); }
+
+    handleInput(input) {
+        super.handleInput(input);
+    }
 }

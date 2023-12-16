@@ -16,15 +16,8 @@ export class Sprite {
         this.frameInterval = 1000/this.fps; //Based on the fps, we can determin how much time to leave between frames
         this.frameTimer = 0; //Need to keep track of how long we have been on this frame
         
-        //handle movement variables as pixels per frame
-        this.vx = 0;
-        this.vy = 0;
-        
         this.loop = loop;
         this.animationFinished = false;
-
-        this.flipHorizontal = false;
-        console.log(this);
     }
 
     restartArnimation() {
@@ -32,6 +25,12 @@ export class Sprite {
         this.animationFinished = false;
     }
 
+    move(deltaX, deltaY) {
+        this.x += deltaX;
+        this.y += deltaY;
+        this.drawX = this.x - this.width/2;
+        this.drawY = this.y - this.height/2;
+    }
     //Move the sprite to a new world location
     changeLocation(newX, newY) {
         this.x = newX;
@@ -44,7 +43,6 @@ export class Sprite {
         //Sprite Animation
         if (this.frameTimer > this.frameInterval) { //If we have spent enough time on this frame, move to the next
             this.frameTimer = 0;
-            this.changeLocation(this.x+this.vx, this.y + this.vy);
             if (this.frameX < this.maxFrames) { 
                 this.frameX++;
             }
@@ -63,15 +61,8 @@ export class Sprite {
         if (drawHitBox === true) {
             context.strokeRect(this.drawX, this.drawY, this.width, this.height);
         }
-        if (this.flipHorizontal) {
-            context.translate(this.drawX + this.width, this.drawY);
-            context.scale(-1,1);
-        }
-        else {
-            context.translate(this.drawX, this.drawY);//Multiply widht times 1.5 because we are offsetting the X by half the width of the image
-        }
-        context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, 0, 0, this.width, this.height);
-        context.setTransform(1,0,0,1,0,0);
+        context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, 
+                          this.drawX, this.drawY, this.width, this.height);
     }
-
 }
+
