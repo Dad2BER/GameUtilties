@@ -1,4 +1,5 @@
-import { skeletonIdle, skeletonWalk, skeletonRun, skeletonJump, skeletonHurt, skeletonDead, skeletonAttack1 } from "./sprite_classes/knownSprites.js";
+import { skeletonIdle, skeletonWalkLeft, skeletonWalkRight, 
+         skeletonRun, skeletonJump, skeletonHurt, skeletonDead, skeletonAttack1 } from "./sprite_classes/knownSprites.js";
 import { MovingSprite } from "./sprite_classes/movingSprite.js";
 import { direction } from "./sprite_classes/directionSprite.js";
 
@@ -11,8 +12,8 @@ class idleSkeleton extends MovingSprite {
 }
 
 class walkingSkeleton extends MovingSprite {
-    constructor(x,y) { super(new skeletonWalk(x,y), new skeletonWalk(x,y), 
-                             new skeletonWalk(x,y), new skeletonWalk(x,y), 
+    constructor(x,y) { super(new skeletonWalkLeft(x,y), new skeletonWalkRight(x,y), 
+                             new skeletonWalkLeft(x,y), new skeletonWalkRight(x,y), 
                              direction.LEFT, 50); }
 }
 

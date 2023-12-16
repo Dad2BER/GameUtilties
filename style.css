@@ -34,7 +34,8 @@ h3 {
 
 /* We set the display to none for our pre-loaded images to prevent them from showing up until we need them */
 
-#skeleton_Walk,#skeleton_Attack_1,#skeleton_Dead,#skeleton_Hurt,#skeleton_Idle,#skeleton_Jump,#skeleton_Run
+#skeleton_Walk_Left, #skeleton_Walk_Right,
+#skeleton_Attack_1,#skeleton_Dead,#skeleton_Hurt,#skeleton_Idle,#skeleton_Jump,#skeleton_Run
 {
     display: none;
 }
