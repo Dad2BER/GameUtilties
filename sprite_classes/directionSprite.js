@@ -29,4 +29,8 @@ export class DirectionSprite {
         this.sprites[this.facing].draw(context, drawHitBox);
     }
 
+    getHitBox() {
+        return this.sprites[this.facing].getHitBox();
+    }
+
 }

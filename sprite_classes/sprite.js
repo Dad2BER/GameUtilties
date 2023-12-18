@@ -1,3 +1,5 @@
+import { HitBox } from "../utilities.js";
+
 export class Sprite {
     
     constructor(spriteSheetImageID, x, y, spriteWidth, spriteHeight, numberFrames, frameX, frameY) {
@@ -12,7 +14,7 @@ export class Sprite {
         this.y = y; //Y Location of sprite in the world
         this.drawX = this.x - this.width/2;
         this.drawY = this.y - this.height/2;
-
+        this.solid = true;
     }
 
     move(deltaX, deltaY) {
@@ -38,6 +40,10 @@ export class Sprite {
         }
         context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, 
                           this.drawX, this.drawY, this.width, this.height);
+    }
+
+    getHitBox() {
+        return new HitBox(this.drawX, this.drawY, this.width, this.height);
     }
 }
 

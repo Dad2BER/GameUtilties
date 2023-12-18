@@ -2,6 +2,7 @@ import { skeletonIdle, skeletonWalkLeft, skeletonWalkRight,
          skeletonRun, skeletonJump, skeletonHurt, skeletonDead, skeletonAttack1 } from "./sprite_classes/knownSprites.js";
 import { MovingSprite } from "./sprite_classes/movingSprite.js";
 import { direction } from "./sprite_classes/directionSprite.js";
+import { HitBox } from "./utilities.js";
 
 export const states = { IDLE: 0, WALK: 1, RUN: 2, JUMP: 3, HURT: 4, DEAD: 5, MELEE_ATTACK: 6 };
 
@@ -65,7 +66,14 @@ export class Skeleton  {
     setState(newState){
         this.stateSpriteList[newState].setLocation(this.currentStateSprite.x, this.currentStateSprite.y);
         this.currentStateSprite = this.stateSpriteList[newState];
-        console.log(this.currentStateSprite);
+    }
+
+    getHitBox() {
+        return this.currentStateSprite.getHitBox();
+    }
+
+    undoMove() {
+        this.currentStateSprite.undoMove();
     }
 
 }

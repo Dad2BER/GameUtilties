@@ -12,5 +12,9 @@ export class skeletonRun extends AnimatedSprite { constructor(x,y) {super('skele
 
 //Dugeon
 export class randomeBrickBrown extends RandomeSpirte { constructor(x,y) {super('brick_brown',x,y,32,32,8)}}
-export class randomGrayFloor extends RandomeSpirte { constructor(x,y) {super('floor_gray',x,y,32,32,4)}}
+export class randomGrayFloor extends RandomeSpirte { 
+    constructor(x,y) {
+        super('floor_gray',x,y,32,32,4);
+        this.solid = false;
+}}
 export class door extends Sprite { constructor(x,y) {super('door',x,y,32,32,2)}}

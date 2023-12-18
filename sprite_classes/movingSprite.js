@@ -26,7 +26,13 @@ export class MovingSprite extends DirectionSprite {
 
     update (deltaTime) {
         super.update(deltaTime);
+        this.prevX = this.x;
+        this.prevY = this.y;
         this.setLocation(this.x + this.vx*deltaTime, this.y + this.vy*deltaTime);
+    }
+
+    undoMove() {
+        this.setLocation(this.prevX, this.prevY);
     }
 
 }
