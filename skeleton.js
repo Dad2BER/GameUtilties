@@ -1,11 +1,15 @@
 import { skeletonIdle, skeletonWalkLeft, skeletonWalkRight, 
-         skeletonRun, skeletonJump, skeletonHurt, skeletonDead, skeletonAttack1 } from "./sprite_classes/knownSprites.js";
+         skeletonRun, skeletonJump, skeletonHurt, skeletonDead, skeletonAttack1,
+         skeletonIdleSmall, skeletonWalkLeftSmall, skeletonWalkRightSmall,
+         skeletonRunSmall, skeletonJumpSmall, skeletonHurtSmall, skeletonDeadSmall, skeletonAttack1Small
+         } from "./sprite_classes/knownSprites.js";
 import { MovingSprite } from "./sprite_classes/movingSprite.js";
 import { direction } from "./sprite_classes/directionSprite.js";
 import { HitBox } from "./utilities.js";
 
 export const states = { IDLE: 0, WALK: 1, RUN: 2, JUMP: 3, HURT: 4, DEAD: 5, MELEE_ATTACK: 6 };
 
+//Large Seketon
 class idleSkeleton extends MovingSprite {
     constructor(x,y) { super(new skeletonIdle(x,y), new skeletonIdle(x,y), 
                              new skeletonIdle(x,y), new skeletonIdle(x,y), 
@@ -38,6 +42,55 @@ class meleeAttaackingSkeleton extends MovingSprite {
     constructor(x,y) { super(new skeletonAttack1(x,y), new skeletonAttack1(x,y), new skeletonAttack1(x,y), new skeletonAttack1(x,y), direction.LEFT, 0); }
 }
 
+// Small Skeleton
+class idleSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonIdleSmall(x,y), new skeletonIdleSmall(x,y), 
+              new skeletonIdleSmall(x,y), new skeletonIdleSmall(x,y), 
+              direction.LEFT, 0); }
+}
+
+class walkingSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonWalkLeftSmall(x,y), new skeletonWalkRightSmall(x,y), 
+              new skeletonWalkLeftSmall(x,y), new skeletonWalkRightSmall(x,y), 
+              direction.LEFT, 50); }
+}
+
+class runningSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonRunSmall(x,y), new skeletonRunSmall(x,y), 
+             new skeletonRunSmall(x,y), new skeletonRunSmall(x,y), 
+             direction.LEFT, 100); }
+}
+
+class jumpingSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonJumpSmall(x,y), new skeletonJumpSmall(x,y), 
+              new skeletonJumpSmall(x,y), new skeletonJumpSmall(x,y), 
+              direction.LEFT, 100); }
+}
+
+class hurtingSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonHurtSmall(x,y), new skeletonHurtSmall(x,y), 
+              new skeletonHurtSmall(x,y), new skeletonHurtSmall(x,y), 
+              direction.LEFT, 0); }
+}
+
+class deadSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonDeadSmall(x,y), new skeletonDeadSmall(x,y), 
+              new skeletonDeadSmall(x,y), new skeletonDeadSmall(x,y), 
+              direction.LEFT, 0); }
+}
+
+class meleeAttaackingSkeletonSmall extends MovingSprite {
+    constructor(x,y) { 
+        super(new skeletonAttack1Small(x,y), new skeletonAttack1Small(x,y), 
+              new skeletonAttack1Small(x,y), new skeletonAttack1Small(x,y), 
+              direction.LEFT, 0); }
+}
 
 export class Skeleton  {
     constructor(x,y) {
@@ -76,4 +129,14 @@ export class Skeleton  {
         this.currentStateSprite.undoMove();
     }
 
+}
+
+export class SkeletonSmall extends Skeleton {
+    constructor(x,y) {
+        super(x,y);
+        this.stateSpriteList = [new idleSkeletonSmall(x,y), new walkingSkeletonSmall(x,y), new runningSkeletonSmall(x,y), 
+                               new jumpingSkeletonSmall(x,y), new hurtingSkeletonSmall(x,y), new deadSkeletonSmall(x,y), 
+                               new meleeAttaackingSkeletonSmall(x,y)];
+        this.currentStateSprite = this.stateSpriteList[0];
+    }
 }

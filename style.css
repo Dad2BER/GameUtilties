@@ -39,6 +39,9 @@ h3 {
 {
     display: none;
 }
+#skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small, #skeleton_Idle_Small {
+    display: none;;
+}
 #brick_brown, #floor_gray, #door {
     display: none;
 }
