@@ -21,7 +21,6 @@ export class MovingSprite extends DirectionSprite {
             case direction.DOWN: this.vy = this.speed; break;
             default: this.vx = 0; this.vy = 0; break;
         }
-        console.log("Direction: " + newDirection + "   dx: " + this.vx + "   dy: " + this.vy);
     }
 
     update (deltaTime) {

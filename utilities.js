@@ -17,3 +17,8 @@ export class HitBox {
         this.height = height;
     }
 }
+
+export class RandomNumber{
+    constructor() {}
+    intBetween(min, max) { return Math.floor(Math.random() * (max-min)) + min;}
+}

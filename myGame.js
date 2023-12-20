@@ -6,8 +6,10 @@ import { TileMap } from "./tileMap.js";
 export class MyGame extends Game {
     constructor(canvasID, width, height) {
         super(canvasID, width, height);
-        this.player = new Player(200,200);
         this.map = new TileMap(Math.floor(width/32), Math.floor(height/32));
+        let firstRoom = this.map.rooms[0];
+        this.player = new Player(firstRoom.x + Math.floor(firstRoom.width/2),
+                                      firstRoom.y+Math.floor(firstRoom.height/2));
     }
 
     update(timeStamp) {

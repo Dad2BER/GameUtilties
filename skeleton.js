@@ -109,7 +109,6 @@ export class Skeleton  {
 
     setDirection(newDirection) {
         this.currentStateSprite.setDirection(newDirection);
-        console.log("NewDirection: " + newDirection);
     }
 
     getDirection() {
