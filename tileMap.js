@@ -1,8 +1,7 @@
-import { randomeBrickBrown, randomGrayFloor, door } from "./sprite_classes/knownSprites.js";
+import { randomeBrickBrown, randomGrayFloor, doorHorizontal } from "./sprite_classes/knownSprites.js";
 import { create2DArray, HitBox, RandomNumber, direction, Point } from "./utilities.js";
 
 const tileType = { FLOOR: 0, WALL: 1 };
-const pathDirection = {UP: 0, }
 
 export class TileMap {
     constructor(width,height){
@@ -14,7 +13,7 @@ export class TileMap {
         this.regions2D = create2DArray(this.width, this.height);
         console.log("Width: " + this.width + " Height: " + this.height)
         this.rooms = [];
-        this.roomExits = [];
+        this.doors = [];
         this.myRandom = new RandomNumber();
         this.windingPercent = 0;
         //This is mostly a port of what I implemented in the Java version of Rogue
@@ -143,8 +142,6 @@ export class TileMap {
 	}
 
     ConnectSections(p) {
-        this.roomExits.push(new Point(p.x, p.y));
-	    //setTile(new Door(p.x, p.y));
         this.map[p.x][p.y] = tileType.FLOOR;
 	    this.regions2D[p.x][p.y] = this.currentRegion;
 	    if (this.regions2D[p.x-1][p.y] != -1 && this.regions2D[p.x-1][p.y] != this.currentRegion ) {this.setRegion(this.regions2D[p.x-1][p.y]); }
@@ -213,17 +210,15 @@ export class TileMap {
     }
     
 
-    mapTiles(objectHitBox) {
-        let left = Math.floor(objectHitBox.x/32);
-        let right = Math.ceil((objectHitBox.x+objectHitBox.width)/32);
-        let top = Math.floor(objectHitBox.y/32);
-        let bottom = Math.ceil((objectHitBox.y+objectHitBox.height)/32);
+    getOverlapTiles(objectHitBox) {
+        let left = Math.max(0,Math.floor(objectHitBox.x/32));
+        let right = Math.min(this.width,Math.ceil((objectHitBox.x+objectHitBox.width)/32));
+        let top = Math.max(0,Math.floor(objectHitBox.y/32));
+        let bottom = Math.min(this.height,Math.ceil((objectHitBox.y+objectHitBox.height)/32));
         let returnTiles = [];
-        if (left >= 0 && right < this.width && top >= 0 && bottom < this.height) {
-            for (let x=left; x<right; x++){
-                for (let y = top; y<bottom; y++) {
-                    returnTiles.push(this.map[x][y]);
-                }
+        for (let x=left; x<right; x++){
+            for (let y = top; y<bottom; y++) {
+                returnTiles.push(this.map[x][y]);
             }
         }
         return returnTiles;
@@ -235,6 +230,7 @@ export class TileMap {
                 this.map[x][y].draw(context);
             }
         }
+        this.doors.forEach((door) => {door.draw(context);})
     }
 
 
@@ -263,7 +259,7 @@ export class TileMap {
 
     adjustMovingObject(player) {
         let playerHitBox = player.getHitBox();
-        let mapTiles = this.mapTiles(playerHitBox);
+        let mapTiles = this.getOverlapTiles(playerHitBox);
         let adjust = new Point(0,0);
         let adjustPlayer = false;
         mapTiles.forEach((tile)=> { 
@@ -305,6 +301,37 @@ export class TileMap {
         }
     }
 
+    addDoors() {
+        this.rooms.forEach((room) => {
+            let box = room.gridBox;
+            //Any halls on the top or bottom become doors
+            for(let x=box.x; x<box.x+box.width; x++ ) {
+                if (!this.map[x][box.y-1].solid) {this.doors.push(new Door(x,box.y-1))}
+                if (!this.map[x][box.y+box.height].solid) {this.doors.push(new Door(x,box.y+box.height))}
+            }
+            //Any halls on the left or right become doors
+            for(let y=box.y; y<box.y+box.height; y++ ) {
+                if (!this.map[box.x-1][y].solid) {this.doors.push(new Door(box.x-1,y))}
+                if (!this.map[box.x+box.width][y].solid) {this.doors.push(new Door(box.x+box.width,y))}
+            }
+        })
+    }
+
+    openHitDoor(hitBox) {
+        this.doors.forEach((door) => {
+            if (!door.isOpen && hitBox.overlap(door.getHitBox())) { door.open(); } 
+        })
+    }
+
+}
+
+class Door extends doorHorizontal {
+    constructor(x,y) {
+        super(x*32+16,y*32+16);
+        this.isOpen = false;
+    }
+    close() { this.frameX = 0; this.solid = true;}
+    open() { this.frameX = 1; this.solid = false;}
 }
 
 class Room {

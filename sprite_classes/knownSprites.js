@@ -26,4 +26,4 @@ export class randomGrayFloor extends RandomeSpirte {
         super('floor_gray',x,y,32,32,4);
         this.solid = false;
 }}
-export class door extends Sprite { constructor(x,y) {super('door',x,y,32,32,2)}}
+export class doorHorizontal extends Sprite { constructor(x,y) {super('door',x,y,32,32,2,0,0)}}

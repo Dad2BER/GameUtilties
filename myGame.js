@@ -17,6 +17,7 @@ export class MyGame extends Game {
         let deltaTime = super.update(timeStamp);
         this.player.handleInput(this.InputHandler.keys)
         this.player.update(deltaTime);
+        this.dungeon.openHitDoor(this.player.getHitBox());
         this.dungeon.adjustMovingObject(this.player);
         this.draw(this.ctx);
         return true;

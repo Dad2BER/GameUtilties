@@ -8,6 +8,7 @@ export class Dungeon {
         this.map = [];
         for(let level=0; level<numberLevels; level++) {
             this.map[level] = new TileMap(width, height);
+            this.map[level].addDoors();
         }
     }
     update(deltaTime) {
@@ -22,4 +23,9 @@ export class Dungeon {
     getRoom(levelIndex, roomIndex) {
         return this.map[levelIndex].rooms[roomIndex];
     }
+
+    openHitDoor(hitBox) {
+        this.map[this.currentlevel].openHitDoor(hitBox);
+    }
+
 }
