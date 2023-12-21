@@ -14,6 +14,7 @@ export class TileMap {
         this.regions2D = create2DArray(this.width, this.height);
         console.log("Width: " + this.width + " Height: " + this.height)
         this.rooms = [];
+        this.roomExits = [];
         this.myRandom = new RandomNumber();
         this.windingPercent = 0;
         //This is mostly a port of what I implemented in the Java version of Rogue
@@ -142,6 +143,7 @@ export class TileMap {
 	}
 
     ConnectSections(p) {
+        this.roomExits.push(new Point(p.x, p.y));
 	    //setTile(new Door(p.x, p.y));
         this.map[p.x][p.y] = tileType.FLOOR;
 	    this.regions2D[p.x][p.y] = this.currentRegion;
@@ -257,6 +259,50 @@ export class TileMap {
             }
         }
 
+    }
+
+    adjustMovingObject(player) {
+        let playerHitBox = player.getHitBox();
+        let mapTiles = this.mapTiles(playerHitBox);
+        let adjust = new Point(0,0);
+        let adjustPlayer = false;
+        mapTiles.forEach((tile)=> { 
+            if(tile.solid) { adjustPlayer = true;} 
+        })
+        if (adjustPlayer) {
+            player.undoMove();
+            let left=mapTiles[0].x;
+            let right = mapTiles[0].x;
+            let top = mapTiles[0].y;
+            let bottom = mapTiles[0].y;
+            mapTiles.forEach((tile)=> {
+                if (tile.x < left) left = tile.x;
+                if (tile.x > right) right = tile.x;
+                if (tile.y < top) top = tile.y;
+                if (tile.y > bottom) bottom = tile.y;
+            }) 
+            mapTiles.forEach((tile)=> {
+                let tBox = tile.getHitBox();
+                switch(player.getDirection()) {
+                    case direction.LEFT:
+                        if (tile.x == left && !tile.solid) adjust.y = tBox.y - playerHitBox.y;
+                        break;
+                    case direction.RIGHT:
+                        if (tile.x == right && !tile.solid) adjust.y = tBox.y - playerHitBox.y;
+                        break;
+                    case direction.UP:
+                        if (tile.y == top && !tile.solid) adjust.x = tBox.x - playerHitBox.x;
+                        break;
+                    case direction.DOWN:
+                        if (tile.y == bottom && !tile.solid) adjust.x = tBox.x - playerHitBox.x;
+                        break;
+                    }
+                }
+            ) 
+            if (adjust.x != 0 || adjust.y != 0) { //Only adjust if we can, and if it is a small adjustment
+                if (Math.abs(adjust.x)<8 && Math.abs(adjust.y)<8) player.adjustLocation(adjust.x, adjust.y);
+            }            
+        }
     }
 
 }
