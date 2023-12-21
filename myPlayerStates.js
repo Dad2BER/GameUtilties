@@ -1,6 +1,6 @@
 import { Player } from "./myPlayer.js";
 import { states } from "./skeleton.js";
-import { direction } from "./sprite_classes/directionSprite.js";
+import { direction } from "./utilities.js";
 
 class playerState {
     constructor(state, player) {

@@ -1,29 +1,230 @@
 import { randomeBrickBrown, randomGrayFloor, door } from "./sprite_classes/knownSprites.js";
-import { create2DArray, RandomNumber } from "./utilities.js";
+import { create2DArray, HitBox, RandomNumber, direction, Point } from "./utilities.js";
 
 const tileType = { FLOOR: 0, WALL: 1 };
+const pathDirection = {UP: 0, }
 
 export class TileMap {
     constructor(width,height){
         //Our initial implementation will just draw a wall around the boarder
         this.width = width;
         this.height = height;
+        this.currentRegion = -1
         this.map = create2DArray(this.width, this.height);
+        this.regions2D = create2DArray(this.width, this.height);
+        console.log("Width: " + this.width + " Height: " + this.height)
         this.rooms = [];
-        this.addRoomsandHalls(8, 3, 5);
+        this.myRandom = new RandomNumber();
+        this.windingPercent = 0;
+        //This is mostly a port of what I implemented in the Java version of Rogue
+	    this.setMapTiles(0, 0, this.width, this.height, tileType.WALL);	 //Allocate the grid and set all the cells to walls to start		
+	    this.placeRooms(4); //Randomly place rooms onto the Grid (No two rooms may overlap)
+	    this.fillInMaze();  	 //Fill in anywhere that is not a room with hallways
+	    this.connectRegions();  	 //Start in a random room, remove a connector to join it to a neighboring region.	
+	    this.fillDeadEnds();	 //Clean up dead end hallways
+
+        this.convertGridToSprites();
     }
 
-    wallCollision(objectHitBox) {
+    //NOTE:  Trick to this, is that rooms always are located at an odd number x,y and are odd widths and heights
+    //	     This guarantees that there is the correct spacing for hallways
+	placeRooms(maxRooms) {
+		for(let tryCount=0; tryCount<maxRooms; tryCount++) {
+			let width = 3 + this.myRandom.int(2)*2; // This will give us 3, 5, 7 as possible room widths
+			let height = 3 + this.myRandom.int(2)*2; // This will give us 3, 5, 7 as possible room heights
+			let x = this.myRandom.int((this.width-width-1)/2)*2+1;
+			let y = this.myRandom.int((this.height-height-1)/2)*2+1;
+            console.log("X: " + x + " Y: "+ y + " Width: " + width + " Height: "+height);
+			if ((x+width) < this.width && (y+height) < this.height) {
+                let newRoom = new Room(x, y, width, height);
+				let bAddRoom = true; //Check every existing room to see if this room overlaps
+                this.rooms.forEach((room) => {
+                    if (room.gridBox.overlap(newRoom.gridBox)) {
+                        bAddRoom = false;
+                    }
+                })
+				if (bAddRoom) {//We did not find any overlapping room, so we can add it
+					this.currentRegion++;
+                    this.rooms.push(newRoom);
+                    this.setMapTiles(newRoom.gridBox.x, newRoom.gridBox.y, newRoom.gridBox.width, newRoom.gridBox.height, tileType.FLOOR);
+				}
+			}
+		}
+	}
+
+    fillInMaze() {
+        for (let y = 1; y < this.height; y += 2) {
+            for (let x = 1; x < this.width; x += 2) {
+                if (this.map[x][y] == tileType.WALL) { //Grow Maze
+                    let cells = [];
+                    let lastDirection = -1;            
+                    this.currentRegion++;
+                    this.map[x][y] = tileType.FLOOR;
+                    this.regions2D[x][y] = this.currentRegion;
+                    let start = new Point(x,y);
+                    cells.push(start);
+            
+                    while (cells.length > 0) {
+                        let cell = cells[cells.length-1];
+                        // See which adjacent cells are open.
+                        let unmadeCells = [];
+                        for(let dir = 0; dir<=3; dir++) { if (this.canCarve(cell, dir)) unmadeCells.push(dir); }
+                        if(unmadeCells.length > 0) { //Did we find at least one direction we can go		        
+                            let newDirection = lastDirection;  // Prefer carving in the same direction
+                            if (unmadeCells.includes(lastDirection) && this.myRandom.percent() > this.windingPercent) {
+                                newDirection = lastDirection;
+                            } 
+                            else {
+                                let randomIndex = this.myRandom.int(unmadeCells.length);
+                                newDirection = unmadeCells[randomIndex];
+                            }
+                            let carvePoint = this.directionOffset(cell, newDirection, 1);
+                            this.map[carvePoint.x][carvePoint.y] = tileType.FLOOR;
+                            this.regions2D[carvePoint.x][carvePoint.y] = this.currentRegion;
+                            carvePoint = this.directionOffset(cell, newDirection, 2);
+                            this.map[carvePoint.x][carvePoint.y] = tileType.FLOOR;
+                            this.regions2D[carvePoint.x][carvePoint.y] = this.currentRegion;
+                            cells.push(carvePoint);
+                            lastDirection = newDirection;
+                        } 
+                        else {  // No adjacent uncarved cells.
+                            cells.length--;
+                            lastDirection = -1;  // This path has ended.
+                        }
+                    }
+                }
+            }
+        }		
+    }
+
+    connectRegions() {
+	    //Region 0 is always a randomly placed room.  We will start there
+	    this.currentRegion = 0;
+	    let possibleConnectors = this.getBoarderWalls(this.currentRegion);
+	    while (possibleConnectors.length > 0) { //If there are possible connectors, there must be multiple regions
+		    let randomIndex = this.myRandom.int(possibleConnectors.length);
+		    this.ConnectSections(possibleConnectors[randomIndex]);
+		    possibleConnectors = this.getBoarderWalls(this.currentRegion);
+		}
+	}
+
+    getBoarderWalls(regionID) {
+		let boarderWalls = [];
+		for (let y = 1; y < this.height-1; y ++) {
+		      for (let x = 1; x < this.width-1; x ++) {
+		    	  if(this.isBoarderWall(x,y,regionID)) {  boarderWalls.push(new Point(x,y));	  }
+		      }
+		}
+		return boarderWalls;
+	}
+
+    isBoarderWall(x, y, regionID) {
+		let bRVal = false;
+		if (this.regions2D[x][y] != -1) { //The block must be a wall
+			bRVal = false;
+		}
+		else {  
+			let regionMatchCount = 0;
+			if (this.regions2D[x-1][y] == regionID) {regionMatchCount++;}
+			if (this.regions2D[x+1][y] == regionID) {regionMatchCount++;}
+			if (this.regions2D[x][y-1] == regionID) {regionMatchCount++;}
+			if (this.regions2D[x][y+1] == regionID) {regionMatchCount++;}
+			if (regionMatchCount == 1) { //The region we are looking for exists on only one side of the wall
+				let otherRegionCount = 0;
+				if (this.regions2D[x-1][y] != regionID && this.regions2D[x-1][y] != -1) {otherRegionCount++;}
+				else if (this.regions2D[x+1][y] != regionID && this.regions2D[x+1][y] != -1) {otherRegionCount++;}
+				else if (this.regions2D[x][y-1] != regionID && this.regions2D[x][y-1] != -1) {otherRegionCount++;}
+				else if (this.regions2D[x][y+1] != regionID && this.regions2D[x][y+1] != -1) {otherRegionCount++;}
+				if (otherRegionCount > 0) { 	bRVal = true;	}
+			}
+		}
+		return bRVal;
+	}
+
+    ConnectSections(p) {
+	    //setTile(new Door(p.x, p.y));
+        this.map[p.x][p.y] = tileType.FLOOR;
+	    this.regions2D[p.x][p.y] = this.currentRegion;
+	    if (this.regions2D[p.x-1][p.y] != -1 && this.regions2D[p.x-1][p.y] != this.currentRegion ) {this.setRegion(this.regions2D[p.x-1][p.y]); }
+	    if (this.regions2D[p.x+1][p.y] != -1 && this.regions2D[p.x+1][p.y] != this.currentRegion ) {this.setRegion(this.regions2D[p.x+1][p.y]);	}
+	    if (this.regions2D[p.x][p.y-1] != -1 && this.regions2D[p.x][p.y-1] != this.currentRegion ) {this.setRegion(this.regions2D[p.x][p.y-1]);}
+	    if (this.regions2D[p.x][p.y+1] != -1 && this.regions2D[p.x][p.y+1] != this.currentRegion ) {this.setRegion(this.regions2D[p.x][p.y+1]);}
+	}
+
+    setRegion(oldRegion) {
+		for(let y=0; y<this.height; y++) {
+			for(let x=0; x<this.width; x++){
+				if (this.regions2D[x][y] == oldRegion) { this.regions2D[x][y] =this.currentRegion; }
+			}	
+		}		
+	}
+
+    directionOffset(p, d, m) {
+		let deltaY = 0;
+		let deltaX = 0;
+		switch(d) {
+			case direction.UP:		deltaY = -1;		break;
+			case direction.DOWN:	deltaY = 1;		break;
+			case direction.LEFT:	deltaX = -1;		break;
+			case direction.RIGHT: 	deltaX = 1;		break;
+		}
+		return new Point(p.x + deltaX*m, p.y + deltaY*m);
+	}
+
+    canCarve(pos, dir) {
+		let bRVal = false;
+		let gridCheckPoint = this.directionOffset(pos, dir, 3);
+		if (gridCheckPoint.x < 1 || gridCheckPoint.x > (this.width-1) ||
+			gridCheckPoint.y < 1 || gridCheckPoint.y > (this.height-1)) {
+			bRVal = false;
+		}
+		else {
+			let dstPoint = this.directionOffset(pos, dir, 2);
+			bRVal = this.map[dstPoint.x][dstPoint.y] == tileType.WALL;
+		}
+		return bRVal;
+	}
+
+    fillDeadEnds() {
+		for (let y = 1; y < this.height; y++) {
+			for (let x = 1; x < this.width; x++) {
+                this.checkAndFill(x,y);
+			}
+		}
+	}
+
+    checkAndFill(x,y) {
+        if (this.map[x][y]==tileType.FLOOR) {
+            let solidCount = 0;
+            if (this.map[x-1][y] == tileType.WALL) { solidCount++; }
+            if (this.map[x+1][y] == tileType.WALL) { solidCount++; }
+            if (this.map[x][y-1] == tileType.WALL) { solidCount++; }
+            if (this.map[x][y+1] == tileType.WALL) { solidCount++; }
+            if (solidCount >= 3) {  //If there were blocks on three or four sides
+                this.map[x][y] = tileType.WALL;
+                this.checkAndFill(x-1,y); //We may have just made a neighbor a dead end
+                this.checkAndFill(x+1,y); //Now we recursively call checkAndFill for all the neighbor blocks
+                this.checkAndFill(x,y-1); 
+                this.checkAndFill(x,y+1); 				
+            }                        
+        }
+    }
+    
+
+    mapTiles(objectHitBox) {
         let left = Math.floor(objectHitBox.x/32);
         let right = Math.ceil((objectHitBox.x+objectHitBox.width)/32);
         let top = Math.floor(objectHitBox.y/32);
         let bottom = Math.ceil((objectHitBox.y+objectHitBox.height)/32);
-        for (let x=left; x<right; x++){
-            for (let y = top; y<bottom; y++) {
-                if (this.map[x][y].solid) { return true;}
+        let returnTiles = [];
+        if (left >= 0 && right < this.width && top >= 0 && bottom < this.height) {
+            for (let x=left; x<right; x++){
+                for (let y = top; y<bottom; y++) {
+                    returnTiles.push(this.map[x][y]);
+                }
             }
         }
-        return false;
+        return returnTiles;
     }
 
     draw(context) {
@@ -34,35 +235,14 @@ export class TileMap {
         }
     }
 
+
     setMapTiles(left, top, width, height, type) {
         for(let x=left; x<left+width; x++) {
             for(let y=top; y<top+height; y++) {
                 this.map[x][y] = type;
+                this.regions2D[x][y] = this.currentRegion;
             }
         }
-    }
-
-    addRoomsandHalls(roomCount, minSize, maxSize) {
-        let myRandom = new RandomNumber();
-        //Initialize the whole map to walls and then we will carve out the rooms and halls
-        this.setMapTiles(0, 0, this.width, this.height, tileType.WALL);
-        //For the desired number of rooms, find a space we can carve out that leaves a wall on all sides
-        let tryLimit = 100; //We can't guarantee they will all fit, but we can retry on failure to increase the chances
-        while (tryLimit > 0 && this.rooms.length < roomCount) {
-            let width = myRandom.intBetween(minSize, maxSize);
-            let height = myRandom.intBetween(minSize, maxSize);
-            let left = myRandom.intBetween(1, this.width-width-2);
-            let top = myRandom.intBetween(1, this.height-height-2);
-            if (this.isLocationAvailable(left, top, width, height)) {
-                this.setMapTiles(left, top, width, height, tileType.FLOOR);
-                this.rooms.push(new Room(left, top, width, height));
-            }
-            else {
-                tryLimit--;
-            }
-        }
-        this.convertGridToSprites();
-        return this.rooms.length;
     }
 
     convertGridToSprites() {
@@ -79,29 +259,15 @@ export class TileMap {
 
     }
 
-    isLocationAvailable(roomLeft, roomTop, roomWidth, roomHeight) {
-        //This checks each tile, the other way to do this is to check to see if it overlaps with  any room in the room list
-        //Checking the room list would be faster, but is depednent on rooms being created first on the map
-        if (roomLeft -1 < 0 || roomTop-1 < 0 || roomLeft+roomWidth > this.width-1 || roomTop+roomHeight > this.height-1) {
-            return false;
-        }
-        for(let x=roomLeft-1; x<roomLeft+roomWidth+1; x++) {
-            for(let y=roomTop-1; y<roomTop + roomHeight+1; y++) {
-                if (this.map[x][y] == tileType.FLOOR) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 }
 
 class Room {
     constructor(x, y, width, height) {
+        this.gridBox = new HitBox(x, y, width, height);
         this.x = x*32;
         this.y = y*32;
         this.width = width*32;
         this.height = height*32;
     }
+
 }

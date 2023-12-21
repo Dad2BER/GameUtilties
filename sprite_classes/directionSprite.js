@@ -1,4 +1,4 @@
-export const direction = {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3};
+import { direction } from "../utilities.js";
 
 export class DirectionSprite {
     constructor(leftSprite, rightSprite, upSprite, downSprite, facing) {
