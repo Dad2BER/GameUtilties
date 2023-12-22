@@ -20,12 +20,16 @@ export class Dungeon {
     adjustMovingObject(player) {
         this.map[this.currentlevel].adjustMovingObject(player);
     }
+    openHitDoor(hitBox) {
+        this.map[this.currentlevel].openHitDoor(hitBox);
+    }
+
     getRoom(levelIndex, roomIndex) {
         return this.map[levelIndex].rooms[roomIndex];
     }
 
-    openHitDoor(hitBox) {
-        this.map[this.currentlevel].openHitDoor(hitBox);
+    getLevelRooms(levelIndex) {
+        return this.map[levelIndex].rooms;
     }
 
 }

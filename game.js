@@ -1,4 +1,5 @@
 import { InputHandler } from "./input.js";
+import { RandomNumber } from "./utilities.js";
 export class Game {
     //Every game has a canvas, width and height
     constructor(canvasID, width, height){
@@ -8,6 +9,7 @@ export class Game {
         this.canvas.height = height;
         this.lastTime = 0;
         this.InputHandler = new InputHandler();
+        this.randomNUmber = new RandomNumber();
     }
     
     //The main application is responsible for calling update in the animate loop

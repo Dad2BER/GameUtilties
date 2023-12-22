@@ -21,9 +21,7 @@ export class skeletonRunSmall extends AnimatedSprite { constructor(x,y) {super('
 
 //Dugeon
 export class randomeBrickBrown extends RandomeSpirte { constructor(x,y) {super('brick_brown',x,y,32,32,8)}}
-export class randomGrayFloor extends RandomeSpirte { 
-    constructor(x,y) {
-        super('floor_gray',x,y,32,32,4);
-        this.solid = false;
-}}
-export class doorHorizontal extends Sprite { constructor(x,y) {super('door',x,y,32,32,2,0,0)}}
+export class randomGrayFloor extends RandomeSpirte { constructor(x,y) { super('floor_gray',x,y,32,32,4); this.solid = false; }}
+export const binary = {CLOSED: 0, OPEN: 1, OFF: 0, ON: 1}
+export class doorHorizontal extends Sprite { constructor(x,y) { super('door',x,y,32,32,2,binary.CLOSED,0); }}
+export class chest extends Sprite{ constructor(x,y) { super('chest',x,y,32,32,2,binary.CLOSED,0); }}

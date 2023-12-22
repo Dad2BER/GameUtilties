@@ -128,8 +128,11 @@ export class Skeleton  {
     }
 
     adjustLocation(deltaX,deltaY) {
-        this.currentStateSprite.setLocation(this.currentStateSprite.x + deltaX, 
-                                            this.currentStateSprite.y + deltaY);
+        this.setLocation(this.currentStateSprite.x + deltaX, this.currentStateSprite.y + deltaY);
+    }
+
+    setLocation(x,y) {
+        this.currentStateSprite.setLocation(x, y);
     }
 
 }

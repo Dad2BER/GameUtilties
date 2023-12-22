@@ -42,6 +42,9 @@ h3 {
 #skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small, #skeleton_Idle_Small {
     display: none;;
 }
-#brick_brown, #floor_gray, #door {
+#brick_brown, #floor_gray, #door, #chest {
+    display: none;
+}
+#dragons, #giants, #orcs, #rats, #trolls {
     display: none;
 }
