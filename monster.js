@@ -18,7 +18,6 @@ class Monster extends MovingSprite{
 
     update(deltaTime) {
         super.update(deltaTime);
-//        console.log("DeltaTime: " + X: " + this.x + " Y: " + this.y + " vx: " + this.vx + " vy: " + this.vy);
         if (this.wander){
 
         }
@@ -27,7 +26,6 @@ class Monster extends MovingSprite{
     setRandomDirection() {
         this.wander = true;
         let randomDirection = diceBag.d4() -1;
-        console.log(randomDirection)
         this.setDirection(diceBag.d4() - 1); //Directions are 0 based and d4 is 1 to 4
     }
 
