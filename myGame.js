@@ -4,7 +4,7 @@ import { Player } from "./myPlayer.js";
 import { Dungeon } from "./dungeon.js";
 import { rat, ratSubtype } from "./monster.js";
 import { statusText } from "./text.js";
-import { Point } from "./utilities.js";
+import { Point, direction } from "./utilities.js";
 
 
 export class MyGame extends Game {
@@ -27,6 +27,9 @@ export class MyGame extends Game {
             monster.update(deltaTime);
             if ( this.dungeon.adjustMovingObject(monster)==true ) { //If we collided with something change direction
                 monster.setRandomDirection();
+            }
+            if (monster.getHitBox().overlap(this.player.getHitBox()) ) { //Monster Overlaps with Player
+                this.overlayTexts.push( new statusText("HIT", monster.getLocation()) );
             }
         })
         this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })

@@ -1,4 +1,4 @@
-import { direction } from "../utilities.js";
+import { direction, Point } from "../utilities.js";
 
 export class DirectionSprite {
     constructor(leftSprite, rightSprite, upSprite, downSprite, facing) {
@@ -14,6 +14,10 @@ export class DirectionSprite {
         this.sprites.forEach(sprite => {
             sprite.changeLocation(x, y);
         });
+    }
+
+    getLocation() {
+        return new Point(this.x, this.y);
     }
 
     getDirection() {

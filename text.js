@@ -18,7 +18,6 @@ export class overlayText {
         let lastComma = this.fontColor.lastIndexOf(',');
         let tmpValue = Math.floor(this.alpha*100)/100;
         let newRGBA = this.fontColor.substr(0, lastComma+1) + " " + tmpValue + ") "
-        this.text = newRGBA;
         this.fontColor = newRGBA;
         if (tmpValue <= 0) {this.markedForDeletion = true;}
     }
@@ -39,6 +38,6 @@ export class overlayText {
 
 export class statusText extends overlayText {
     constructor(displayText, location) {
-        super(displayText, 'Helvetica', 15, location, 'rgba(255,0,0,1)', 'rgba(255,128,129,1)', 0, 0, 1)
+        super(displayText, 'Helvetica', 15, location, 'rgba(255,0,0,1)', 'rgba(255,128,129,1)', 0, 0, 5)
     }
 }
