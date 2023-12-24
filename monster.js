@@ -14,18 +14,33 @@ class Monster extends MovingSprite{
               direction.LEFT,speed);
         this.wander = false;
         this.markedForDeletion = false;
+        this.coolDownValue = 5000; //This value should be overriddent for each monster
+        this.attackCoolDown = this.coolDownValue;
+        this.hitPoints = hitPoints;
+        this.meleDamage = meleDamage;
+        this.rangeDamage = rangeDamage;
     }
 
     update(deltaTime) {
         super.update(deltaTime);
-        if (this.wander){
+        this.attackCoolDown -= deltaTime;
+    }
 
-        }
+    canAttack() {
+        return this.attackCoolDown <= 0;
+    }
+
+    meleAttack() {
+        this.attackCoolDown = this.coolDownValue;
+        return this.meleDamage;
+    }
+
+    rangeAttack() {
+        this.attackCoolDown = this.coolDownValue;
+        return this.rangeDamage;
     }
 
     setRandomDirection() {
-        this.wander = true;
-        let randomDirection = diceBag.d4() -1;
         this.setDirection(diceBag.d4() - 1); //Directions are 0 based and d4 is 1 to 4
     }
 

@@ -45,6 +45,7 @@ export class RandomNumber{
     roll(numberDice, diceType) {
         let rValue = this.intBetween(1,diceType); //take advantage that diceType is the actual max value
         for(let i=1; i<numberDice; i++) { rValue += this.intBetween(1,diceType);}
+        return rValue;
     }
     percent() {return this.intBetween(1,100);}
 }

@@ -4,7 +4,7 @@ import { Player } from "./myPlayer.js";
 import { Dungeon } from "./dungeon.js";
 import { rat, ratSubtype } from "./monster.js";
 import { statusText } from "./text.js";
-import { Point, direction } from "./utilities.js";
+import { Point, RandomNumber, direction } from "./utilities.js";
 
 
 export class MyGame extends Game {
@@ -15,6 +15,7 @@ export class MyGame extends Game {
         this.monsters = [];
         this.overlayTexts = [];
         this.populateLevel(0);
+        this.diceBag = new RandomNumber();
     }
 
     update(timeStamp) {
@@ -25,11 +26,13 @@ export class MyGame extends Game {
         this.dungeon.adjustMovingObject(this.player);
         this.monsters.forEach((monster)=> { 
             monster.update(deltaTime);
-            if ( this.dungeon.adjustMovingObject(monster)==true ) { //If we collided with something change direction
+            if ( this.dungeon.adjustMovingObject(monster)==true || this.diceBag.percent()>99) { //If we collided with something change direction
                 monster.setRandomDirection();
             }
-            if (monster.getHitBox().overlap(this.player.getHitBox()) ) { //Monster Overlaps with Player
-                this.overlayTexts.push( new statusText("HIT", monster.getLocation()) );
+            if (monster.getHitBox().overlap(this.player.getHitBox()) && monster.canAttack()) { //Monster Overlaps with Player
+                let damage = monster.meleAttack();
+                let outputStr = "HIT: " + damage;
+                this.overlayTexts.push( new statusText(outputStr , monster.getLocation()) );
             }
         })
         this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
