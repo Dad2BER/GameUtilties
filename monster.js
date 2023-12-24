@@ -13,6 +13,7 @@ class Monster extends MovingSprite{
               new Sprite(type,x,y,32,32,0,subtype,0), new Sprite(type,x,y,32,32,0,subtype,0), 
               direction.LEFT,speed);
         this.wander = false;
+        this.markedForDeletion = false;
     }
 
     update(deltaTime) {

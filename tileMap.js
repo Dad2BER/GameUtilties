@@ -102,7 +102,7 @@ export class TileMap {
 	    this.currentRegion = 0;
 	    let possibleConnectors = this.getBoarderWalls(this.currentRegion);
 	    while (possibleConnectors.length > 0) { //If there are possible connectors, there must be multiple regions
-		    let randomIndex = this.myRandom.int(possibleConnectors.length);
+		    let randomIndex = this.myRandom.intBetween(0, possibleConnectors.length-1);
 		    this.ConnectSections(possibleConnectors[randomIndex]);
 		    possibleConnectors = this.getBoarderWalls(this.currentRegion);
 		}

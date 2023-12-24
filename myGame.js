@@ -3,6 +3,8 @@ import { Game } from "./game.js";
 import { Player } from "./myPlayer.js";
 import { Dungeon } from "./dungeon.js";
 import { rat, ratSubtype } from "./monster.js";
+import { statusText } from "./text.js";
+import { Point } from "./utilities.js";
 
 
 export class MyGame extends Game {
@@ -11,6 +13,7 @@ export class MyGame extends Game {
         this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1);
         this.player = new Player(0,0); //Does not matter where, because popualteLevel will move them.
         this.monsters = [];
+        this.overlayTexts = [];
         this.populateLevel(0);
     }
 
@@ -26,6 +29,7 @@ export class MyGame extends Game {
                 monster.setRandomDirection();
             }
         })
+        this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
         this.draw(this.ctx);
         return true;
     }
@@ -34,7 +38,14 @@ export class MyGame extends Game {
         super.draw(context);
         this.dungeon.draw(context);
         this.player.draw(context);
-        this.monsters.forEach((monster)=> { monster.draw(context); })
+        this.monsters.forEach((monster, index)=>  { 
+            monster.draw(context); 
+            if (monster.markedForDeletion) { this.monsters.splice(index, 1);}
+        })
+        this.overlayTexts.forEach((txt, index) => { 
+            txt.draw(context); 
+            if (txt.markedForDeletion) { this.overlayTexts.splice(index, 1);}
+        })
     }
 
     populateLevel(levelIndex) {
@@ -47,6 +58,7 @@ export class MyGame extends Game {
             let monster = new rat(x,y,ratSubtype.BROWN);
             monster.setRandomDirection();
             this.monsters.push(monster);       
+            this.overlayTexts.push( new statusText("Rat", new Point(x,y)) )
        }
     }
 
