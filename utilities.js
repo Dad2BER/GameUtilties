@@ -32,12 +32,19 @@ export class HitBox {
     }
 }
 
+export const sidedDice = {d4: 4, d6: 6, d8: 8, d10: 10, d12: 12, d20: 20};
 export class RandomNumber{
     constructor() {}
-    intBetween(min, max) { return Math.floor(Math.random() * (max-min)) + min; }
+    intBetween(min, max) {return Math.floor(Math.random() * (max - min + 1) + min) }
     int(max) {return this.intBetween(0, max);}
     d20() {return this.intBetween(1,20);}
-    d6() {return this.intBetween(1,6);}
     d10(){return this.intBetween(1,10);}
+    d8() {return this.intBetween(1,8);}
+    d6() {return this.intBetween(1,6);}
+    d4() { return this.intBetween(1,4);}
+    roll(numberDice, diceType) {
+        let rValue = this.intBetween(1,diceType); //take advantage that diceType is the actual max value
+        for(let i=1; i<numberDice; i++) { rValue += this.intBetween(1,diceType);}
+    }
     percent() {return this.intBetween(1,100);}
 }

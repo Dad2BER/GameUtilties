@@ -16,9 +16,17 @@ export class DirectionSprite {
         });
     }
 
+    getDirection() {
+        return this.facing;
+    }
+    
     setDirection(newDirection) {
         this.facing = newDirection;
-        this.sprites[this.facing].restartArnimation();
+        if (this.sprites[this.facing].maxFrames > 1) { this.sprites[this.facing].restartArnimation(); }
+    }
+
+    adjustLocation(deltaX,deltaY) {
+        this.setLocation(this.x + deltaX, this.y + deltaY);
     }
 
     update(deltaTime) {

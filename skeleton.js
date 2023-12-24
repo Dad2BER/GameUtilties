@@ -111,7 +111,7 @@ export class Skeleton  {
     }
 
     getDirection() {
-        return this.currentStateSprite.facing;
+        return this.currentStateSprite.getDirection();
     }
     
     setState(newState){
@@ -128,7 +128,7 @@ export class Skeleton  {
     }
 
     adjustLocation(deltaX,deltaY) {
-        this.setLocation(this.currentStateSprite.x + deltaX, this.currentStateSprite.y + deltaY);
+        this.currentStateSprite.adjustLocation(deltaX, deltaY);
     }
 
     setLocation(x,y) {

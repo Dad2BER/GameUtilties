@@ -17,8 +17,8 @@ export class Dungeon {
     draw(context) {
         this.map[this.currentlevel].draw(context);
     }
-    adjustMovingObject(player) {
-        this.map[this.currentlevel].adjustMovingObject(player);
+    adjustMovingObject(object) {
+        return this.map[this.currentlevel].adjustMovingObject(object);
     }
     openHitDoor(hitBox) {
         this.map[this.currentlevel].openHitDoor(hitBox);

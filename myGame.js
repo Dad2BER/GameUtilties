@@ -20,7 +20,12 @@ export class MyGame extends Game {
         this.player.update(deltaTime);
         this.dungeon.openHitDoor(this.player.getHitBox());
         this.dungeon.adjustMovingObject(this.player);
-        this.monsters.forEach((monster)=> { monster.update(timeStamp); })
+        this.monsters.forEach((monster)=> { 
+            monster.update(deltaTime);
+            if ( this.dungeon.adjustMovingObject(monster)==true ) { //If we collided with something change direction
+                monster.setRandomDirection();
+            }
+        })
         this.draw(this.ctx);
         return true;
     }
@@ -29,7 +34,7 @@ export class MyGame extends Game {
         super.draw(context);
         this.dungeon.draw(context);
         this.player.draw(context);
-        this.monsters.forEach((monster)=> { monster.draw(context,false); })
+        this.monsters.forEach((monster)=> { monster.draw(context); })
     }
 
     populateLevel(levelIndex) {
@@ -39,8 +44,10 @@ export class MyGame extends Game {
         for(let i=1; i<rooms.length; i++) {
             let x = this.randomNUmber.intBetween(rooms[i].x, rooms[i].x+rooms[i].width-32)+16;
             let y = this.randomNUmber.intBetween(rooms[i].y, rooms[i].y+rooms[i].height-32)+16;
-            this.monsters.push(new rat(x,y,ratSubtype.BROWN));
-        }
+            let monster = new rat(x,y,ratSubtype.BROWN);
+            monster.setRandomDirection();
+            this.monsters.push(monster);       
+       }
     }
 
 }

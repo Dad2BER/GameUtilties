@@ -257,16 +257,16 @@ export class TileMap {
 
     }
 
-    adjustMovingObject(player) {
-        let playerHitBox = player.getHitBox();
-        let mapTiles = this.getOverlapTiles(playerHitBox);
+    adjustMovingObject(object) {
+        let ObjHitBox = object.getHitBox();
+        let mapTiles = this.getOverlapTiles(ObjHitBox);
         let adjust = new Point(0,0);
-        let adjustPlayer = false;
+        let adjustObj = false;
         mapTiles.forEach((tile)=> { 
-            if(tile.solid) { adjustPlayer = true;} 
+            if(tile.solid) { adjustObj = true;} 
         })
-        if (adjustPlayer) {
-            player.undoMove();
+        if (adjustObj) {
+            object.undoMove();
             let left=mapTiles[0].x;
             let right = mapTiles[0].x;
             let top = mapTiles[0].y;
@@ -279,26 +279,29 @@ export class TileMap {
             }) 
             mapTiles.forEach((tile)=> {
                 let tBox = tile.getHitBox();
-                switch(player.getDirection()) {
+                switch(object.getDirection()) {
                     case direction.LEFT:
-                        if (tile.x == left && !tile.solid) adjust.y = tBox.y - playerHitBox.y;
+                        if (tile.x == left && !tile.solid) adjust.y = tBox.y - ObjHitBox.y;
                         break;
                     case direction.RIGHT:
-                        if (tile.x == right && !tile.solid) adjust.y = tBox.y - playerHitBox.y;
+                        if (tile.x == right && !tile.solid) adjust.y = tBox.y - ObjHitBox.y;
                         break;
                     case direction.UP:
-                        if (tile.y == top && !tile.solid) adjust.x = tBox.x - playerHitBox.x;
+                        if (tile.y == top && !tile.solid) adjust.x = tBox.x - ObjHitBox.x;
                         break;
                     case direction.DOWN:
-                        if (tile.y == bottom && !tile.solid) adjust.x = tBox.x - playerHitBox.x;
+                        if (tile.y == bottom && !tile.solid) adjust.x = tBox.x - ObjHitBox.x;
                         break;
                     }
                 }
             ) 
-            if (adjust.x != 0 || adjust.y != 0) { //Only adjust if we can, and if it is a small adjustment
-                if (Math.abs(adjust.x)<8 && Math.abs(adjust.y)<8) player.adjustLocation(adjust.x, adjust.y);
-            }            
+            if( adjust.x != 0 || adjust.y != 0) {
+                if (Math.abs(adjust.x)<8 && Math.abs(adjust.y)<8)  { //Only adjust if we can, and if it is a small adjustment
+                    object.adjustLocation(adjust.x, adjust.y);
+                }  
+            }
         }
+        return adjustObj;
     }
 
     addDoors() {

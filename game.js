@@ -15,6 +15,7 @@ export class Game {
     //The main application is responsible for calling update in the animate loop
     update(timeStamp) {
         let deltaTime = timeStamp - this.lastTime;
+        if (this.lastTime == 0) { deltaTime = 0; }
         this.lastTime = timeStamp;
         return deltaTime;
     }

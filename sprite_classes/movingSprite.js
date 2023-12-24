@@ -6,7 +6,6 @@ export class MovingSprite extends DirectionSprite {
         super(leftSprite, rightSprite, upSprite, downSprite, facing);
         //handle movement variables as pixels per second
         this.speed = speed/1000.0; //Convert speed to delta time milliseconds
-        this.moveTimer = 0;
         this.vx = 0;
         this.vy = 0;
     }
@@ -25,9 +24,9 @@ export class MovingSprite extends DirectionSprite {
     }
 
     update (deltaTime) {
-        super.update(deltaTime);
         this.prevX = this.x;
         this.prevY = this.y;
+        super.update(deltaTime);
         this.setLocation(this.x + this.vx*deltaTime, this.y + this.vy*deltaTime);
     }
 
