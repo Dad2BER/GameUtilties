@@ -45,4 +45,8 @@ export class DirectionSprite {
         return this.sprites[this.facing].getHitBox();
     }
 
+    getActiveSprite() {
+        return this.sprites[this.facing];
+    }
+
 }

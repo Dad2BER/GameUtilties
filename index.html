@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Game Tutorial</title>
+    <title>JavaScript Rogue Like Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,9 +14,28 @@
     </h3>
     <section>
     <!-- the canvas-->
-    <canvas id="canvas1"></canvas>
-
+    <table style="width: 100%">
+            <colgroup>
+               <col span="1" style="width: 70%;">
+               <col span="1" style="width: 30%;">
+            </colgroup>
+        <tr>
+            <td width:90%><canvas id="mapCanvas"></canvas></td>
+            <td>
+                <table>
+                    <tr><canvas id="playerCanvas" width="100px"></canvas></tr>
+                    <tr>
+                        <textarea id="storyTextArea" readonly>
+                        </textarea>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
     <!-- Preload our images to prevent errors, but use the style sheet to set display to none -->
+    <p>Skeleton used for player comes from <a href="https://craftpix.net/freebies/free-fantasy-enemies-pixel-art-sprite-pack">
+       FREE FANTASY ENEMIES PIXEL ART SPRITE PACK</a> at graphpix.net</p>
     <img id="skeleton_Walk_Left"  src="spriteSheets/Skeleton/Walk_Left_128_80_8.png">
     <img id="skeleton_Walk_Right" src="spriteSheets/Skeleton/Walk_Right_128_80_8.png">
     <img id="skeleton_Attack_1" src="spriteSheets/Skeleton/Attack1_128_80_7.png">

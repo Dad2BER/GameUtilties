@@ -117,6 +117,7 @@ export class Skeleton  {
     setState(newState){
         this.stateSpriteList[newState].setLocation(this.currentStateSprite.x, this.currentStateSprite.y);
         this.currentStateSprite = this.stateSpriteList[newState];
+        this.currentStateSprite.getActiveSprite().restartArnimation();
     }
 
     getHitBox() {
@@ -133,6 +134,10 @@ export class Skeleton  {
 
     setLocation(x,y) {
         this.currentStateSprite.setLocation(x, y);
+    }
+
+    getActiveSprite() {
+        return this.currentStateSprite.getActiveSprite();
     }
 
 }

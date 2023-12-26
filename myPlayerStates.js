@@ -83,7 +83,16 @@ export class jumping extends playerState {
 }
 
 export class hurt extends playerState {
-    constructor(player) { super('HURT', player); }
+    constructor(player) { 
+        super('HURT', player); 
+    }
+    
+    handleInput(input) {
+        if (this.player.getActiveSprite().animationFinished && this.player.getActiveSprite().endAnimationDelay< 0) { 
+            this.player.setState(states.IDLE);
+            console.log("Set back to Idle");
+        }
+    }
 }
 
 export class dead extends playerState {

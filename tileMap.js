@@ -18,7 +18,7 @@ export class TileMap {
         this.windingPercent = 0;
         //This is mostly a port of what I implemented in the Java version of Rogue
 	    this.setMapTiles(0, 0, this.width, this.height, tileType.WALL);	 //Allocate the grid and set all the cells to walls to start		
-	    this.placeRooms(4); //Randomly place rooms onto the Grid (No two rooms may overlap)
+	    this.placeRooms(10); //Randomly place rooms onto the Grid (No two rooms may overlap)
 	    this.fillInMaze();  	 //Fill in anywhere that is not a room with hallways
 	    this.connectRegions();  	 //Start in a random room, remove a connector to join it to a neighboring region.	
 	    this.fillDeadEnds();	 //Clean up dead end hallways

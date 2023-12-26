@@ -62,6 +62,7 @@ export class AnimatedSprite extends Sprite {
         
         this.loop = loop;
         this.animationFinished = false;
+        this.endAnimationDelay = 1000;
     }
 
     restartArnimation() {
@@ -72,7 +73,10 @@ export class AnimatedSprite extends Sprite {
     update(deltaTime) {
         super.update(deltaTime);
         //Sprite Animation
-        if (this.frameTimer > this.frameInterval) { //If we have spent enough time on this frame, move to the next
+        if (this.animationFinished) {
+            this.endAnimationDelay -= deltaTime;
+        }
+        else if (this.frameTimer > this.frameInterval) { //If we have spent enough time on this frame, move to the next
             this.frameTimer = 0;
             if (this.frameX < this.maxFrames) { 
                 this.frameX++;
