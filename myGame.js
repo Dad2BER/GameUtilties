@@ -8,13 +8,15 @@ import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
 import { TreasureChest } from "./treasureChest.js";
+import { PotionDictionary } from "./potion.js";
 
 
 export class MyGame extends Game {
     constructor(mapCanvasID, playerCanvasID, storyTextAreaID, width, height) {
         super(mapCanvasID, width, height);
+        this.potionDictionar = new PotionDictionary();
         this.player = new Player(0,0); //Does not matter where, because popualteLevel will move them.
-        this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID);
+        this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID, this.potionDictionar);
         this.storyText = new StoryText(storyTextAreaID);
         this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1);
         this.monsters = [];

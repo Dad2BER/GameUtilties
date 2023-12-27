@@ -51,17 +51,20 @@ table, th, td, tr {
 }
 /* We set the display to none for our pre-loaded images to prevent them from showing up until we need them */
 
-#skeleton_Walk_Left, #skeleton_Walk_Right,
-#skeleton_Attack_1,#skeleton_Dead,#skeleton_Hurt,#skeleton_Idle,#skeleton_Jump,#skeleton_Run
+#skeleton_Idle, #skeleton_Walk_Left, #skeleton_Walk_Right,
+#skeleton_Attack_1, #skeleton_Dead, #skeleton_Hurt, #skeleton_Jump, #skeleton_Run
 {
     display: none;
 }
-#skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small, #skeleton_Idle_Small {
+#skeleton_Idle_Small, #skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small {
     display: none;;
 }
 #brick_brown, #floor_gray, #door, #chest {
     display: none;
 }
 #dragons, #giants, #orcs, #rats, #trolls {
+    display: none;
+}
+#potions {
     display: none;
 }

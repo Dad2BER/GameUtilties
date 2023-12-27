@@ -8,6 +8,12 @@ class statLabelText extends overlayText {
     }
 }
 
+class potionLabelText extends overlayText {
+    constructor(displayText, location) {
+        super(displayText, 'Arial', 16, location, 'left','rgba(192,192,192,1)', 'rgba(255,255,255,0)', 0, 0, 0)
+    }
+}
+
 const redTrue = 'rgba(255, 0, 0, 1)';
 const redDark = 'rgba(255, 64, 64, 1)';
 const yellowTrue = 'rgba(255, 255, 0, 1)';
@@ -40,10 +46,16 @@ class rygText extends overlayText {
 }
 
 export class PlayerCanvas {
-    constructor(player, canvasID) {
+    constructor(player, canvasID, potionDictionary) {
+        this.potionDictionary = potionDictionary;
+        this.potionDesciprions = [];
+        for (let i = 0; i<this.potionDictionary.potions.length; i++) {
+            this.potionDictionary.potions[i].changeLocation(32, 100+i*32);
+            this.potionDesciprions.push(new potionLabelText("UNKOWN", new Point(40, 110+i*32)) );
+        }
         this.canvas = document.getElementById(canvasID);
-        this.canvas.width = 200;
-        this.canvas.height = 200;
+        this.canvas.width = 250;
+        this.canvas.height = 250;
         this.ctx = this.canvas.getContext('2d');
         this.player = player;
         this.playerImage = new skeletonIdle(30, 30);
@@ -67,6 +79,9 @@ export class PlayerCanvas {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.playerImage.draw(this.ctx);
         this.statLabels.forEach((stat) => { stat.draw(this.ctx); })
+        // Draw Potion List with Descriptions
+        this.potionDictionary.potions.forEach((potion) => { potion.draw(this.ctx); })
+        this.potionDesciprions.forEach((description) => {description.draw(this.ctx); })
         this.hpText.draw(this.ctx);
     }
 }
