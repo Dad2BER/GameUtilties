@@ -1,4 +1,4 @@
-import { HitBox } from "../utilities.js";
+import { HitBox, Point } from "../utilities.js";
 
 export class Sprite {
     
@@ -30,6 +30,8 @@ export class Sprite {
         this.drawX = this.x - this.width/2;
         this.drawY = this.y - this.height/2;
     }
+
+    getLocation() { return new Point(this.x, this.y); }
 
     update(deltaTime) {
     }

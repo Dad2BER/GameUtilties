@@ -7,6 +7,7 @@ import { statusText } from "./text.js";
 import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
+import { TreasureChest } from "./treasureChest.js";
 
 
 export class MyGame extends Game {
@@ -17,6 +18,7 @@ export class MyGame extends Game {
         this.storyText = new StoryText(storyTextAreaID);
         this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1);
         this.monsters = [];
+        this.treasureChests = [];
         this.overlayTexts = [];
         this.populateLevel(0);
         this.diceBag = new RandomNumber();
@@ -40,9 +42,17 @@ export class MyGame extends Game {
                     this.overlayTexts.push( new statusText(outputStr , monster.getLocation()) );
                     this.storyText.addLine("Rat did " + "damage to you!");
                     this.player.damagePlayer(damage);
-                    console.log("Player Hit");
                 }
             })
+            this.treasureChests.forEach((chest)=> {
+                chest.update(deltaTime);
+                if (chest.getHitBox().overlap(this.player.getHitBox()) && !chest.isOpen) { //Monster Overlaps with Player
+                    chest.open();
+                    this.overlayTexts.push( new statusText("Open" , chest.getLocation()) );
+                    this.storyText.addLine("You open a chest...");
+                }
+            }) 
+
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);
         }
@@ -56,21 +66,27 @@ export class MyGame extends Game {
     draw(context){
         super.draw(context);
         this.dungeon.draw(context);
-        this.player.draw(context);
         this.monsters.forEach((monster, index)=>  { 
             monster.draw(context); 
             if (monster.markedForDeletion) { this.monsters.splice(index, 1);}
         })
+        this.treasureChests.forEach((chest)=> {
+            chest.draw(context);
+            if (chest.markedForDeletion) { this.treasureChests.splice(index, 1);}
+        }) 
         this.overlayTexts.forEach((txt, index) => { 
             txt.draw(context); 
             if (txt.markedForDeletion) { this.overlayTexts.splice(index, 1);}
         })
+        this.player.draw(context);
     }
 
     populateLevel(levelIndex) {
         let rooms = this.dungeon.getLevelRooms(levelIndex);
+        //Player goes in the first room
         this.player.setLocation(rooms[0].x + Math.floor(rooms[0].width/2),
                                 rooms[0].y + Math.floor(rooms[0].height/2));
+        //Monsters go in every other room
         for(let i=1; i<rooms.length; i++) {
             let x = this.randomNUmber.intBetween(rooms[i].x, rooms[i].x+rooms[i].width-32)+16;
             let y = this.randomNUmber.intBetween(rooms[i].y, rooms[i].y+rooms[i].height-32)+16;
@@ -80,6 +96,16 @@ export class MyGame extends Game {
             this.monsters.push(monster);       
             this.overlayTexts.push( new statusText("Rat", new Point(x,y)) )
        }
-    }
-
+       //0-2 Treasure Chests go in each room 
+       for(let i=0; i<rooms.length; i++) {
+            for(let j=0; j<2; j++) {
+                if (this.randomNUmber.intBetween(0,1) == 1) {
+                    let x = this.randomNUmber.intBetween(rooms[i].x, rooms[i].x+rooms[i].width-32)+16;
+                    let y = this.randomNUmber.intBetween(rooms[i].y, rooms[i].y+rooms[i].height-32)+16;
+                    this.treasureChests.push(new TreasureChest(x,y));
+                }
+            }
+       }       
+   }
 }
+
