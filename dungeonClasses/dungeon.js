@@ -25,6 +25,10 @@ export class Dungeon {
     chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
     itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
 
+    removeItem(item) {
+        this.map[this.currentlevel].removeItem(item);
+    }
+
     addPlayer(player) {
         //Player goes in the first room
         this.player = player;

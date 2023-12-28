@@ -6,7 +6,7 @@ import { statusText } from "./text.js";
 import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
-import { PotionDictionary } from "./potion.js";
+import { PotionDictionary, potionColorText } from "./potion.js";
 
 
 export class MyGame extends Game {
@@ -49,6 +49,13 @@ export class MyGame extends Game {
                     this.storyText.addLine("You open a chest...");
                 }
             }) 
+            //Pick Up Items
+            let items = this.dungeon.itemCollisions(this.player.getHitBox());
+            items.forEach((item, index) => {
+                this.storyText.addLine("You have collected a " + potionColorText[item.color] + " potion.");
+                this.player.addItem(item);
+                this.dungeon.removeItem(item);
+            })
 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);

@@ -1,3 +1,4 @@
+import { potionColorText, potionEffectText } from "./potion.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
 import { overlayText } from "./text.js";
 import { Point } from "./utilities.js";
@@ -50,8 +51,8 @@ export class PlayerCanvas {
         this.potionDictionary = potionDictionary;
         this.potionDesciprions = [];
         for (let i = 0; i<this.potionDictionary.potions.length; i++) {
-            this.potionDictionary.potions[i].changeLocation(32, 100+i*32);
-            this.potionDesciprions.push(new potionLabelText("UNKOWN", new Point(40, 110+i*32)) );
+            this.potionDictionary.potions[i].changeLocation(16, 100+i*32);
+            this.potionDesciprions.push(new potionLabelText("UNKOWN", new Point(30, 110+i*32)) );
         }
         this.canvas = document.getElementById(canvasID);
         this.canvas.width = 250;
@@ -66,10 +67,25 @@ export class PlayerCanvas {
         this.hpText = new rygText(new Point(125, 20), 5, 10);
         this.hpText.setColor(this.player.hitPoints);
     }
+
+    countPotions(color) {
+        let count = 0;
+        return count;
+    }
     
     update(deltaTime) {
         this.playerImage.update(deltaTime);
         this.hpText.setColor(this.player.hitPoints);
+        this.potionDictionary.potions.forEach((potion, index) => {
+            let color = potionColorText[potion.color];
+            let effect = "Unkown"
+            if (potion.identified) {effect = potionEffectText[potion.effect];}
+            let qty = 0;
+            this.player.items.forEach((item) => {
+                if (item.color == potion.color) {qty++;}
+            })
+            this.potionDesciprions[index].text = qty + " " + color + " " + effect
+        })
         this.draw();
     }
 

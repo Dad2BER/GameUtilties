@@ -9,6 +9,7 @@ export class Player extends SkeletonSmall {
         this.currentState = this.states[0];
         this.diceBag = new RandomNumber();
         this.hitPoints = this.diceBag.d10() + 5;
+        this.items = [];
     }
     
     handleInput(input) {
@@ -24,6 +25,10 @@ export class Player extends SkeletonSmall {
     damagePlayer(damage) {
         this.hitPoints -= damage;
         this.setState(4);
+    }
+
+    addItem(item) {
+        this.items.push(item);
     }
 }
 

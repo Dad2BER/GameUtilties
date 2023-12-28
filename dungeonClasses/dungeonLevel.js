@@ -85,7 +85,12 @@ export class DungeonLevel extends TileMap {
     //Return a list of all the monsters that overlap with this hitBox
     monsterCollisions(hitBox) { return this.overlapItems(this.monsters, hitBox); }
     chestCollisions(hitBox) { return this.overlapItems(this.treasureChests, hitBox); }
-    ItemCollisions(hitBox) { return this.overlapItems(this.items, hitBox); }
+    itemCollisions(hitBox) { return this.overlapItems(this.items, hitBox); }
 
-    
+    removeFromList(list, thing) {
+        
+    }
+    removeItem(item) { this.items.splice(this.items.indexOf(item), 1); }
+    removeMonster(monster) { this.monster.splice(this.monsters.indexOf(monster), 1); }
+    removeChest(chest) {this.treasureChests.splice(this.treasureChests.indexOf(chest), 1); }
 }
