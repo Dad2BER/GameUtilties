@@ -1,5 +1,5 @@
-import { randomeBrickBrown, randomGrayFloor, doorHorizontal } from "./sprite_classes/knownSprites.js";
-import { create2DArray, HitBox, RandomNumber, direction, Point } from "./utilities.js";
+import { randomeBrickBrown, randomGrayFloor, doorHorizontal } from "../sprite_classes/knownSprites.js";
+import { create2DArray, HitBox, RandomNumber, direction, Point } from "../utilities.js";
 
 const tileType = { FLOOR: 0, WALL: 1 };
 
@@ -11,7 +11,6 @@ export class TileMap {
         this.currentRegion = -1
         this.map = create2DArray(this.width, this.height);
         this.regions2D = create2DArray(this.width, this.height);
-        console.log("Width: " + this.width + " Height: " + this.height)
         this.rooms = [];
         this.doors = [];
         this.myRandom = new RandomNumber();
@@ -24,6 +23,8 @@ export class TileMap {
 	    this.fillDeadEnds();	 //Clean up dead end hallways
 
         this.convertGridToSprites();
+        this.addDoors();
+
     }
 
     //NOTE:  Trick to this, is that rooms always are located at an odd number x,y and are odd widths and heights
@@ -230,7 +231,6 @@ export class TileMap {
                 this.map[x][y].draw(context);
             }
         }
-        this.doors.forEach((door) => {door.draw(context);})
     }
 
 
@@ -325,7 +325,6 @@ export class TileMap {
             if (!door.isOpen && hitBox.overlap(door.getHitBox())) { door.open(); } 
         })
     }
-
 }
 
 class Door extends doorHorizontal {
