@@ -225,15 +225,6 @@ export class TileMap {
         return returnTiles;
     }
 
-    draw(context) {
-        for(let x=0; x<this.width; x++) {
-            for(let y=0; y<this.height; y++) {
-                this.map[x][y].draw(context);
-            }
-        }
-    }
-
-
     setMapTiles(left, top, width, height, type) {
         for(let x=left; x<left+width; x++) {
             for(let y=top; y<top+height; y++) {
@@ -319,6 +310,26 @@ export class TileMap {
             }
         })
     }
+
+    draw(context) {
+        for(let x=0; x<this.width; x++) {
+            for(let y=0; y<this.height; y++) {
+                this.map[x][y].draw(context);
+            }
+        }
+        this.doors.forEach((door) => {door.draw(context);})
+    }
+
+    update(deltaTime) {
+        /* If we ever use animated tiles for walls and floors we need to uncomment this code
+        for(let x=0; x<this.width; x++) {
+            for(let y=0; y<this.height; y++) {
+                this.map[x][y].update(deltaTime);
+            }
+        } */
+        this.doors.forEach((door) => {door.update(deltaTime);})
+    }
+
 
     openHitDoor(hitBox) {
         this.doors.forEach((door) => {

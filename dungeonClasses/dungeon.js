@@ -1,12 +1,12 @@
 import { DungeonLevel } from "./dungeonLevel.js";
 
 export class Dungeon {
-    constructor(width, height, numberLevels) {
+    constructor(width, height, numberLevels, potionDictionary) {
         this.maxLevel = numberLevels;
         this.currentlevel = 0;
         this.map = [];
         for(let level=0; level<numberLevels; level++) {
-            this.map[level] = new DungeonLevel(width, height);
+            this.map[level] = new DungeonLevel(width, height, potionDictionary);
         }
     }
     
@@ -17,10 +17,13 @@ export class Dungeon {
 
     getRoom(levelIndex, roomIndex) { return this.map[levelIndex].rooms[roomIndex]; }
 
-    getLevelRooms() { return this.map[this.currentlevel].rooms; }
-    getLevelChests() { return this.map[this.currentlevel].treasureChests; }
-    getLevelItems() { return this.map[this.currentlevel].items; }
-    getLevelMonsters() { return this.map[this.currentlevel].monsters; }
+    levelRooms() { return this.map[this.currentlevel].rooms; }
+    levelChests() { return this.map[this.currentlevel].treasureChests; }
+    levelItems() { return this.map[this.currentlevel].items; }
+    levelMonsters() { return this.map[this.currentlevel].monsters; }
+    monsterCollisions(hitBox) { return this.map[this.currentlevel].monsterCollisions(hitBox); }
+    chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
+    itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
 
     addPlayer(player) {
         //Player goes in the first room
@@ -28,6 +31,8 @@ export class Dungeon {
         let room = this.map[this.currentlevel].rooms[0];
         this.player.setLocation(room.x + Math.floor(room.width/2), room.y + Math.floor(room.height/2));
     }
+
+
 
 }
 

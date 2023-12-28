@@ -18,7 +18,7 @@ export class MyGame extends Game {
         this.player = new Player(0,0); //Does not matter where, because popualteLevel will move them.
         this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID, this.potionDictionar);
         this.storyText = new StoryText(storyTextAreaID);
-        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1);
+        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionar);
         this.dungeon.addPlayer(this.player);
     }
 
@@ -26,27 +26,24 @@ export class MyGame extends Game {
         let deltaTime = super.update(timeStamp);
         if (deltaTime < 1000) { //The browser pauses the animation loop when we are not the focus, so ignore large time jumps
             this.player.handleInput(this.InputHandler.keys)
-            this.player.update(deltaTime);
+            this.player.update(deltaTime); //This allows the player to move and animate, but we may reset them later
+            this.dungeon.update(deltaTime); //This allows all the monsters to move and animations to run
             this.dungeon.openHitDoor(this.player.getHitBox());
             this.dungeon.adjustMovingObject(this.player);
-            let monsters = this.dungeon.getLevelMonsters();
+            //Monster attacks
+            let monsters = this.dungeon.monsterCollisions(this.player.getHitBox());
             monsters.forEach((monster)=> { 
-                monster.update(deltaTime);
-                if ( this.dungeon.adjustMovingObject(monster)==true || this.diceBag.percent()>99) { //If we collided with something change direction
-                    monster.setRandomDirection();
-                }
-                if (monster.getHitBox().overlap(this.player.getHitBox()) && monster.canAttack()) { //Monster Overlaps with Player
-                    let damage = monster.meleAttack();
+                if (monster.canAttack()) { //If the monster can attack then it does
                     let outputStr = "HIT: " + damage;
                     this.overlayTexts.push( new statusText(outputStr , monster.getLocation()) );
                     this.storyText.addLine("Rat did " + "damage to you!");
                     this.player.damagePlayer(damage);
                 }
             })
-            let treasureChests = this.dungeon.getLevelChests();
-            treasureChests.forEach((chest)=> {
-                chest.update(deltaTime);
-                if (chest.getHitBox().overlap(this.player.getHitBox()) && !chest.isOpen) { //Monster Overlaps with Player
+            //Open Chests
+            let chests = this.dungeon.chestCollisions(this.player.getHitBox());
+            chests.forEach((chest)=> {
+                if (!chest.isOpen) { 
                     chest.open();
                     this.overlayTexts.push( new statusText("Open" , chest.getLocation()) );
                     this.storyText.addLine("You open a chest...");

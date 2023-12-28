@@ -18,10 +18,10 @@ export class Potion extends Sprite {
 export class PotionDictionary {
     constructor() {
         this.potions = [];
-        let diceBag = new RandomNumber();
+        this.diceBag = new RandomNumber();
         for(let i=1; i<=3; i++) { //For every potion effect, find a random unused color to assign it to
             //NOTE:  If the number of effects starts getting close to the number of colors thers are more efficient ways to implement this
-            let color = diceBag.intBetween(0, 12); 
+            let color = this.diceBag.intBetween(0, 12); 
             while (this.getEffect(color) != potionEffect.UNKNOWN) { color = diceBag.intBetween(0, 12); }
             this.potions.push(new Potion(0, 0, color, i));
         }
@@ -40,5 +40,7 @@ export class PotionDictionary {
         })
         return potionColor.UNKNOWN;
     }
+
+    getRandom() { return this.potions[this.diceBag.intBetween(0, this.potions.length -1)]; }
 
 }
