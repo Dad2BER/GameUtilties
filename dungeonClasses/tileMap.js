@@ -31,11 +31,18 @@ export class TileMap {
     //	     This guarantees that there is the correct spacing for hallways
 	placeRooms(maxRooms) {
 		for(let tryCount=0; tryCount<maxRooms; tryCount++) {
+            this.tryPlaceRoom(50); //We are going to try 50 times to find a place for the room to fit before we give up.
+		}
+	}
+
+    tryPlaceRoom(maxTrys) {
+        let tryCount=0;
+        do {
+            tryCount++;
 			let width = 3 + this.myRandom.int(2)*2; // This will give us 3, 5, 7 as possible room widths
 			let height = 3 + this.myRandom.int(2)*2; // This will give us 3, 5, 7 as possible room heights
 			let x = this.myRandom.int((this.width-width-1)/2)*2+1;
 			let y = this.myRandom.int((this.height-height-1)/2)*2+1;
-            console.log("X: " + x + " Y: "+ y + " Width: " + width + " Height: "+height);
 			if ((x+width) < this.width && (y+height) < this.height) {
                 let newRoom = new Room(x, y, width, height);
 				let bAddRoom = true; //Check every existing room to see if this room overlaps
@@ -48,10 +55,11 @@ export class TileMap {
 					this.currentRegion++;
                     this.rooms.push(newRoom);
                     this.setMapTiles(newRoom.gridBox.x, newRoom.gridBox.y, newRoom.gridBox.width, newRoom.gridBox.height, tileType.FLOOR);
+                    tryCount = maxTrys;
 				}
 			}
-		}
-	}
+		} while (tryCount < maxTrys)
+    }
 
     fillInMaze() {
         for (let y = 1; y < this.height; y += 2) {
