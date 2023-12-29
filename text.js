@@ -1,3 +1,5 @@
+import { Point } from "./utilities.js";
+
 export class overlayText {
     constructor(displayText, fontFamily, fontSize, location, alignement, fontColor, shadowColor, vx, vy, fadeSpeed) {
         this.text = displayText;
@@ -20,6 +22,8 @@ export class overlayText {
         let tmpValue = Math.floor(this.alpha*100)/100;
         let newRGBA = this.fontColor.substr(0, lastComma+1) + " " + tmpValue + ") "
         this.fontColor = newRGBA;
+        this.location.x += this.vx*deltaTime;
+        this.location.y += this.vy*deltaTime;
         if (tmpValue <= 0) {this.markedForDeletion = true;}
     }
 
@@ -40,6 +44,24 @@ export class overlayText {
 export class statusText extends overlayText {
     constructor(displayText, location) {
         super(displayText, 'Helvetica', 15, location, 'center','rgba(255,0,0,1)', 'rgba(255,128,129,1)', 0, 0, 5)
+    }
+}
+
+export class monsterDamageText extends overlayText {
+    constructor(displayText, location) {
+        super(displayText, 'Helvetica', 15, 
+              new Point(location.x + Math.floor(Math.random() * 10) - 5, location.y + Math.floor(Math.random()*10)-5), 
+              'center','rgba(255,0,0,1)', 'rgba(255,128,129,1)', Math.floor(Math.random()*50) - 25, -50, 5);
+        console.log(this);
+    }
+}
+
+export class playerDamageText extends overlayText {
+    constructor(displayText, location) {
+        super(displayText, 'Helvetica', 15, 
+              new Point(location.x + Math.floor(Math.random() * 10) - 5, location.y + Math.floor(Math.random()*10)-5), 
+              'center','rgba(255,255,0,1)', 'rgba(128,128,129,1)', Math.floor(Math.random()*50) - 25, -50, 5);
+        console.log(this);
     }
 }
 

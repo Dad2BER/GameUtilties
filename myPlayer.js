@@ -30,5 +30,6 @@ export class Player extends SkeletonSmall {
     addItem(item) {
         this.items.push(item);
     }
+
 }
 

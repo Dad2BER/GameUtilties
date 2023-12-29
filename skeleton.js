@@ -4,7 +4,7 @@ import { skeletonIdle, skeletonWalkLeft, skeletonWalkRight,
          skeletonRunSmall, skeletonJumpSmall, skeletonHurtSmall, skeletonDeadSmall, skeletonAttack1Small
          } from "./sprite_classes/knownSprites.js";
 import { MovingSprite } from "./sprite_classes/movingSprite.js";
-import { HitBox, direction } from "./utilities.js";
+import { HitBox, RandomNumber, direction } from "./utilities.js";
 
 export const states = { IDLE: 0, WALK: 1, RUN: 2, JUMP: 3, HURT: 4, DEAD: 5, MELEE_ATTACK: 6 };
 
@@ -96,48 +96,48 @@ export class Skeleton  {
         this.stateSpriteList = [new idleSkeleton(x,y), new walkingSkeleton(x,y), new runningSkeleton(x,y), new jumpingSkeleton(x,y), 
                            new hurtingSkeleton(x,y), new deadSkeleton(x,y), new meleeAttaackingSkeleton(x,y)];
         this.currentStateSprite = this.stateSpriteList[0];
+        this.coolDownValue = 2000;
+        this.attackCoolDown = this.coolDownValue;
+        this.diceBag = new RandomNumber();
     }
     
     update(deltaTime) {
         this.currentStateSprite.update(deltaTime);
+        this.attackCoolDown -= deltaTime;
     }
     
     draw(context, drawHitBox) {
         this.currentStateSprite.draw(context, drawHitBox);
     }
 
-    setDirection(newDirection) {
-        this.currentStateSprite.setDirection(newDirection);
-    }
-
-    getDirection() {
-        return this.currentStateSprite.getDirection();
-    }
-    
     setState(newState){
         this.stateSpriteList[newState].setLocation(this.currentStateSprite.x, this.currentStateSprite.y);
         this.currentStateSprite = this.stateSpriteList[newState];
         this.currentStateSprite.getActiveSprite().restartArnimation();
     }
 
-    getHitBox() {
-        return this.currentStateSprite.getHitBox();
+    // This is a container that acts like a sprite, so we duplicate the sprite methods and then call the currently ative one
+    setDirection(newDirection) { this.currentStateSprite.setDirection(newDirection); }
+    getDirection() { return this.currentStateSprite.getDirection(); }    
+    getHitBox() { return this.currentStateSprite.getHitBox(); }
+    undoMove() { this.currentStateSprite.undoMove(); }
+    adjustLocation(deltaX,deltaY) { this.currentStateSprite.adjustLocation(deltaX, deltaY); }
+    setLocation(x,y) { this.currentStateSprite.setLocation(x, y);}
+    getLocation() { return this.currentStateSprite.getLocation(); }
+    getActiveSprite() { return this.currentStateSprite.getActiveSprite(); }
+
+    canAttack() {
+        return this.attackCoolDown <= 0;
     }
 
-    undoMove() {
-        this.currentStateSprite.undoMove();
+    meleAttack(monster) {
+        this.attackCoolDown = this.coolDownValue;
+        return this.diceBag.d4();
     }
 
-    adjustLocation(deltaX,deltaY) {
-        this.currentStateSprite.adjustLocation(deltaX, deltaY);
-    }
-
-    setLocation(x,y) {
-        this.currentStateSprite.setLocation(x, y);
-    }
-
-    getActiveSprite() {
-        return this.currentStateSprite.getActiveSprite();
+    rangeAttack(monster) {
+        this.attackCoolDown = this.coolDownValue;
+        return this.rangeDamage;
     }
 
 }

@@ -2,7 +2,7 @@
 import { Game } from "./game.js";
 import { Player } from "./myPlayer.js";
 import { Dungeon } from "./dungeonClasses/dungeon.js";
-import { statusText } from "./text.js";
+import { playerDamageText, monsterDamageText, statusText } from "./text.js";
 import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
@@ -30,13 +30,25 @@ export class MyGame extends Game {
             this.dungeon.update(deltaTime); //This allows all the monsters to move and animations to run
             this.dungeon.openHitDoor(this.player.getHitBox());
             this.dungeon.adjustMovingObject(this.player);
-            //Monster attacks
+            //Monster attacks and Player Attacks
             let monsters = this.dungeon.monsterCollisions(this.player.getHitBox());
             monsters.forEach((monster)=> { 
+                //Notice that the player can only attack monsters they overlap with, so this is a mele attack
+                //Also the canAttack will get set to false after the first attack so player will only attack the first monster
+                if (this.player.canAttack()) { 
+                    let playerDamage = this.player.meleAttack(monster);
+                    this.overlayTexts.push( new playerDamageText(playerDamage.toString() , this.player.getLocation()) );
+                    if (playerDamage > 0) {
+                        this.storyText.addLine("You hit the " + monster.name + " for " + playerDamage + " damage");
+                    }
+                    else {
+                        this.storyText.addLine("You missed the " + monster.name);
+                    }
+                }
                 if (monster.canAttack()) { //If the monster can attack then it does
-                    let outputStr = "HIT: " + damage;
-                    this.overlayTexts.push( new statusText(outputStr , monster.getLocation()) );
-                    this.storyText.addLine("Rat did " + "damage to you!");
+                    let damage = monster.meleAttack();
+                    this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );
+                    this.storyText.addLine("Rat did " + damage + " damage to you!");
                     this.player.damagePlayer(damage);
                 }
             })

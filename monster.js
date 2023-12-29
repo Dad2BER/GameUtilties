@@ -19,6 +19,17 @@ class Monster extends MovingSprite{
         this.hitPoints = hitPoints;
         this.meleDamage = meleDamage;
         this.rangeDamage = rangeDamage;
+        this.type = type;
+        this.subtype = subtype;
+        this.name = "";
+        switch(this.type) {
+            case monsterType.RAT: this.name = "Rat"; break;
+            case monsterType.TROLL: this.name = "Troll"; break;
+            case monsterType.GIANT: this.name = "Giant"; break;
+            case monsterSpeed.ORC: this.name = "Orc"; break;
+            case monsterType.DRAGON: this.name = "Dragon"; break;
+            default: this.name = "Unkown"; break;
+        }
     }
 
     update(deltaTime) {
