@@ -6,7 +6,7 @@ import { playerDamageText, monsterDamageText, statusText } from "./text.js";
 import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
-import { PotionDictionary, potionColorText } from "./potion.js";
+import { PotionDictionary, potionColorText } from "./dungeonClasses/potion.js";
 
 
 export class MyGame extends Game {
@@ -35,11 +35,19 @@ export class MyGame extends Game {
             monsters.forEach((monster)=> { 
                 //Notice that the player can only attack monsters they overlap with, so this is a mele attack
                 //Also the canAttack will get set to false after the first attack so player will only attack the first monster
+                //Also the player always gets initiative, so if the player hits the monster the monster resets cooldown 
+                //                                                and thus canAttack for the monster will retrun fallse
                 if (this.player.canAttack()) { 
                     let playerDamage = this.player.meleAttack(monster);
                     this.overlayTexts.push( new playerDamageText(playerDamage.toString() , this.player.getLocation()) );
                     if (playerDamage > 0) {
-                        this.storyText.addLine("You hit the " + monster.name + " for " + playerDamage + " damage");
+                        if (monster.takeDamage(playerDamage) < 0) { //Did we kill the monster
+                            this.storyText.addLine("You killed the " + monster.name);
+                            monster.markedForDeletion = true;
+                        }
+                        else {
+                            this.storyText.addLine("You hit the " + monster.name + " for " + playerDamage + " damage");
+                        }
                     }
                     else {
                         this.storyText.addLine("You missed the " + monster.name);
@@ -64,8 +72,19 @@ export class MyGame extends Game {
             //Pick Up Items
             let items = this.dungeon.itemCollisions(this.player.getHitBox());
             items.forEach((item, index) => {
-                this.storyText.addLine("You have collected a " + potionColorText[item.color] + " potion.");
-                this.player.addItem(item);
+                switch(item.spriteType) {
+                    case "potions": 
+                        this.storyText.addLine("You have collected a " + potionColorText[item.color] + " potion.");
+                    break;
+                    case "gold_piles": 
+                        this.storyText.addLine("You have collected " + item.Quantity + " gold.");
+                        this.player.gold += item.Quantity;
+                    break;
+                    default:
+                        this.storyText.addLine("You have collected an unkown item: " + item.spriteType);
+                        this.player.addItem(item);
+                        break;
+                }
                 this.dungeon.removeItem(item);
             })
 

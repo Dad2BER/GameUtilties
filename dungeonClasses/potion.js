@@ -1,11 +1,12 @@
-import { Sprite } from "./sprite_classes/sprite.js";
-import { RandomNumber } from "./utilities.js";
+import { Sprite } from "../sprite_classes/sprite.js";
+import { RandomNumber } from "../utilities.js";
 export const potionColor = {UNKNOWN: -1, BLACK: 0, BRILIANT_BLUE: 1, BROWN: 2, CYAN: 3, EMERALD: 4, MAGENTA: 5, 
                             ORANGE: 6, PINK: 7, RUBY: 8, SILVER: 9, SKY_BLUE: 10, YELLOW: 11, WHITE: 12 };
 export const potionColorText = ["Black", "Briliant Blue", "Brown", "CYAN", "EMERALD", "MAGENTA", 
                                 "ORANGE", "PINK", "RUBY", "SILVER", "Sky Blue", "Yellow", "White"];
-export const potionEffect = {RANDOM: 0, HEAL: 1, STRENGTH: 2, DEXTARITY: 3};
-export const potionEffectText = ["Random", "Heal", "Strength", "Dextarty"];
+export const potionEffect = {RANDOM: 0, HEAL: 1, STRENGTH: 2, DEXTARITY: 3, POISON: 4};
+export const potionEffectText = ["Random", "Heal", "Strength", "Dextarty", "Poison"];
+const NumberEffects = 4;
 
 export class Potion extends Sprite {
     constructor(x,y, color, effect) {
@@ -14,7 +15,7 @@ export class Potion extends Sprite {
         this.identified = false;
         this.color = color;
         this.effect = effect;
-        if (effect == potionEffect.RANDOM) { this.effect = diceBag.d4(); }
+        if (effect == potionEffect.RANDOM) { this.effect = diceBag.intBetween(1,NumberEffects); }
     }
 }
 
@@ -22,7 +23,7 @@ export class PotionDictionary {
     constructor() {
         this.potions = [];
         this.diceBag = new RandomNumber();
-        for(let i=1; i<=3; i++) { //For every potion effect, find a random unused color to assign it to
+        for(let i=1; i<=NumberEffects; i++) { //For every potion effect, find a random unused color to assign it to
             //NOTE:  If the number of effects starts getting close to the number of colors thers are more efficient ways to implement this
             let color = this.diceBag.intBetween(0, 12); 
             while (this.getEffect(color) != -1) { color = diceBag.intBetween(0, 12); }

@@ -3,6 +3,7 @@ import { HitBox, Point } from "../utilities.js";
 export class Sprite {
     
     constructor(spriteSheetImageID, x, y, spriteWidth, spriteHeight, numberFrames, frameX, frameY) {
+        this.spriteType = spriteSheetImageID;
         this.image = document.getElementById(spriteSheetImageID); //Image sheet to be used for this sprite
         this.frameX = frameX; //Which X frame are we currently on
         this.frameY = frameY;

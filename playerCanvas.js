@@ -1,4 +1,4 @@
-import { potionColorText, potionEffectText } from "./potion.js";
+import { potionColorText, potionEffectText } from "./dungeonClasses/potion.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
 import { overlayText } from "./text.js";
 import { Point } from "./utilities.js";
@@ -21,6 +21,7 @@ const yellowTrue = 'rgba(255, 255, 0, 1)';
 const yellowAmber = 'rgba(255, 191, 0, 1)';
 const greenTrue = 'rgba(0, 255, 0, 1)';
 const greenDark = 'rgba(0, 128, 0, 1)';
+
 class rygText extends overlayText {
     constructor(locaton, redThreshold, yellowThreshold) {
         super("", 'Arial', 16, locaton, 'left', redTrue, redDark, 0, 0, 0);
@@ -62,10 +63,11 @@ export class PlayerCanvas {
         this.playerImage = new skeletonIdle(30, 30);
         this.statLabels = [];
         this.statLabels.push(new statLabelText("H.P.: ", new Point(120, 20)) );
-        this.statLabels.push(new statLabelText("Wepeon: ", new Point(120, 40)) );
-        this.statLabels.push(new statLabelText("Status: ", new Point(120, 60)) );
+        this.statLabels.push(new statLabelText("Damage: ", new Point(120, 40)) );
+        this.statLabels.push(new statLabelText("Gold: ", new Point(120, 60)) );
         this.hpText = new rygText(new Point(125, 20), 5, 10);
         this.hpText.setColor(this.player.hitPoints);
+        this.goldText = new overlayText(this.player.gold, 'Arial', 16, new Point(125,60), 'left', yellowAmber, yellowTrue, 0, 0, 0);
     }
 
     countPotions(color) {
@@ -86,6 +88,7 @@ export class PlayerCanvas {
             })
             this.potionDesciprions[index].text = qty + " " + color + " " + effect
         })
+        this.goldText.text = this.player.gold;
         this.draw();
     }
 
@@ -99,5 +102,6 @@ export class PlayerCanvas {
         this.potionDictionary.potions.forEach((potion) => { potion.draw(this.ctx); })
         this.potionDesciprions.forEach((description) => {description.draw(this.ctx); })
         this.hpText.draw(this.ctx);
+        this.goldText.draw(this.ctx);
     }
 }
