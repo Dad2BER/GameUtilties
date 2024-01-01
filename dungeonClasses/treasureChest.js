@@ -1,4 +1,4 @@
-import {chest} from "./sprite_classes/knownSprites.js"
+import {chest} from "../sprite_classes/knownSprites.js"
 
 export class TreasureChest extends chest {
     constructor(x,y) {

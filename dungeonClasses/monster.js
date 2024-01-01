@@ -35,6 +35,7 @@ class Monster extends MovingSprite{
     update(deltaTime) {
         super.update(deltaTime);
         this.attackCoolDown -= deltaTime;
+        if (this.attackCoolDown < 0 ) { this.attackCoolDown = 0; }
     }
 
     canAttack() {
@@ -56,7 +57,7 @@ class Monster extends MovingSprite{
     }
 
     takeDamage(damage) {
-        this.attackCoolDown = this.coolDownValue;
+        this.attackCoolDown += this.coolDownValue*0.5;
         this.hitPoints -= damage;
         return this.hitPoints;
     }

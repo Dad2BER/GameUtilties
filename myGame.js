@@ -82,7 +82,7 @@ export class MyGame extends Game {
             let chests = this.dungeon.chestCollisions(this.player.getHitBox());
             chests.forEach((chest)=> {
                 if (!chest.isOpen) { 
-                    chest.open();
+                    this.dungeon.openChest(chest);
                     this.overlayTexts.push( new statusText("Open" , chest.getLocation()) );
                     this.storyText.addLine("You open a chest...");
                 }

@@ -1,7 +1,7 @@
 import { TileMap } from "./tileMap.js";
-import { Point, direction } from "../utilities.js";
+import { JitterPoint, Point, direction } from "../utilities.js";
 import { rat, ratSubtype } from "./monster.js";
-import { TreasureChest } from "../treasureChest.js";
+import { TreasureChest } from "./treasureChest.js";
 import { Potion } from "./potion.js";
 import { Scroll } from "./scroll.js";
 import { Gold } from "./gold.js";
@@ -17,6 +17,29 @@ export class DungeonLevel extends TileMap {
         this.scrollDictionary = scrollDictionary;
         this.populateLevel();
     }
+
+    openChest(chest) {
+        chest.open();
+        let addPotions = this.diceBag.intBetween(0,2); //How many potions to put in this room
+        let addScrolls = this.diceBag.intBetween(0,2); // How many scrolls to put in this room
+        let addGold = this.diceBag.intBetween(0,2); //How many gold pilse to put in this room
+        for (let j=0; j<addPotions; j++) {
+            let randomPotion = this.potionDictionary.getRandom();
+            let pt = new JitterPoint(chest.x, chest.y, 32, 32);
+            this.items.push(new Potion(pt.x, pt.y, randomPotion.color));
+        }
+        for (let j=0; j<addScrolls; j++) {
+            let randomScroll = this.scrollDictionary.getRandom();
+            let pt = new JitterPoint(chest.x, chest.y, 32, 32);
+            this.items.push(new Scroll(pt.x, pt.y, randomScroll.color));
+        }
+        for (let j=0; j<addGold; j++) {
+            let pt = new JitterPoint(chest.x, chest.y, 32, 32);
+            this.items.push(new Gold(pt.x, pt.y, this.diceBag.d6()+1));
+        }
+    }
+
+
 
     populateLevel() {
         //Monsters go in every room, except the first (to make it safe for the player)
@@ -42,7 +65,7 @@ export class DungeonLevel extends TileMap {
                 let randomPotion = this.potionDictionary.getRandom();
                 this.items.push(new Potion(RandomPoint.x,RandomPoint.y, randomPotion.color));
             }
-            for (let j=0; j<addPotions; j++) {
+            for (let j=0; j<addScrolls; j++) {
                 let RandomPoint = this.getRandomRoomPoint(i);
                 let randomScroll = this.scrollDictionary.getRandom();
                 this.items.push(new Scroll(RandomPoint.x,RandomPoint.y, randomScroll.color));

@@ -23,6 +23,7 @@ export class Dungeon {
     levelMonsters() { return this.map[this.currentlevel].monsters; }
     monsterCollisions(hitBox) { return this.map[this.currentlevel].monsterCollisions(hitBox); }
     chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
+    openChest(chest) { return this.map[this.currentlevel].openChest(chest); }
     itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
 
     removeItem(item) {

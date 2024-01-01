@@ -168,7 +168,6 @@ export class PlayerCanvas {
         this.hpText.setColor(this.player.hitPoints);
         // Potions
         this.potionDictionary.potions.forEach((potion, index) => {
-            let color = potionColorText[potion.color];
             let effect = "Unkown"
             if (potion.identified) {effect = potionEffectText[potion.effect];}
             let qty = this.playerItemCount("potions", potion.color);
@@ -176,13 +175,9 @@ export class PlayerCanvas {
         })
         // Scrolls
         this.scrollDictionary.scrolls.forEach((scroll, index) => {
-            let color = scrollColorText[scroll.color];
             let effect = "Unkown"
             if (scroll.identified) {effect = scrollEffectText[scroll.effect];}
             let qty = this.playerItemCount("scrolls", scroll.color);
-            this.player.items.forEach((item) => {
-                if (item.spriteType == "scrolls" && item.color == scroll.color) {qty++;}
-            })
             this.scrollDesciprions[index].text = qty + " " + effect
         })
 

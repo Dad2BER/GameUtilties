@@ -52,7 +52,6 @@ export class monsterDamageText extends overlayText {
         super(displayText, 'Helvetica', 15, 
               new Point(location.x + Math.floor(Math.random() * 10) - 5, location.y + Math.floor(Math.random()*10)-5), 
               'center','rgba(255,0,0,1)', 'rgba(255,128,129,1)', Math.floor(Math.random()*50) - 25, -50, 5);
-        console.log(this);
     }
 }
 

@@ -15,6 +15,13 @@ export class Point {
     constructor(x,y) {this.x = x; this.y = y;}
 }
 
+export class JitterPoint extends Point {
+    constructor(x, y, jitterX, jitterY) { 
+        super(x + Math.floor(Math.random()*jitterX*2) - jitterX, 
+              y + Math.floor(Math.random()*jitterY*2) - jitterY);
+    }
+}
+
 export class HitBox {
     constructor(x,y,width,height) {
         this.x = x;
