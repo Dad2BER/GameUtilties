@@ -25,7 +25,7 @@ const greenDark = 'rgba(0, 128, 0, 1)';
 
 class rygText extends overlayText {
     constructor(locaton, redThreshold, yellowThreshold) {
-        super("", 'Arial', 16, locaton, 'left', redTrue, redDark, 0, 0, 0);
+        super("", 'Arial', 12, locaton, 'left', redTrue, redDark, 0, 0, 0);
         this.redThreshold = redThreshold;
         this.yellowThreshold = yellowThreshold;
     }
@@ -59,8 +59,8 @@ export class PlayerCanvas {
         this.scrollDictionary = scrollDictionary;
         this.scrollDesciprions = [];
         for (let i = 0; i<this.scrollDictionary.scrolls.length; i++) {
-            this.scrollDictionary.scrolls[i].changeLocation(130, 100+i*32);
-            this.scrollDesciprions.push(new potionLabelText("SCROLL", new Point(150, 110+i*32)) );
+            this.scrollDictionary.scrolls[i].changeLocation(155, 100+i*32);
+            this.scrollDesciprions.push(new potionLabelText("SCROLL", new Point(165, 110+i*32)) );
         }
 
 
@@ -71,17 +71,35 @@ export class PlayerCanvas {
         this.player = player;
         this.playerImage = new skeletonIdle(30, 30);
         this.statLabels = [];
-        this.statLabels.push(new statLabelText("H.P.: ", new Point(120, 20)) );
-        this.statLabels.push(new statLabelText("Damage: ", new Point(120, 40)) );
-        this.statLabels.push(new statLabelText("Gold: ", new Point(120, 60)) );
-        this.hpText = new rygText(new Point(125, 20), 5, 10);
+        this.statLabels.push(new statLabelText("H.P.:", new Point(120, 20)) );
+        this.statLabels.push(new statLabelText("Damage:", new Point(120, 37)) );
+        this.statLabels.push(new statLabelText("Defence:", new Point(120, 54)) );
+        this.statLabels.push(new statLabelText("Gold:", new Point(120, 71)) );
+        this.hpText = new rygText(new Point(125, 18), 5, 10);  
         this.hpText.setColor(this.player.hitPoints);
-        this.goldText = new overlayText(this.player.gold, 'Arial', 16, new Point(125,60), 'left', yellowAmber, yellowTrue, 0, 0, 0);
+        this.damageText = new overlayText("+" + this.player.damageModifier, 
+                                          'Araial', 12, new Point(125,35), 'left', greenDark, greenTrue, 0, 0, 0);
+        this.defenceText = new overlayText("+" + this.player.defenceModifier,
+                                           'Araial', 12, new Point(125,52), 'left', greenDark, greenTrue, 0, 0, 0);
+        this.goldText = new overlayText(this.player.gold, 
+                                           'Arial', 12, new Point(125,69), 'left', yellowAmber, yellowTrue, 0, 0, 0);
+    
+        this.potionIndex = 0;
+        this.scrollIndex = 0;
+        this.readyForInput = true; //This allows us to only trigger on the key down, once
     }
 
-    countPotions(color) {
-        let count = 0;
-        return count;
+    handleInput(input) {
+        if ( input.includes('p') && this.readyForInput) {
+            this.potionIndex += 1;
+            if (this.potionIndex >= this.potionDictionary.potions.length) { this.potionIndex = 0;}
+        }
+        if (input.includes('s') && this.readyForInput) {
+            this.scrollIndex += 1;
+            if (this.scrollIndex >= this.scrollDictionary.scrolls.length) { this.scrollIndex = 0;}
+
+        }
+        this.readyForInput = input.includes('p')==false && input.includes('s')==false;
     }
     
     update(deltaTime) {
@@ -110,6 +128,10 @@ export class PlayerCanvas {
             this.scrollDesciprions[index].text = qty + " " + effect
         })
 
+        if (this.player.damageModifier > 0) { this.damageText.text = "+" + this.player.damageModifier; }
+        else this.damageText.text = this.player.damageModifier;
+        if (this.player.defenceModifier > 0) { this.defenceText.text = "+" + this.player.defenceModifier; }
+        else this.defenceText.text = this.player.defenceModifier;
         this.goldText.text = this.player.gold;
         this.draw();
     }
@@ -121,12 +143,30 @@ export class PlayerCanvas {
         this.playerImage.draw(this.ctx);
         this.statLabels.forEach((stat) => { stat.draw(this.ctx); })
         // Draw Potion List with Descriptions
-        this.potionDictionary.potions.forEach((potion) => { potion.draw(this.ctx); })
+        this.potionDictionary.potions.forEach((potion, index) => { 
+            if (index == this.potionIndex) {
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = "white";
+                this.ctx.rect(4, 84+32*index, 106, 30);
+                this.ctx.stroke();
+            }
+            potion.draw(this.ctx); 
+        })
         this.potionDesciprions.forEach((description) => {description.draw(this.ctx); })
         // Draw Scroll List with Descriptions
-        this.scrollDictionary.scrolls.forEach((scroll) => { scroll.draw(this.ctx); })
+        this.scrollDictionary.scrolls.forEach((scroll, index) => { 
+            if (index == this.scrollIndex) {
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = "white";
+                this.ctx.rect(139, 84+32*index, 106, 30);
+                this.ctx.stroke();
+            }    
+            scroll.draw(this.ctx); 
+        })
         this.scrollDesciprions.forEach((description) => {description.draw(this.ctx); })
         this.hpText.draw(this.ctx);
+        this.damageText.draw(this.ctx);
+        this.defenceText.draw(this.ctx);
         this.goldText.draw(this.ctx);
     }
 }

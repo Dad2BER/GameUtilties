@@ -95,6 +95,7 @@ export class MyGame extends Game {
             })
 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
+            this.playerCanvas.handleInput(this.InputHandler.keys)
             this.playerCanvas.update(deltaTime);
         }
         else {
