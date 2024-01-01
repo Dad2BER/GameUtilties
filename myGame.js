@@ -22,12 +22,28 @@ export class MyGame extends Game {
         this.storyText = new StoryText(storyTextAreaID);
         this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
+        this.readyForInput = true;
+    }
+    
+    handleInput() {
+        let keys = this.InputHandler.keys;
+        this.player.handleInput(keys); // Arrow keys
+        this.playerCanvas.handleInput(keys); // 'p' and 's'
+        if (this.readyForInput) {
+            if ( keys.includes('q')) { // Quaff a potion
+                this.storyText.addLine(this.playerCanvas.quaffPotion());
+            }
+            if ( keys.includes('r') ) {// Read a scroll
+                this.storyText.addLine(this.playerCanvas.readScroll());
+            }
+        }
+        this.readyForInput = keys.includes('q')==false && keys.includes('r')==false;
     }
 
     update(timeStamp) {
         let deltaTime = super.update(timeStamp);
         if (deltaTime < 1000) { //The browser pauses the animation loop when we are not the focus, so ignore large time jumps
-            this.player.handleInput(this.InputHandler.keys)
+            this.handleInput();
             this.player.update(deltaTime); //This allows the player to move and animate, but we may reset them later
             this.dungeon.update(deltaTime); //This allows all the monsters to move and animations to run
             this.dungeon.openHitDoor(this.player.getHitBox());
@@ -95,7 +111,6 @@ export class MyGame extends Game {
             })
 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
-            this.playerCanvas.handleInput(this.InputHandler.keys)
             this.playerCanvas.update(deltaTime);
         }
         else {

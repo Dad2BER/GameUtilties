@@ -90,18 +90,79 @@ export class PlayerCanvas {
     }
 
     handleInput(input) {
-        if ( input.includes('p') && this.readyForInput) {
-            this.potionIndex += 1;
-            if (this.potionIndex >= this.potionDictionary.potions.length) { this.potionIndex = 0;}
-        }
-        if (input.includes('s') && this.readyForInput) {
-            this.scrollIndex += 1;
-            if (this.scrollIndex >= this.scrollDictionary.scrolls.length) { this.scrollIndex = 0;}
-
+        if (this.readyForInput) {
+            if ( input.includes('p') ) {
+                this.potionIndex += 1;
+                if (this.potionIndex >= this.potionDictionary.potions.length) { this.potionIndex = 0;}
+            }
+            if (input.includes('s') ) {
+                this.scrollIndex += 1;
+                if (this.scrollIndex >= this.scrollDictionary.scrolls.length) { this.scrollIndex = 0;}
+            }
         }
         this.readyForInput = input.includes('p')==false && input.includes('s')==false;
     }
+
+    quaffPotion() {
+        let dictionaryPotion = this.potionDictionary.potions[this.potionIndex]; 
+        let qty = this.playerItemCount("potions", dictionaryPotion.color);
+        let storyText = "";
+        if (qty > 0) {
+            let effect = this.potionDictionary.getEffect(dictionaryPotion.color);
+            if (dictionaryPotion.identified) {
+                "You quaff a " + potionEffectText[effect] + " potion";
+            }
+            else {
+                dictionaryPotion.identified = true;
+                "You quaff and identify " + potionEffectText[effect] + " potion";
+            }
+            this.removePlayerItem("potions", dictionaryPotion.color);
+        }
+        else {
+            storyText = "You don't have any " + potionColorText[dictionaryPotion.color] + " potions to quaff."
+        }
+        return storyText;
+    }
+
+    readScroll() {
+        let dictionaryScroll = this.scrollDictionary.scrolls[this.scrollIndex]; 
+        let qty = this.playerItemCount("scrolls", dictionaryScroll.color);
+        let storyText = "";
+        if (qty > 0) {
+            let effect = this.scrollDictionary.getEffect(dictionaryScroll.color);
+            if (dictionaryScroll.identified) {
+                storyText = "You read a " + scrollEffectText[effect] + " scroll";
+            }
+            else {
+                dictionaryScroll.identified = true;
+                storyText = "You read and identify " + scrollEffectText[effect] + " scroll";
+            }
+            this.removePlayerItem("scrolls", dictionaryScroll.color);
+        }
+        else {
+            storyText = "You don't have any " + scrollColorText[dictionaryScroll.color] + " scrolls to read."
+        }
+        return storyText;
+    }
+
+    removePlayerItem(type, color) {
+        let index = -1;
+        this.player.items.forEach((item, i) => {
+            if (item.spriteType == type && item.color == color) {index = i;}
+        })
+        if (index >= 0) {
+            this.player.items.splice(index, 1);
+        }
+    }
     
+    playerItemCount(type, color) {
+        let qty = 0;
+        this.player.items.forEach((item) => {
+            if (item.spriteType == type && item.color == color) {qty++;}
+        })
+        return qty;
+    }
+
     update(deltaTime) {
         this.playerImage.update(deltaTime);
         this.hpText.setColor(this.player.hitPoints);
@@ -110,10 +171,7 @@ export class PlayerCanvas {
             let color = potionColorText[potion.color];
             let effect = "Unkown"
             if (potion.identified) {effect = potionEffectText[potion.effect];}
-            let qty = 0;
-            this.player.items.forEach((item) => {
-                if (item.spriteType == "potions" && item.color == potion.color) {qty++;}
-            })
+            let qty = this.playerItemCount("potions", potion.color);
             this.potionDesciprions[index].text = qty + " " + effect
         })
         // Scrolls
@@ -121,7 +179,7 @@ export class PlayerCanvas {
             let color = scrollColorText[scroll.color];
             let effect = "Unkown"
             if (scroll.identified) {effect = scrollEffectText[scroll.effect];}
-            let qty = 0;
+            let qty = this.playerItemCount("scrolls", scroll.color);
             this.player.items.forEach((item) => {
                 if (item.spriteType == "scrolls" && item.color == scroll.color) {qty++;}
             })
