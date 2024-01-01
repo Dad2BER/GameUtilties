@@ -1,12 +1,12 @@
 import { DungeonLevel } from "./dungeonLevel.js";
 
 export class Dungeon {
-    constructor(width, height, numberLevels, potionDictionary) {
+    constructor(width, height, numberLevels, potionDictionary, scrollDictionary) {
         this.maxLevel = numberLevels;
         this.currentlevel = 0;
         this.map = [];
         for(let level=0; level<numberLevels; level++) {
-            this.map[level] = new DungeonLevel(width, height, potionDictionary);
+            this.map[level] = new DungeonLevel(width, height, potionDictionary, scrollDictionary);
         }
     }
     

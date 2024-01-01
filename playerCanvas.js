@@ -1,4 +1,5 @@
 import { potionColorText, potionEffectText } from "./dungeonClasses/potion.js";
+import { scrollColorText, scrollEffectText } from "./dungeonClasses/scroll.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
 import { overlayText } from "./text.js";
 import { Point } from "./utilities.js";
@@ -48,13 +49,21 @@ class rygText extends overlayText {
 }
 
 export class PlayerCanvas {
-    constructor(player, canvasID, potionDictionary) {
+    constructor(player, canvasID, potionDictionary, scrollDictionary) {
         this.potionDictionary = potionDictionary;
         this.potionDesciprions = [];
         for (let i = 0; i<this.potionDictionary.potions.length; i++) {
             this.potionDictionary.potions[i].changeLocation(16, 100+i*32);
-            this.potionDesciprions.push(new potionLabelText("UNKOWN", new Point(30, 110+i*32)) );
+            this.potionDesciprions.push(new potionLabelText("POTION", new Point(30, 110+i*32)) );
         }
+        this.scrollDictionary = scrollDictionary;
+        this.scrollDesciprions = [];
+        for (let i = 0; i<this.scrollDictionary.scrolls.length; i++) {
+            this.scrollDictionary.scrolls[i].changeLocation(130, 100+i*32);
+            this.scrollDesciprions.push(new potionLabelText("SCROLL", new Point(150, 110+i*32)) );
+        }
+
+
         this.canvas = document.getElementById(canvasID);
         this.canvas.width = 250;
         this.canvas.height = 250;
@@ -78,16 +87,29 @@ export class PlayerCanvas {
     update(deltaTime) {
         this.playerImage.update(deltaTime);
         this.hpText.setColor(this.player.hitPoints);
+        // Potions
         this.potionDictionary.potions.forEach((potion, index) => {
             let color = potionColorText[potion.color];
             let effect = "Unkown"
             if (potion.identified) {effect = potionEffectText[potion.effect];}
             let qty = 0;
             this.player.items.forEach((item) => {
-                if (item.color == potion.color) {qty++;}
+                if (item.spriteType == "potions" && item.color == potion.color) {qty++;}
             })
-            this.potionDesciprions[index].text = qty + " " + color + " " + effect
+            this.potionDesciprions[index].text = qty + " " + effect
         })
+        // Scrolls
+        this.scrollDictionary.scrolls.forEach((scroll, index) => {
+            let color = scrollColorText[scroll.color];
+            let effect = "Unkown"
+            if (scroll.identified) {effect = scrollEffectText[scroll.effect];}
+            let qty = 0;
+            this.player.items.forEach((item) => {
+                if (item.spriteType == "scrolls" && item.color == scroll.color) {qty++;}
+            })
+            this.scrollDesciprions[index].text = qty + " " + effect
+        })
+
         this.goldText.text = this.player.gold;
         this.draw();
     }
@@ -101,6 +123,9 @@ export class PlayerCanvas {
         // Draw Potion List with Descriptions
         this.potionDictionary.potions.forEach((potion) => { potion.draw(this.ctx); })
         this.potionDesciprions.forEach((description) => {description.draw(this.ctx); })
+        // Draw Scroll List with Descriptions
+        this.scrollDictionary.scrolls.forEach((scroll) => { scroll.draw(this.ctx); })
+        this.scrollDesciprions.forEach((description) => {description.draw(this.ctx); })
         this.hpText.draw(this.ctx);
         this.goldText.draw(this.ctx);
     }

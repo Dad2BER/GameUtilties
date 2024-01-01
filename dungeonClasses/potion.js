@@ -26,23 +26,25 @@ export class PotionDictionary {
         for(let i=1; i<=NumberEffects; i++) { //For every potion effect, find a random unused color to assign it to
             //NOTE:  If the number of effects starts getting close to the number of colors thers are more efficient ways to implement this
             let color = this.diceBag.intBetween(0, 12); 
-            while (this.getEffect(color) != -1) { color = diceBag.intBetween(0, 12); }
+            while (this.getEffect(color) != -1) { color = this.diceBag.intBetween(0, 12); }
             this.potions.push(new Potion(0, 0, color, i));
         }
     }
 
     getEffect(color) {
+        let RVal = -1;
         this.potions.forEach((potion) => { 
-            if (potion.color == color) { return potion.effect; }
+            if (potion.color == color) { return RVal = potion.effect; }
         })
-        return -1;
+        return RVal;
     }
 
     getColor(effect) {
+        let RVal = potionColor.UNKNOWN;
         this.potions.forEach((potion) => {
-            if (potion.effect == effect) { return potion.color; }
+            if (potion.effect == effect) { RVal = potion.color; }
         })
-        return potionColor.UNKNOWN;
+        return RVal;
     }
 
     getRandom() { return this.potions[this.diceBag.intBetween(0, this.potions.length -1)]; }

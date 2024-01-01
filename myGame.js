@@ -7,6 +7,7 @@ import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
 import { PotionDictionary, potionColorText } from "./dungeonClasses/potion.js";
+import { ScrollDictionary, scrollColorText } from "./dungeonClasses/scroll.js";
 
 
 export class MyGame extends Game {
@@ -14,11 +15,12 @@ export class MyGame extends Game {
         super(mapCanvasID, width, height);
         this.overlayTexts = [];
         this.diceBag = new RandomNumber();
-        this.potionDictionar = new PotionDictionary();
+        this.potionDictionary = new PotionDictionary();
+        this.scrollDictionary = new ScrollDictionary();
         this.player = new Player(0,0); //Does not matter where, because popualteLevel will move them.
-        this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID, this.potionDictionar);
+        this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID, this.potionDictionary, this.scrollDictionary);
         this.storyText = new StoryText(storyTextAreaID);
-        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionar);
+        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
     }
 
@@ -75,14 +77,18 @@ export class MyGame extends Game {
                 switch(item.spriteType) {
                     case "potions": 
                         this.storyText.addLine("You have collected a " + potionColorText[item.color] + " potion.");
-                    break;
+                        this.player.addItem(item);
+                        break;
+                    case "scrolls":
+                        this.storyText.addLine("You have collected a " + scrollColorText[item.color] + " scroll.");
+                        this.player.addItem(item);
+                        break;
                     case "gold_piles": 
                         this.storyText.addLine("You have collected " + item.Quantity + " gold.");
                         this.player.gold += item.Quantity;
-                    break;
+                        break;
                     default:
                         this.storyText.addLine("You have collected an unkown item: " + item.spriteType);
-                        this.player.addItem(item);
                         break;
                 }
                 this.dungeon.removeItem(item);

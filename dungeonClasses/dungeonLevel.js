@@ -3,16 +3,18 @@ import { Point, direction } from "../utilities.js";
 import { rat, ratSubtype } from "./monster.js";
 import { TreasureChest } from "../treasureChest.js";
 import { Potion } from "./potion.js";
+import { Scroll } from "./scroll.js";
 import { Gold } from "./gold.js";
 
 export class DungeonLevel extends TileMap {
-    constructor(width, height, potionDictionary) {
+    constructor(width, height, potionDictionary, scrollDictionary) {
         super(width, height);
         this.monsters = [];
         this.treasureChests = [];
         this.items = [];
         this.diceBag = this.myRandom;
         this.potionDictionary = potionDictionary;
+        this.scrollDictionary = scrollDictionary;
         this.populateLevel();
     }
 
@@ -28,6 +30,7 @@ export class DungeonLevel extends TileMap {
        for(let i=0; i<this.rooms.length; i++) {
             let dieRoll = this.diceBag.d10();
             let addPotions = this.diceBag.intBetween(0,2); //How many potions to put in this room
+            let addScrolls = this.diceBag.intBetween(0,2); // How many scrolls to put in this room
             let addChests = this.diceBag.intBetween(0,1); //How many Chests to put in this room
             let addGold = this.diceBag.intBetween(0,2); //How many gold pilse to put in this room
             for (let j=0; j<addChests; j++) {
@@ -38,6 +41,11 @@ export class DungeonLevel extends TileMap {
                 let RandomPoint = this.getRandomRoomPoint(i);
                 let randomPotion = this.potionDictionary.getRandom();
                 this.items.push(new Potion(RandomPoint.x,RandomPoint.y, randomPotion.color));
+            }
+            for (let j=0; j<addPotions; j++) {
+                let RandomPoint = this.getRandomRoomPoint(i);
+                let randomScroll = this.scrollDictionary.getRandom();
+                this.items.push(new Scroll(RandomPoint.x,RandomPoint.y, randomScroll.color));
             }
             for (let j=0; j<addGold; j++) {
                 let RandomPoint = this.getRandomRoomPoint(i);
