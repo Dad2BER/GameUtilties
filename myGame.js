@@ -8,6 +8,7 @@ import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
 import { PotionDictionary, potionColorText } from "./dungeonClasses/potion.js";
 import { ScrollDictionary, scrollColorText } from "./dungeonClasses/scroll.js";
+import { BackGround } from "./sprite_classes/background.js";
 
 
 export class MyGame extends Game {
@@ -17,6 +18,7 @@ export class MyGame extends Game {
         this.diceBag = new RandomNumber();
         this.potionDictionary = new PotionDictionary();
         this.scrollDictionary = new ScrollDictionary();
+        this.backGround = new BackGround('light_cloud', 'dark_cloud', width, height);
         this.player = new Player(0,0); //Does not matter where, because popualteLevel will move them.
         this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID, this.potionDictionary, this.scrollDictionary);
         this.storyText = new StoryText(storyTextAreaID);
@@ -43,6 +45,7 @@ export class MyGame extends Game {
     update(timeStamp) {
         let deltaTime = super.update(timeStamp);
         if (deltaTime < 1000) { //The browser pauses the animation loop when we are not the focus, so ignore large time jumps
+            this.backGround.update(deltaTime);
             this.handleInput();
             this.player.update(deltaTime); //This allows the player to move and animate, but we may reset them later
             this.dungeon.update(deltaTime); //This allows all the monsters to move and animations to run
@@ -129,6 +132,7 @@ export class MyGame extends Game {
     
     draw(context){
         super.draw(context);
+        this.backGround.draw(context);
         this.dungeon.draw(context);
         this.overlayTexts.forEach((txt, index) => { 
             txt.draw(context); 

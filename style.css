@@ -56,6 +56,9 @@ table, th, td, tr {
 {
     display: none;
 }
+#dark_cloud, #light_cloud, #cartoon_cloud {
+    display: none;
+}
 #skeleton_Idle_Small, #skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small {
     display: none;;
 }

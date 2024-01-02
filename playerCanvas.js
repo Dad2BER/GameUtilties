@@ -53,12 +53,14 @@ export class PlayerCanvas {
         this.potionDictionary = potionDictionary;
         this.potionDesciprions = [];
         for (let i = 0; i<this.potionDictionary.potions.length; i++) {
+            this.potionDictionary.potions[i].show();
             this.potionDictionary.potions[i].changeLocation(16, 100+i*32);
             this.potionDesciprions.push(new potionLabelText("POTION", new Point(30, 110+i*32)) );
         }
         this.scrollDictionary = scrollDictionary;
         this.scrollDesciprions = [];
         for (let i = 0; i<this.scrollDictionary.scrolls.length; i++) {
+            this.scrollDictionary.scrolls[i].show();
             this.scrollDictionary.scrolls[i].changeLocation(155, 100+i*32);
             this.scrollDesciprions.push(new potionLabelText("SCROLL", new Point(165, 110+i*32)) );
         }
@@ -70,6 +72,7 @@ export class PlayerCanvas {
         this.ctx = this.canvas.getContext('2d');
         this.player = player;
         this.playerImage = new skeletonIdle(30, 30);
+        this.playerImage.show();
         this.statLabels = [];
         this.statLabels.push(new statLabelText("H.P.:", new Point(120, 20)) );
         this.statLabels.push(new statLabelText("Damage:", new Point(120, 37)) );
