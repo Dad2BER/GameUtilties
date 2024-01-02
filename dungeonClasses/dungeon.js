@@ -25,6 +25,9 @@ export class Dungeon {
     chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
     openChest(chest) { return this.map[this.currentlevel].openChest(chest); }
     itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
+    showOverlapingTiles(hitBox) { return this.map[this.currentlevel].showOverlapyingTiles(hitBox);}
+    getRoomFromPoint(pt) { return this.map[this.currentlevel].getRoomFromPoint(pt);}
+    showRoom(room) {return this.map[this.currentlevel].showRoom(room);}
 
     removeItem(item) {
         this.map[this.currentlevel].removeItem(item);

@@ -247,9 +247,11 @@ export class TileMap {
             for(let y=0; y<this.height; y++) {
                 if(this.map[x][y] == tileType.FLOOR) {
                     this.map[x][y] = new randomGrayFloor(x*32+16,y*32+16);
+                    this.map[x][y].hide();
                 }
                 else {
                     this.map[x][y] = new randomeBrickBrown(x*32+16,y*32+16);
+                    this.map[x][y].hide();
                 }
             }
         }
@@ -338,12 +340,36 @@ export class TileMap {
         this.doors.forEach((door) => {door.update(deltaTime);})
     }
 
-
     openHitDoor(hitBox) {
         this.doors.forEach((door) => {
             if (!door.isOpen && hitBox.overlap(door.getHitBox())) { door.open(); } 
         })
     }
+
+    showOverlapyingTiles(box) {
+        let tiles = this.getOverlapTiles(box);
+        tiles.forEach((tile) => {tile.show();});
+    }
+
+    getRoomFromPoint(pt) {
+        let room = null;
+        let i=0;
+        while (room == null && i < this.rooms.length) {
+            if ( this.rooms[i].containsPoint(pt) ) {room = this.rooms[i]; }
+            i++;
+        }
+        return room;
+    }
+
+    showRoom(room) {
+        let expandedRoom = room.getHitBox();
+        expandedRoom.expand(31);
+        this.showOverlapyingTiles(expandedRoom);
+        this.doors.forEach((door) => {
+            if (expandedRoom.overlap(door.getHitBox())) { door.show(); } 
+        })
+    }
+
 }
 
 class Door extends doorHorizontal {
@@ -362,6 +388,12 @@ class Room {
         this.y = y*32;
         this.width = width*32;
         this.height = height*32;
+    }
+    getHitBox() {
+        return new HitBox(this.x, this.y, this.width, this.height);
+    }
+    containsPoint(pt) { 
+        return this.x <= pt.x && (this.x+this.width) >= pt.x && this.y <= pt.y && (this.y + this.height) >= pt.y; 
     }
 
 }

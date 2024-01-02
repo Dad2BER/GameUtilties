@@ -96,6 +96,7 @@ export class Skeleton  {
         this.stateSpriteList = [new idleSkeleton(x,y), new walkingSkeleton(x,y), new runningSkeleton(x,y), new jumpingSkeleton(x,y), 
                            new hurtingSkeleton(x,y), new deadSkeleton(x,y), new meleeAttaackingSkeleton(x,y)];
         this.currentStateSprite = this.stateSpriteList[0];
+        this.currentStateSprite.show();
         this.coolDownValue = 2000;
         this.attackCoolDown = this.coolDownValue;
         this.diceBag = new RandomNumber();
@@ -114,6 +115,7 @@ export class Skeleton  {
         this.stateSpriteList[newState].setLocation(this.currentStateSprite.x, this.currentStateSprite.y);
         this.currentStateSprite = this.stateSpriteList[newState];
         this.currentStateSprite.getActiveSprite().restartArnimation();
+        this.currentStateSprite.show();
     }
 
     // This is a container that acts like a sprite, so we duplicate the sprite methods and then call the currently ative one
@@ -149,5 +151,6 @@ export class SkeletonSmall extends Skeleton {
                                new jumpingSkeletonSmall(x,y), new hurtingSkeletonSmall(x,y), new deadSkeletonSmall(x,y), 
                                new meleeAttaackingSkeletonSmall(x,y)];
         this.currentStateSprite = this.stateSpriteList[0];
+        this.currentStateSprite.show();
     }
 }

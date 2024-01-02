@@ -133,4 +133,13 @@ export class DungeonLevel extends TileMap {
     removeItem(item) { this.items.splice(this.items.indexOf(item), 1); }
     removeMonster(monster) { this.monster.splice(this.monsters.indexOf(monster), 1); }
     removeChest(chest) {this.treasureChests.splice(this.treasureChests.indexOf(chest), 1); }
+
+    
+    showRoom(room) {
+        super.showRoom(room);
+        let roomRect = room.getHitBox();
+        this.monsterCollisions(roomRect).forEach((monster) => {monster.show();})
+        this.chestCollisions(roomRect).forEach((chest) => {chest.show();})
+        this.itemCollisions(roomRect).forEach((item) => {item.show();})
+    }
 }

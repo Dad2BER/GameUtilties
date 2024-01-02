@@ -16,6 +16,7 @@ export class Sprite {
         this.drawX = this.x - this.width/2;
         this.drawY = this.y - this.height/2;
         this.solid = true;
+        this.visible = false;
     }
 
     move(deltaX, deltaY) {
@@ -38,16 +39,22 @@ export class Sprite {
     }
 
     draw(context, drawHitBox) {
-        if (drawHitBox === true) {
-            context.strokeRect(this.drawX, this.drawY, this.width, this.height);
+        if (this.visible) {
+            if (drawHitBox === true) {
+                context.strokeRect(this.drawX, this.drawY, this.width, this.height);
+            }
+            context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, 
+                              this.drawX, this.drawY, this.width, this.height);
         }
-        context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, 
-                          this.drawX, this.drawY, this.width, this.height);
     }
 
     getHitBox() {
         return new HitBox(this.drawX, this.drawY, this.width, this.height);
     }
+
+    isVisible() { return this.visible; }
+    hide() { this.visible = false;}
+    show() { this.visible = true;}
 }
 
 export class RandomeSpirte extends Sprite {

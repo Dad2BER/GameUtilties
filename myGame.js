@@ -116,6 +116,13 @@ export class MyGame extends Game {
         else {
             this.storyText.addLine("Time Jump Avoided: " + deltaTime);
         }
+        let playerRoom = this.dungeon.getRoomFromPoint(this.player.getLocation());
+        if (playerRoom != null) { this.dungeon.showRoom(playerRoom); }
+        else {
+            let viewTileBox = this.player.getHitBox();
+            viewTileBox.expand(32);
+            this.dungeon.showOverlapingTiles(viewTileBox)
+        }
         this.draw(this.ctx);
         return true;
     }

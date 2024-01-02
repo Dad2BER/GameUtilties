@@ -30,6 +30,13 @@ export class HitBox {
         this.height = height;
     }
 
+    expand(delta) {
+        this.x -= delta;
+        this.y -= delta;
+        this.width += 2*delta;
+        this.height += 2*delta;
+    }
+
     overlap(target) {
         if ( (this.x+this.width) < target.x  || (target.x+target.width) < this.x || 
              (this.y+this.height) < target.y || (target.y+target.height) < this.y) {

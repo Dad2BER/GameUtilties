@@ -6,6 +6,17 @@ export class DirectionSprite {
         this.facing = facing;
         this.x = this.sprites[this.facing].x;
         this.y = this.sprites[this.facing].y;
+        this.visible = false;
+    }
+
+    isVisible() { return this.visible; }
+    show() { 
+        this.visible = true;
+        this.sprites.forEach((sprite) => {sprite.show(); } )
+    }
+    hide() { 
+        this.visible = false;
+        this.sprites.forEach((sprite) => {sprite.hide(); })
     }
 
     setLocation(x,y) {
@@ -38,7 +49,7 @@ export class DirectionSprite {
     }
 
     draw(context, drawHitBox) {
-        this.sprites[this.facing].draw(context, drawHitBox);
+        if ( this.isVisible() ) { this.sprites[this.facing].draw(context, drawHitBox); }
     }
 
     getHitBox() {
