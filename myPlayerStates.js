@@ -33,6 +33,9 @@ export class idle extends playerState {
         if (this.containsMovementKeys(input)) {
             this.player.setState(states.WALK);
         }
+        else if (input.includes('a')) {
+            this.player.setState(states.MELEE_ATTACK);
+        }
     }
 }
 
@@ -46,6 +49,9 @@ export class walking extends playerState {
         }
         else if (input.includes(' ')) {
             this.player.setState(states.JUMP);
+        }
+        else if (input.includes('a')) {
+            this.player.setState(states.MELEE_ATTACK);
         }
         else if (!this.containsMovementKeys(input)) {
             this.player.setState(states.IDLE);
@@ -90,7 +96,6 @@ export class hurt extends playerState {
     handleInput(input) {
         if (this.player.getActiveSprite().animationFinished && this.player.getActiveSprite().endAnimationDelay< 0) { 
             this.player.setState(states.IDLE);
-            console.log("Set back to Idle");
         }
     }
 }
@@ -100,9 +105,14 @@ export class dead extends playerState {
 }
 
 export class meleeAttack extends playerState {
-    constructor(player) { super("MELEE", player); }
+    constructor(player) { 
+        super("MELEE", player); 
+    }
 
     handleInput(input) {
         super.handleInput(input);
+        if (this.player.getActiveSprite().animationFinished && this.player.getActiveSprite().endAnimationDelay< 0) { 
+            this.player.setState(states.IDLE);
+        }
     }
 }

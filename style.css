@@ -59,7 +59,8 @@ table, th, td, tr {
 #dark_cloud, #light_cloud, #cartoon_cloud {
     display: none;
 }
-#skeleton_Idle_Small, #skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small {
+#skeleton_Idle_Small, #skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small, 
+#skeleton_Attack_Left_Small, #skeleton_Attack_Right_Small {
     display: none;;
 }
 #brick_brown, #floor_gray, #door, #chest {
