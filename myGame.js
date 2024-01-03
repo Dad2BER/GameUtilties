@@ -123,7 +123,7 @@ export class MyGame extends Game {
         if (playerRoom != null) { this.dungeon.showRoom(playerRoom); }
         else {
             let viewTileBox = this.player.getHitBox();
-            viewTileBox.expand(32);
+            viewTileBox.expand(31);
             this.dungeon.showOverlapingTiles(viewTileBox)
         }
         this.draw(this.ctx);

@@ -7,6 +7,8 @@ export class Dungeon {
         this.map = [];
         for(let level=0; level<numberLevels; level++) {
             this.map[level] = new DungeonLevel(width, height, potionDictionary, scrollDictionary);
+            this.map[level].addStairsDown();
+            if (level > 0) { this.map[level].addStairsUp(); }
         }
     }
     

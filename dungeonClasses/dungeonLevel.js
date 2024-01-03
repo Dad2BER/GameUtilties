@@ -77,12 +77,6 @@ export class DungeonLevel extends TileMap {
         }
     }
     
-    getRandomRoomPoint(roomIndex) {
-        let x = this.diceBag.intBetween(this.rooms[roomIndex].x, this.rooms[roomIndex].x+this.rooms[roomIndex].width-32)+16;
-        let y = this.diceBag.intBetween(this.rooms[roomIndex].y, this.rooms[roomIndex].y+this.rooms[roomIndex].height-32)+16;
-        return new Point(x,y);
-    }
-
     update(deltaTime) {
         super.update(deltaTime);
         this.monsters.forEach((monster)=> { 

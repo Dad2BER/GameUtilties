@@ -1,4 +1,4 @@
-import { randomeBrickBrown, randomGrayFloor, doorHorizontal } from "../sprite_classes/knownSprites.js";
+import { randomeBrickBrown, randomGrayFloor, doorHorizontal, stairUp, stairDown } from "../sprite_classes/knownSprites.js";
 import { create2DArray, HitBox, RandomNumber, direction, Point } from "../utilities.js";
 
 const tileType = { FLOOR: 0, WALL: 1 };
@@ -13,6 +13,8 @@ export class TileMap {
         this.regions2D = create2DArray(this.width, this.height);
         this.rooms = [];
         this.doors = [];
+        this.stairsDown = null;
+        this.stairsUp = null;
         this.myRandom = new RandomNumber();
         this.windingPercent = 0;
         //This is mostly a port of what I implemented in the Java version of Rogue
@@ -321,6 +323,24 @@ export class TileMap {
         })
     }
 
+        
+    getRandomRoomPoint(roomIndex) {
+        let x = this.myRandom.intBetween(this.rooms[roomIndex].x, this.rooms[roomIndex].x+this.rooms[roomIndex].width-32)+16;
+        let y = this.myRandom.intBetween(this.rooms[roomIndex].y, this.rooms[roomIndex].y+this.rooms[roomIndex].height-32)+16;
+        return new Point(x,y);
+    }
+
+    addStairsDown() {
+        let pt = this.getRandomRoomPoint(this.myRandom.intBetween(1, this.rooms.length-1));
+        this.stairsDown = new stairDown(pt.x, pt.y);
+    }
+
+    addStairsUp() {
+        let pt = this.getRandomRoomPoint(0); //Player always is added to room 0
+        this.stairsDown = new stairDown(pt.x, pt.y);
+        console.log(this.stairsUp);
+    }
+
     draw(context) {
         for(let x=0; x<this.width; x++) {
             for(let y=0; y<this.height; y++) {
@@ -328,6 +348,8 @@ export class TileMap {
             }
         }
         this.doors.forEach((door) => {door.draw(context);})
+        if (this.stairsDown != null) { this.stairsDown.draw(context); }
+        if (this.stairsUp != null) { this.stairsUp.draw(context); }
     }
 
     update(deltaTime) {
@@ -349,6 +371,15 @@ export class TileMap {
     showOverlapyingTiles(box) {
         let tiles = this.getOverlapTiles(box);
         tiles.forEach((tile) => {tile.show();});
+        this.doors.forEach((door) => {
+            if (box.overlap(door.getHitBox())) { door.show(); } 
+        })
+        if (this.stairsDown!= null && box.overlap(this.stairsDown.getHitBox())) {
+            this.stairsDown.show(); 
+        }
+        if (this.stairsUp != null && box.overlap(this.stairsUp.getHitBox())) {
+            this.stairsUp.show();
+        }
     }
 
     getRoomFromPoint(pt) {
@@ -365,9 +396,6 @@ export class TileMap {
         let expandedRoom = room.getHitBox();
         expandedRoom.expand(31);
         this.showOverlapyingTiles(expandedRoom);
-        this.doors.forEach((door) => {
-            if (expandedRoom.overlap(door.getHitBox())) { door.show(); } 
-        })
     }
 
 }

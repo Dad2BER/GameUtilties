@@ -60,10 +60,11 @@ table, th, td, tr {
     display: none;
 }
 #skeleton_Idle_Small, #skeleton_Walk_Left_Small, #skeleton_Walk_Right_Small, 
-#skeleton_Attack_Left_Small, #skeleton_Attack_Right_Small {
+#skeleton_Attack_Left_Small, #skeleton_Attack_Right_Small,
+#skeleton_Small_All_States {
     display: none;;
 }
-#brick_brown, #floor_gray, #door, #chest {
+#brick_brown, #floor_gray, #door, #chest, #stairs {
     display: none;
 }
 #dragons, #giants, #orcs, #rats, #trolls {
