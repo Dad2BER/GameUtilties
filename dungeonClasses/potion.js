@@ -10,7 +10,7 @@ const NumberEffects = 4;
 
 export class Potion extends Sprite {
     constructor(x,y, color, effect) {
-        super('potions', x, y, 32, 32, 0, color, 0);
+        super('potions', x, y, 32, 32, color, 0);
         let diceBag = new RandomNumber();
         this.identified = false;
         this.color = color;

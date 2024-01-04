@@ -52,7 +52,8 @@ table, th, td, tr {
 /* We set the display to none for our pre-loaded images to prevent them from showing up until we need them */
 
 #skeleton_Idle, #skeleton_Walk_Left, #skeleton_Walk_Right,
-#skeleton_Attack_1, #skeleton_Dead, #skeleton_Hurt, #skeleton_Jump, #skeleton_Run
+#skeleton_Attack_1, #skeleton_Dead, #skeleton_Hurt, #skeleton_Jump, #skeleton_Run,
+#skeleton_sheet_small
 {
     display: none;
 }

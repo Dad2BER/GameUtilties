@@ -18,6 +18,13 @@ export class DungeonLevel extends TileMap {
         this.populateLevel();
     }
 
+    showAll() {
+        super.showAll();
+        this.monsters.forEach((monster) => monster.show());
+        this.treasureChests.forEach((chest)=> chest.show());
+        this.items.forEach((item)=> item.show());
+    }
+
     openChest(chest) {
         chest.open();
         let addPotions = this.diceBag.intBetween(0,2); //How many potions to put in this room
@@ -48,10 +55,9 @@ export class DungeonLevel extends TileMap {
             let y = this.diceBag.intBetween(this.rooms[i].y, this.rooms[i].y+this.rooms[i].height-32)+16;
             let monster = new rat(x,y,ratSubtype.BROWN);
             monster.setRandomDirection();
-            this.monsters.push(monster);       
-       }
+            this.monsters.push(monster);
+        }       
        for(let i=0; i<this.rooms.length; i++) {
-            let dieRoll = this.diceBag.d10();
             let addPotions = this.diceBag.intBetween(0,2); //How many potions to put in this room
             let addScrolls = this.diceBag.intBetween(0,2); // How many scrolls to put in this room
             let addChests = this.diceBag.intBetween(0,1); //How many Chests to put in this room

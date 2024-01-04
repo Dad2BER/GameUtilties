@@ -1,5 +1,6 @@
 import { potionColorText, potionEffectText } from "./dungeonClasses/potion.js";
 import { scrollColorText, scrollEffectText } from "./dungeonClasses/scroll.js";
+import { ActionSprite } from "./sprite_classes/actionSprite.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
 import { overlayText } from "./text.js";
 import { Point } from "./utilities.js";
@@ -72,6 +73,7 @@ export class PlayerCanvas {
         this.ctx = this.canvas.getContext('2d');
         this.player = player;
         this.playerImage = new skeletonIdle(30, 30);
+        //this.playerImage = new ActionSprite('skeleton_sheet_small',20,20,32,32,0);
         this.playerImage.show();
         this.statLabels = [];
         this.statLabels.push(new statLabelText("H.P.:", new Point(120, 20)) );
@@ -224,5 +226,6 @@ export class PlayerCanvas {
         this.damageText.draw(this.ctx);
         this.defenceText.draw(this.ctx);
         this.goldText.draw(this.ctx);
+        this.playerImage.draw(this.ctx, false);
     }
 }

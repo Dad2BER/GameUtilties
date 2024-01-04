@@ -29,6 +29,17 @@ export class TileMap {
 
     }
 
+    showAll() {
+        for(let x=0; x<this.width; x++) {
+            for(let y=0; y<this.height; y++) {
+                this.map[x][y].show();
+            }
+        }
+        this.doors.forEach((door)=>door.show());
+        if(this.stairsUp != null) {this.stairsUp.show();}
+        if(this.stairsDown != null) {this.stairsDown.show();}
+    }
+
     //NOTE:  Trick to this, is that rooms always are located at an odd number x,y and are odd widths and heights
     //	     This guarantees that there is the correct spacing for hallways
 	placeRooms(maxRooms) {
