@@ -1,6 +1,5 @@
 import { Player } from "./myPlayer.js";
-import { states } from "./skeleton.js";
-import { direction } from "./utilities.js";
+import { spriteActions, spriteFacing } from "./sprite_classes/actionSprite.js";
 
 class playerState {
     constructor(state, player) {
@@ -9,13 +8,12 @@ class playerState {
     }
 
     handleInput(input) {
-        let facing = this.player.getDirection();
-        let targetFacing = direction.LEFT;
-        if (input.includes('ArrowLeft') ) targetFacing = direction.LEFT;
-        else if (input.includes('ArrowRight')) targetFacing = direction.RIGHT;
-        else if (input.includes('ArrowUp')) targetFacing = direction.UP;
-        else if (input.includes('ArrowDown')) targetFacing = direction.DOWN;
-        if (targetFacing != this.player.getDirection()) {
+        let targetFacing = null;
+        if (input.includes('ArrowLeft') ) targetFacing = spriteFacing.LEFT;
+        else if (input.includes('ArrowRight')) targetFacing = spriteFacing.RIGHT;
+        else if (input.includes('ArrowUp')) targetFacing = spriteFacing.UP;
+        else if (input.includes('ArrowDown')) targetFacing = spriteFacing.DOWN;
+        if (targetFacing != null && this.player.getDirection() != targetFacing) {
             this.player.setDirection(targetFacing);
         }
     }
@@ -26,93 +24,58 @@ class playerState {
 }
 
 export class idle extends playerState { 
-    constructor(player) { super('IDLE', player); }
+    constructor(player) { super(spriteActions.IDLE, player); }
 
     handleInput(input) {
         super.handleInput(input);
         if (this.containsMovementKeys(input)) {
-            this.player.setState(states.WALK);
+            this.player.setState(spriteActions.WALK);
         }
         else if (input.includes('a')) {
-            this.player.setState(states.MELEE_ATTACK);
+            this.player.setState(spriteActions.ATTACK);
         }
     }
 }
 
 export class walking extends playerState {
-    constructor(player) { super('WALKING', player); }
+    constructor(player) { super(spriteActions.WALK, player); }
     
     handleInput(input) {
         super.handleInput(input);
-        if (input.includes('r') && this.containsMovementKeys(input)) {
-            this.player.setState(states.RUN);
-        }
-        else if (input.includes(' ')) {
-            this.player.setState(states.JUMP);
-        }
-        else if (input.includes('a')) {
-            this.player.setState(states.MELEE_ATTACK);
+        if (input.includes('a')) {
+            this.player.setState(spriteActions.ATTACK);
         }
         else if (!this.containsMovementKeys(input)) {
-            this.player.setState(states.IDLE);
-        }
-    }
-}
-
-export class running extends playerState { 
-    constructor(player) { super('RUNNING', player); }
-    
-    handleInput(input) {
-        super.handleInput(input);
-        if (input.includes('w') && this.containsMovementKeys(input)) {
-            this.player.setState(states.WALK);
-        }
-        else if (input.includes(' ')) {
-            this.player.setState(states.JUMP);
-        }
-        else if (!this.containsMovementKeys(input)) {
-            this.player.setState(states.IDLE);
-        }
-    }
-}
-
-export class jumping extends playerState { 
-    constructor(player) { super('jumping', player); }
-
-    handleInput(input) {
-        super.handleInput(input);
-        if(!input.includes(' ') && this.player.currentSprite.animationFinished) {
-            if(this.containsMovementKeys(input)) { this.player.setState(states.RUN); }
-            else this.player.setState(states.IDLE);
+            this.player.setState(spriteActions.IDLE);
         }
     }
 }
 
 export class hurt extends playerState {
     constructor(player) { 
-        super('HURT', player); 
+        super(spriteActions.HURT, player); 
     }
     
     handleInput(input) {
         if (this.player.getActiveSprite().animationFinished && this.player.getActiveSprite().endAnimationDelay< 0) { 
-            this.player.setState(states.IDLE);
+            this.player.setState(spriteActions.IDLE);
         }
     }
 }
 
 export class dead extends playerState {
-    constructor(player) { super('DEAD', player); }
+    constructor(player) { super(spriteActions.DEAD, player); }
 }
 
 export class meleeAttack extends playerState {
     constructor(player) { 
-        super("MELEE", player); 
+        super(spriteActions.ATTACK, player); 
     }
 
     handleInput(input) {
         super.handleInput(input);
-        if (this.player.getActiveSprite().animationFinished && this.player.getActiveSprite().endAnimationDelay< 0) { 
-            this.player.setState(states.IDLE);
+        if (this.player.animationFinished && this.player.endAnimationDelay< 0) { 
+            this.player.setState(spriteActions.IDLE);
         }
     }
 }

@@ -114,7 +114,7 @@ export class Skeleton  {
     setState(newState){
         this.stateSpriteList[newState].setLocation(this.currentStateSprite.x, this.currentStateSprite.y);
         this.currentStateSprite = this.stateSpriteList[newState];
-        this.currentStateSprite.getActiveSprite().restartArnimation();
+        this.currentStateSprite.getActiveSprite().restartAnimation();
         this.currentStateSprite.show();
     }
 

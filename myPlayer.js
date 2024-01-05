@@ -1,12 +1,13 @@
-import { idle, walking, running, jumping, hurt, dead, meleeAttack } from "./myPlayerStates.js";
-import { SkeletonSmall } from "./skeleton.js";
+import { idle, walking, hurt, dead, meleeAttack } from "./myPlayerStates.js";
 import { RandomNumber } from "./utilities.js";
+import { ActionSprite, spriteActions} from "./sprite_classes/actionSprite.js";
 
-export class Player extends SkeletonSmall {
+export class Player extends ActionSprite {
     constructor(x,y) {
-        super(x,y);
-        this.states = [new idle(this), new walking(this), new running(this), new jumping(this), new hurt(this), new dead(this), new meleeAttack(this) ]
-        this.currentState = this.states[0];
+        super('skeleton_sheet_small',x,y,32,32,30);
+        this.states = [new walking(this), new meleeAttack(this), new idle(this), 
+                       new hurt(this), new dead(this) ]
+        this.setState(spriteActions.IDLE);
         this.diceBag = new RandomNumber();
         this.maxHitPoints = 10;
         this.hitPoints = this.maxHitPoints;
@@ -27,7 +28,7 @@ export class Player extends SkeletonSmall {
 
     damagePlayer(damage) {
         this.hitPoints -= damage;
-        this.setState(4);
+        this.setState(spriteActions.HURT);
     }
 
     addItem(item) {
@@ -35,7 +36,7 @@ export class Player extends SkeletonSmall {
     }
 
     isAttacking() {
-        return this.currentState == this.states[states.MELEE_ATTACK];
+        return this.currentState == this.states[spriteActions.ATTACK];
     }
 
 }

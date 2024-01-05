@@ -24,6 +24,7 @@ export class MyGame extends Game {
         this.storyText = new StoryText(storyTextAreaID);
         this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
+        this.player.show();
         this.readyForInput = true;
     }
     
@@ -58,7 +59,7 @@ export class MyGame extends Game {
                 //Also the canAttack will get set to false after the first attack so player will only attack the first monster
                 //Also the player always gets initiative, so if the player hits the monster the monster resets cooldown 
                 //                                                and thus canAttack for the monster will retrun fallse
-                if (this.player.canAttack()) { 
+                if (this.player.isAttacking()) { 
                     let playerDamage = this.player.meleAttack(monster);
                     this.overlayTexts.push( new playerDamageText(playerDamage.toString() , this.player.getLocation()) );
                     if (playerDamage > 0) {
