@@ -57,7 +57,7 @@ export class hurt extends playerState {
     }
     
     handleInput(input) {
-        if (this.player.getActiveSprite().animationFinished && this.player.getActiveSprite().endAnimationDelay< 0) { 
+        if (this.player.animationFinished && this.player.endAnimationDelay< 0) { 
             this.player.setState(spriteActions.IDLE);
         }
     }

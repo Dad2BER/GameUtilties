@@ -55,14 +55,14 @@ export class PlayerCanvas {
         this.potionDesciprions = [];
         for (let i = 0; i<this.potionDictionary.potions.length; i++) {
             this.potionDictionary.potions[i].show();
-            this.potionDictionary.potions[i].changeLocation(16, 100+i*32);
+            this.potionDictionary.potions[i].setLocation(16, 100+i*32);
             this.potionDesciprions.push(new potionLabelText("POTION", new Point(30, 110+i*32)) );
         }
         this.scrollDictionary = scrollDictionary;
         this.scrollDesciprions = [];
         for (let i = 0; i<this.scrollDictionary.scrolls.length; i++) {
             this.scrollDictionary.scrolls[i].show();
-            this.scrollDictionary.scrolls[i].changeLocation(155, 100+i*32);
+            this.scrollDictionary.scrolls[i].setLocation(155, 100+i*32);
             this.scrollDesciprions.push(new potionLabelText("SCROLL", new Point(165, 110+i*32)) );
         }
 

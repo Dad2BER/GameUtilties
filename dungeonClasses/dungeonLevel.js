@@ -16,6 +16,7 @@ export class DungeonLevel extends TileMap {
         this.potionDictionary = potionDictionary;
         this.scrollDictionary = scrollDictionary;
         this.populateLevel();
+        //this.showAll();
     }
 
     showAll() {
@@ -99,7 +100,10 @@ export class DungeonLevel extends TileMap {
         super.draw(context);
         this.monsters.forEach((monster, index)=>  { 
             monster.draw(context); 
-            if (monster.markedForDeletion) { this.monsters.splice(index, 1);}
+            if (monster.markedForDeletion) { 
+                this.monsters.splice(index, 1);
+                console.log("monster deleted");
+            }
         })
         this.treasureChests.forEach((chest)=> {
             chest.draw(context);

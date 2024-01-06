@@ -26,6 +26,14 @@ export class MyGame extends Game {
         this.dungeon.addPlayer(this.player);
         this.player.show();
         this.readyForInput = true;
+        let cookieRunCount = this.getCookie("runCount");
+        this.runCount = 0;
+        if (cookieRunCount > 0) {
+            this.runCount = cookieRunCount;
+        }
+        this.runCount++;
+        this.setCookie("runCount", this.runCount, 90);
+        this.logCookies();
     }
     
     handleInput() {
@@ -60,7 +68,7 @@ export class MyGame extends Game {
                 //Also the player always gets initiative, so if the player hits the monster the monster resets cooldown 
                 //                                                and thus canAttack for the monster will retrun fallse
                 if (this.player.isAttacking()) { 
-                    let playerDamage = this.player.meleAttack(monster);
+                    let playerDamage = this.player.attack(monster);
                     this.overlayTexts.push( new playerDamageText(playerDamage.toString() , this.player.getLocation()) );
                     if (playerDamage > 0) {
                         if (monster.takeDamage(playerDamage) < 0) { //Did we kill the monster
@@ -140,6 +148,35 @@ export class MyGame extends Game {
             if (txt.markedForDeletion) { this.overlayTexts.splice(index, 1);}
         })
         this.player.draw(context);
+    }
+
+    setCookie(cname, cvalue, exdays) {
+        const d= new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        let expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    getCookie(cname) {
+        let name = cname+"=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i=0; i< ca.length; i++) {
+            let c=ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length,c.length);
+            }
+        }
+        return "";
+    }
+
+    logCookies() {
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        ca.forEach((entry) => console.log(entry) );
     }
 
 }

@@ -7,18 +7,18 @@ import { AnimatedSprite } from "./sprite.js";
 // 1 row of Idel
 // 1 row of Hurt
 // 1 row ot Die
-export const spriteActions = {WALK: 0, ATTACK: 1, IDLE: 2, HURT: 3, DIE: 4};
-export const actionYOffset =        [0,       4,         8,       9,       10];
+export const spriteActions =   {WALK: 0, ATTACK: 1, IDLE: 2, HURT: 3, DIE: 4};
+       const maxActionFrames = [8,       7,         7,       3,       6];
+export const actionYOffset =   [0,       4,         8,       9,       10];
 export const spriteFacing = {LEFT:0, RIGHT:1, UP:2, DOWN:3};
 
 // For more flexiiblity we could pass this in, but for now the number of animation frames
 // is hard codded to the following
-const maxActionFrames = {WALK: 8, ATTACK: 7, IDLE: 7, HURT: 3, DIE: 6};
 
 //The big refacgtor improvement is now the palyer is just another sprite and not a collection of sprites
 export class ActionSprite extends AnimatedSprite{
     constructor(spriteSheetID, x, y, width, height, speed) {
-        super(spriteSheetID, x, y, width, height, maxActionFrames.IDLE, 10, true);
+        super(spriteSheetID, x, y, width, height, maxActionFrames[spriteActions.IDLE], 10, true);
         this.action = spriteActions.IDLE;
         this.frameY = actionYOffset[this.action];
         this.frameX = 0;
@@ -31,6 +31,7 @@ export class ActionSprite extends AnimatedSprite{
         if (newAction != this.action) {
             this.action = newAction;
             this.frameY = actionYOffset[newAction];
+            this.maxFrames = maxActionFrames[newAction]-1;
             switch(this.action) {
                 case spriteActions.WALK:
                     this.frameY += this.facing;

@@ -15,6 +15,13 @@ export class Player extends ActionSprite {
         this.damageModifier = 0;
         this.defenceModifier = 0;
         this.items = [];
+        this.coolDownValue = this.endAnimationDelay;
+        this.attackCoolDown = 0;
+    }
+
+    update(deltaTime) {
+        super.update(deltaTime);
+        if (this.attackCoolDown > 0) {this.attackCoolDown -= deltaTime;}
     }
     
     handleInput(input) {
@@ -36,7 +43,12 @@ export class Player extends ActionSprite {
     }
 
     isAttacking() {
-        return this.currentState == this.states[spriteActions.ATTACK];
+        return this.currentState == this.states[spriteActions.ATTACK] && this.attackCoolDown <= 0;
+    }
+
+    attack(monster) {
+        this.attackCoolDown = this.coolDownValue;
+        return this.diceBag.d4();
     }
 
 }

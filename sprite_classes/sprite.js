@@ -20,28 +20,28 @@ export class Sprite {
         this.drawY = this.y - this.height/2;
         this.solid = true;
         this.visible = false;
+        this.log = false; //this.spriteType == 'skeleton_sheet_small';
     }
 
-    move(deltaX, deltaY) {
-        this.changeLocation(this.x + deltaX, this.y + deltaY);
+    move(deltaX, deltaY) { 
+        if (this.log) { console.log("move: " + deltaX + ", " + deltaY); }
+        this.setLocation(this.x + deltaX, this.y + deltaY); 
     }
-    //Move the sprite to a new world location
-    changeLocation(newX, newY) {
+    getLocation() { return new Point(this.x, this.y); }
+    undoMove() { 
+        if (this.log) { console.log("undoMove: " + this.prevX + ", " + this.prevY); }
+        this.setLocation(this.prevX, this.prevY); 
+    }
+    setLocation(x,y) { 
         this.prevX = this.x;
         this.prevY = this.y;
-        this.x = newX;
-        this.y = newY;
+        if (this.log) { console.log("setLocation: " + x + ", " + y); }
+        this.x = x;
+        this.y = y;
         this.drawX = this.x - this.width/2;
         this.drawY = this.y - this.height/2;
     }
 
-    getLocation() { return new Point(this.x, this.y); }
-    
-    setLocation(x,y) { this.changeLocation(x, y); }
-
-    undoMove() {
-        this.setLocation(this.prevX, this.prevY);
-    }
 
     update(deltaTime) {
         this.setLocation(this.x + this.vx*deltaTime, this.y + this.vy*deltaTime);
@@ -105,6 +105,7 @@ export class AnimatedSprite extends Sprite {
                 this.restartAnimation();
             }
             else {
+                this.frameX = this.maxFrames -1;
                 this.animationFinished = true;
             }
         } else {

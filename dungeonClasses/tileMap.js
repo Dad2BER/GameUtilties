@@ -272,6 +272,7 @@ export class TileMap {
     }
 
     adjustMovingObject(object) {
+try {
         let ObjHitBox = object.getHitBox();
         let mapTiles = this.getOverlapTiles(ObjHitBox);
         let adjust = new Point(0,0);
@@ -311,12 +312,17 @@ export class TileMap {
             ) 
             if( adjust.x != 0 || adjust.y != 0) {
                 if (Math.abs(adjust.x)<8 && Math.abs(adjust.y)<8)  { //Only adjust if we can, and if it is a small adjustment
-                    object.adjustLocation(adjust.x, adjust.y);
+                    object.move(adjust.x, adjust.y);
                 }  
             }
         }
         return adjustObj;
     }
+    catch (error) {
+        console.log(object);
+        console.error(error);
+    }
+}
 
     addDoors() {
         this.rooms.forEach((room) => {

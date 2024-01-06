@@ -23,7 +23,7 @@ export class DirectionSprite {
         this.x = x;
         this.y = y;
         this.sprites.forEach(sprite => {
-            sprite.changeLocation(x, y);
+            sprite.setLocation(x, y);
         });
     }
 
@@ -40,7 +40,7 @@ export class DirectionSprite {
         if (this.sprites[this.facing].maxFrames > 1) { this.sprites[this.facing].restartArnimation(); }
     }
 
-    adjustLocation(deltaX,deltaY) {
+    move(deltaX,deltaY) {
         this.setLocation(this.x + deltaX, this.y + deltaY);
     }
 
