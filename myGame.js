@@ -133,10 +133,16 @@ export class MyGame extends Game {
                     }
                 }
                 if (monster.canAttack()) { //If the monster can attack then it does
-                    let damage = monster.meleAttack();
-                    this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );
-                    this.storyText.addLine("Rat did " + damage + " damage to you!");
-                    this.player.damagePlayer(damage);
+                    let damage = monster.meleAttack() - this.player.defenceModifier;
+                    if (damage > 0) {
+                        this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );
+                        this.storyText.addLine("Rat did " + damage + " damage to you!");
+                        this.player.damagePlayer(damage);
+                    }
+                    else {
+                        this.overlayTexts.push( new monsterDamageText("0" , monster.getLocation()) );
+                        this.storyText.addLine("Rat attacked and missed.");
+                    }
                 }
             })
             //Open Chests
