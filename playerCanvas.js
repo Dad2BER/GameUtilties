@@ -82,10 +82,10 @@ export class PlayerCanvas {
         this.statLabels.push(new statLabelText("Gold:", new Point(120, 71)) );
         this.hpText = new rygText(new Point(125, 18), 5, 10);  
         this.hpText.setColor(this.player.hitPoints);
-        this.damageText = new overlayText("+" + this.player.damageModifier, 
-                                          'Araial', 12, new Point(125,35), 'left', greenDark, greenTrue, 0, 0, 0);
-        this.defenceText = new overlayText("+" + this.player.defenceModifier,
-                                           'Araial', 12, new Point(125,52), 'left', greenDark, greenTrue, 0, 0, 0);
+        this.damageText = new rygText(new Point(125, 35), 0, 0);
+        this.damageText.setColor(this.player.damageModifier);
+        this.defenceText = new rygText(new Point(125, 52), 0, 0);
+        this.defenceText.setColor(this.player.defenceModifier);
         this.goldText = new overlayText(this.player.gold, 
                                            'Arial', 12, new Point(125,69), 'left', yellowAmber, yellowTrue, 0, 0, 0);
     
@@ -175,11 +175,26 @@ export class PlayerCanvas {
             let qty = this.playerItemCount("scrolls", scroll.color);
             this.scrollDesciprions[index].text = qty + " " + effect
         })
-
-        if (this.player.damageModifier > 0) { this.damageText.text = "+" + this.player.damageModifier; }
-        else this.damageText.text = this.player.damageModifier;
-        if (this.player.defenceModifier > 0) { this.defenceText.text = "+" + this.player.defenceModifier; }
-        else this.defenceText.text = this.player.defenceModifier;
+        // Damage Modifier
+        this.damageText.setColor(this.player.damageModifier);
+        if (this.player.damageModifier > 0) { 
+            this.damageText.text = this.player.minDamage + " to " + this.player.maxDamage + " +" + this.player.damageModifier; 
+        }
+        else if (this.player.damageModifier < 0) {
+            this.damageText.text = this.player.minDamage + " to " + this.player.maxDamage + " " + this.player.damageModifier; 
+        }
+        else {
+            this.damageText.text = this.player.minDamage + " to " + this.player.maxDamage
+        }
+        // Defence Modifier
+        this.defenceText.setColor(this.player.defenceModifier);
+        if (this.player.defenceModifier > 0) { 
+            this.defenceText.text = "+" + this.player.defenceModifier; 
+        }
+        else {
+            this.defenceText.text = this.player.defenceModifier; 
+        }
+        // Gold
         this.goldText.text = this.player.gold;
         this.draw();
     }

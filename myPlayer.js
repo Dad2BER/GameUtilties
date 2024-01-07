@@ -12,6 +12,8 @@ export class Player extends ActionSprite {
         this.maxHitPoints = 10;
         this.hitPoints = this.maxHitPoints;
         this.gold = 0;
+        this.minDamage = 1;
+        this.maxDamage = 4;
         this.damageModifier = 0;
         this.defenceModifier = 0;
         this.items = [];
@@ -48,7 +50,7 @@ export class Player extends ActionSprite {
 
     attack(monster) {
         this.attackCoolDown = this.coolDownValue;
-        return this.diceBag.d4();
+        return this.diceBag.intBetween(this.minDamage, this.maxDamage) + this.damageModifier;
     }
 
 }
