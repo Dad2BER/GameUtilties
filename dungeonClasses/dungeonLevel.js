@@ -19,11 +19,18 @@ export class DungeonLevel extends TileMap {
         //this.showAll();
     }
 
+    showMonsters() { this.monsters.forEach((monster) => monster.show()  );                            }
+    showChests()   { this.treasureChests.forEach((chest)=> chest.show() );                            }
+    showItems()    { this.items.forEach((item)=> item.show()            );                            } 
+    showPotions()  { this.items.forEach((item)=> { if (item.spriteType == "potions") item.show(); }); }
+    showScrolls()  { this.items.forEach((item)=> { if (item.spriteType == "scrolls") item.show(); }); }
+    showGold()     { this.items.forEach((item)=> { if (item.spriteType == "gold")    item.show(); })  }
+    showMap()      { super.showAll()                                                                  }
     showAll() {
-        super.showAll();
-        this.monsters.forEach((monster) => monster.show());
-        this.treasureChests.forEach((chest)=> chest.show());
-        this.items.forEach((item)=> item.show());
+        this.showMap();
+        this.showMonsters();
+        this.showChests();
+        this.showItems();
     }
 
     openChest(chest) {

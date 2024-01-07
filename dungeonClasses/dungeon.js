@@ -42,6 +42,16 @@ export class Dungeon {
         this.player.setLocation(room.x + Math.floor(room.width/2), room.y + Math.floor(room.height/2));
     }
 
+    showLevel() { this.map[this.currentlevel].showAll(); }
+    showLevelDetail(showMap, showMonsters, showChests, showPotions, showScrolls, showGold) {
+        let level = this.map[this.currentlevel];
+        if (showMap)      level.showMap();
+        if (showMonsters) level.showMonsters();
+        if (showChests)   level.showChests();
+        if (showPotions)  level.showPotions();
+        if (showScrolls)  level.showScrolls();
+        if (showGold)     level.showGold();
+    }
 
 
 }

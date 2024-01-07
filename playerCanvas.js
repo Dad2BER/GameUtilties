@@ -131,23 +131,13 @@ export class PlayerCanvas {
 
     readScroll() {
         let dictionaryScroll = this.scrollDictionary.scrolls[this.scrollIndex]; 
-        let qty = this.playerItemCount("scrolls", dictionaryScroll.color);
-        let storyText = "";
-        if (qty > 0) {
-            let effect = this.scrollDictionary.getEffect(dictionaryScroll.color);
-            if (dictionaryScroll.identified) {
-                storyText = "You read a " + scrollEffectText[effect] + " scroll";
-            }
-            else {
-                dictionaryScroll.identified = true;
-                storyText = "You read and identify " + scrollEffectText[effect] + " scroll";
-            }
+        let effect = null;
+        if (this.playerItemCount("scrolls", dictionaryScroll.color) > 0) {
+            effect = this.scrollDictionary.getEffect(dictionaryScroll.color);
+            dictionaryScroll.identified = true;
             this.removePlayerItem("scrolls", dictionaryScroll.color);
         }
-        else {
-            storyText = "You don't have any " + scrollColorText[dictionaryScroll.color] + " scrolls to read."
-        }
-        return storyText;
+        return effect;
     }
 
     removePlayerItem(type, color) {

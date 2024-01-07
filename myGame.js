@@ -7,7 +7,7 @@ import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
 import { PotionDictionary, potionColorText } from "./dungeonClasses/potion.js";
-import { ScrollDictionary, scrollColorText } from "./dungeonClasses/scroll.js";
+import { ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
 import { BackGround } from "./sprite_classes/background.js";
 
 
@@ -44,11 +44,60 @@ export class MyGame extends Game {
             if ( keys.includes('q')) { // Quaff a potion
                 this.storyText.addLine(this.playerCanvas.quaffPotion());
             }
-            if ( keys.includes('r') ) {// Read a scroll
-                this.storyText.addLine(this.playerCanvas.readScroll());
-            }
+            if ( keys.includes('r') ) { this.readScroll(); }
         }
         this.readyForInput = keys.includes('q')==false && keys.includes('r')==false;
+    }
+
+    readScroll() {
+        let effect = this.playerCanvas.readScroll();
+        let storyText = "";
+        if (effect != null) {
+            this.storyText.addLine("You read a " + scrollEffectText[effect] + " scroll");
+            if (effect == scrollEffect.RANDOM) {
+                this.storyText.addLine("Wild uncontrollable things happen...");
+                while (effect == scrollEffect.RANDOM) { effect = diceBag.intBetween(1, scrollNumberEffects); } //Now we pick something else
+            }
+            switch (effect) {
+                case scrollEffect.IDENTIFY:
+                    this.storyText.addLine("You feel like you should be able to identify something, but it does not work.");
+                    break;
+                case scrollEffect.FIREBALL:
+                    this.storyText.addLine("Fire courses though your hands, but nothing happens.");
+                    break;
+                case scrollEffect.MAP:
+                    this.storyText.addLine("It looks to be a map to this level of the dungeon.");
+                    let random = this.diceBag.d10();
+                    if (random < 6) {
+                        this.storyText.addLine("You can now see all the rooms, doors, and stairs.");
+                        this.dungeon.showLevelDetail(true, false, false, false, false, false);
+                    }
+                    else if (random < 8) {
+                        this.storyText.addLine("The map includes where treasure chests are.");
+                        this.dungeon.showLevelDetail(true, false, true, false, false, false);
+                    }
+                    else if (random < 9) {
+                        this.storyText.addLine("The map is recent and includes all treasure.");
+                        this.dungeon.showLevelDetail(true, false, true, true, true, true);
+                    }
+                    else {
+                        this.storyText.addLine("The map is magic and shows everything.");
+                        this.dungeon.showLevelDetail(true, true, true, true, true, true);
+                    }
+                    break;
+                case scrollEffect.CURSE:
+                    this.storyText.addLine("Life sucks...you feel weaker.")
+                    this.player.damageModifier -= 1;
+                    break;
+            }
+        }
+        else {
+            this.storyText.addLine("You don't have any scrolls to read.")
+        }
+        return storyText;
+
+        this.storyText.addLine();
+
     }
 
     update(timeStamp) {
