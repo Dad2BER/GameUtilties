@@ -1,5 +1,8 @@
 import { Sprite, RandomeSpirte, AnimatedSprite } from "./sprite.js";
 
+//Game Screens
+export class helpScreen extends Sprite { constructor(x,y) { super('help_screen', x, y, 240, 450, 0, 0); }}
+
 // Skeleton
 export class skeletonWalkLeft extends AnimatedSprite { constructor(x,y) { super('skeleton_Walk_Left',x,y,128,80,8,15, true); } }
 export class skeletonWalkRight extends AnimatedSprite { constructor(x,y) { super('skeleton_Walk_Right',x,y,128,80,8,15, true); } }

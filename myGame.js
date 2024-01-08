@@ -9,11 +9,14 @@ import { StoryText } from "./storyText.js";
 import { PotionDictionary, potionColorText, potionEffect, potionEffectText, potionNumberEffects} from "./dungeonClasses/potion.js";
 import { ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
 import { BackGround } from "./sprite_classes/background.js";
+import { CookieHandler, HighScore } from "./cookie.js";
+import { helpScreen } from "./sprite_classes/knownSprites.js";
 
 
 export class MyGame extends Game {
     constructor(mapCanvasID, playerCanvasID, storyTextAreaID, width, height) {
         super(mapCanvasID, width, height);
+        this.cookie = new CookieHandler();
         this.overlayTexts = [];
         this.diceBag = new RandomNumber();
         this.potionDictionary = new PotionDictionary();
@@ -26,14 +29,16 @@ export class MyGame extends Game {
         this.dungeon.addPlayer(this.player);
         this.player.show();
         this.readyForInput = true;
-        let cookieRunCount = this.getCookie("runCount");
+        let cookieRunCount = this.cookie.getCookie("runCount");
         this.runCount = 0;
-        if (cookieRunCount > 0) {
-            this.runCount = cookieRunCount;
-        }
+        if (cookieRunCount > 0) { this.runCount = cookieRunCount; }
         this.runCount++;
-        this.setCookie("runCount", this.runCount, 90);
-        this.logCookies();
+        this.cookie.setCookie("runCount", this.runCount, 90);
+       //this.cookie.clearTop10();
+        this.cookie.setTop10( new HighScore(this.runCount, "Hello", this.diceBag.intBetween(1,100), null) );
+        this.cookie.logCookies();
+        this.helpScreen = new helpScreen(width/2, height/2);
+        this.helpScreen.show();
     }
     
     handleInput() {
@@ -43,8 +48,9 @@ export class MyGame extends Game {
         if (this.readyForInput) {
             if ( keys.includes('q')) { this.quaffPotion(); }
             if ( keys.includes('r') ) { this.readScroll(); }
+            if ( keys.includes('?') || keys.includes('Escape')) { this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show(); }
         }
-        this.readyForInput = keys.includes('q')==false && keys.includes('r')==false;
+        this.readyForInput = keys.includes('q')==false && keys.includes('r')==false && keys.includes('?') == false && keys.includes('Escape')==false;
     }
 
     quaffPotion() {
@@ -231,35 +237,7 @@ export class MyGame extends Game {
             if (txt.markedForDeletion) { this.overlayTexts.splice(index, 1);}
         })
         this.player.draw(context);
-    }
-
-    setCookie(cname, cvalue, exdays) {
-        const d= new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
-        let expires = "expires="+d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-
-    getCookie(cname) {
-        let name = cname+"=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i=0; i< ca.length; i++) {
-            let c=ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length,c.length);
-            }
-        }
-        return "";
-    }
-
-    logCookies() {
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        ca.forEach((entry) => console.log(entry) );
+        if (this.helpScreen != null) { this.helpScreen.draw(context, false);}
     }
 
 }
