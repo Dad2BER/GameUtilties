@@ -6,7 +6,7 @@ import { playerDamageText, monsterDamageText, statusText } from "./text.js";
 import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
-import { PotionDictionary, potionColorText } from "./dungeonClasses/potion.js";
+import { PotionDictionary, potionColorText, potionEffect, potionEffectText, potionNumberEffects} from "./dungeonClasses/potion.js";
 import { ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
 import { BackGround } from "./sprite_classes/background.js";
 
@@ -41,12 +41,47 @@ export class MyGame extends Game {
         this.player.handleInput(keys); // Arrow keys
         this.playerCanvas.handleInput(keys); // 'p' and 's'
         if (this.readyForInput) {
-            if ( keys.includes('q')) { // Quaff a potion
-                this.storyText.addLine(this.playerCanvas.quaffPotion());
-            }
+            if ( keys.includes('q')) { this.quaffPotion(); }
             if ( keys.includes('r') ) { this.readScroll(); }
         }
         this.readyForInput = keys.includes('q')==false && keys.includes('r')==false;
+    }
+
+    quaffPotion() {
+        let effect = this.playerCanvas.quaffPotion();
+        if (effect != null) {
+            this.storyText.addLine("You drank a " + potionEffectText[effect] + " potion.");
+            if (effect == potionEffect.RANDOM) {
+                this.storyText.addLine("Wild uncontrollable things happen...");
+                while (effect == potionEffect.RANDOM) { effect = this.diceBag.intBetween(1, potionNumberEffects); } //Now we pick something else
+            }
+            switch(effect) {
+                case potionEffect.DEXTARITY:
+                    this.storyText.addLine("Your dodge skills imporve, you will take less damage.");
+                    this.player.defenceModifier += 1;
+                    break;
+                case potionEffect.HEAL:
+                    let heal = this.diceBag.intBetween(1, 6);
+                    if (this.player.maxHitPoints - this.player.hitPoints < heal) {
+                        heal = this.player.maxHitPoints - this.player.hitPoints;
+                    }
+                    this.storyText.addLine("You are healed for " + heal + " points.");
+                    this.player.hitPoints += heal;
+                    break;
+                case potionEffect.POISON:
+                    let damage = this.diceBag.intBetween(1, 4);
+                    this.storyText.addLine("You took " + damage + " damage.");
+                    this.player.hitPoints -= damage;
+                    break;
+                case potionEffect.STRENGTH:
+                    this.storyText.addLine("You are stronger, you will do more damage.");
+                    this.player.damageModifier += 1;
+                    break;
+            }    
+        }
+        else {
+            this.storyText.addLine("You don't have any potions to drink.")
+        }
     }
 
     readScroll() {
@@ -56,7 +91,7 @@ export class MyGame extends Game {
             this.storyText.addLine("You read a " + scrollEffectText[effect] + " scroll");
             if (effect == scrollEffect.RANDOM) {
                 this.storyText.addLine("Wild uncontrollable things happen...");
-                while (effect == scrollEffect.RANDOM) { effect = diceBag.intBetween(1, scrollNumberEffects); } //Now we pick something else
+                while (effect == scrollEffect.RANDOM) { effect = this.diceBag.intBetween(1, scrollNumberEffects); } //Now we pick something else
             }
             switch (effect) {
                 case scrollEffect.IDENTIFY:
@@ -94,10 +129,6 @@ export class MyGame extends Game {
         else {
             this.storyText.addLine("You don't have any scrolls to read.")
         }
-        return storyText;
-
-        this.storyText.addLine();
-
     }
 
     update(timeStamp) {
@@ -179,9 +210,6 @@ export class MyGame extends Game {
 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);
-        }
-        else {
-            this.storyText.addLine("Time Jump Avoided: " + deltaTime);
         }
         let playerRoom = this.dungeon.getRoomFromPoint(this.player.getLocation());
         if (playerRoom != null) { this.dungeon.showRoom(playerRoom); }

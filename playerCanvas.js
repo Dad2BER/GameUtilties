@@ -1,6 +1,5 @@
 import { potionColorText, potionEffectText } from "./dungeonClasses/potion.js";
 import { scrollColorText, scrollEffectText } from "./dungeonClasses/scroll.js";
-import { ActionSprite } from "./sprite_classes/actionSprite.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
 import { overlayText } from "./text.js";
 import { Point } from "./utilities.js";
@@ -73,7 +72,6 @@ export class PlayerCanvas {
         this.ctx = this.canvas.getContext('2d');
         this.player = player;
         this.playerImage = new skeletonIdle(30, 30);
-        //this.playerImage = new ActionSprite('skeleton_sheet_small',20,20,32,32,0);
         this.playerImage.show();
         this.statLabels = [];
         this.statLabels.push(new statLabelText("H.P.:", new Point(120, 20)) );
@@ -110,23 +108,13 @@ export class PlayerCanvas {
 
     quaffPotion() {
         let dictionaryPotion = this.potionDictionary.potions[this.potionIndex]; 
-        let qty = this.playerItemCount("potions", dictionaryPotion.color);
-        let storyText = "";
-        if (qty > 0) {
-            let effect = this.potionDictionary.getEffect(dictionaryPotion.color);
-            if (dictionaryPotion.identified) {
-                "You quaff a " + potionEffectText[effect] + " potion";
-            }
-            else {
-                dictionaryPotion.identified = true;
-                "You quaff and identify " + potionEffectText[effect] + " potion";
-            }
+        let effect = null;
+        if (this.playerItemCount("potions", dictionaryPotion.color) > 0) {
+            effect = this.potionDictionary.getEffect(dictionaryPotion.color);
+            dictionaryPotion.identified = true;
             this.removePlayerItem("potions", dictionaryPotion.color);
         }
-        else {
-            storyText = "You don't have any " + potionColorText[dictionaryPotion.color] + " potions to quaff."
-        }
-        return storyText;
+        return effect;
     }
 
     readScroll() {
@@ -161,6 +149,7 @@ export class PlayerCanvas {
     update(deltaTime) {
         this.playerImage.update(deltaTime);
         this.hpText.setColor(this.player.hitPoints);
+        this.hpText.text =  this.player.hitPoints + " / " + this.player.maxHitPoints
         // Potions
         this.potionDictionary.potions.forEach((potion, index) => {
             let effect = "Unkown"
