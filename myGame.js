@@ -25,6 +25,10 @@ export class MyGame extends Game {
         this.player = new Player(0,0); //Does not matter where, because popualteLevel will move them.
         this.playerCanvas = new PlayerCanvas(this.player, playerCanvasID, this.potionDictionary, this.scrollDictionary);
         this.storyText = new StoryText(storyTextAreaID);
+        this.storyText.addLine("");
+        this.storyText.addLine("Skeleton used for player comes from FREE FANTASY ENEMIES PIXEL ART SPRITE PACK at graphpix.net");
+        this.storyText.addLine("Dungeon graphics come from dungeon crawl tiles at OpenGameArt.org")
+        this.storyText.addLine("");
         this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
         this.player.show();
