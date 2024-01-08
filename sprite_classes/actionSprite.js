@@ -79,7 +79,7 @@ export class ActionSprite extends AnimatedSprite{
         this.vx = 0;
         this.vy = 0;
         if (this.action == spriteActions.WALK) {
-            switch(this.facing) {
+            switch(newDirection) {
                 case spriteFacing.LEFT: this.vx = -this.speed; break;
                 case spriteFacing.RIGHT: this.vx = this.speed; break;
                 case spriteFacing.UP: this.vy = -this.speed; break;
@@ -87,7 +87,10 @@ export class ActionSprite extends AnimatedSprite{
                 default: this.vx = 0; this.vy = 0; break;
             }
         }
-        this.facing = newDirection;
+        if (this.action == spriteActions.WALK || this.action == spriteActions.ATTACK) {
+            this.facing = newDirection;
+            this.frameY = actionYOffset[this.action] + this.facing;
+        }
     }
 
     getDirection() {
