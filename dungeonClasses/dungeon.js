@@ -7,8 +7,8 @@ export class Dungeon {
         this.map = [];
         for(let level=0; level<numberLevels; level++) {
             this.map[level] = new DungeonLevel(width, height, potionDictionary, scrollDictionary);
-            this.map[level].addStairsDown();
-            if (level > 0) { this.map[level].addStairsUp(); }
+            if (level < numberLevels-1) { this.map[level].addStairsDown(); } //Bottom of the dungeon, can't go down
+            if (level > 0) { this.map[level].addStairsUp(); } //Top of the dungeon, can't go up
         }
     }
     
@@ -23,13 +23,23 @@ export class Dungeon {
     levelChests() { return this.map[this.currentlevel].treasureChests; }
     levelItems() { return this.map[this.currentlevel].items; }
     levelMonsters() { return this.map[this.currentlevel].monsters; }
-    monsterCollisions(hitBox) { return this.map[this.currentlevel].monsterCollisions(hitBox); }
-    chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
     openChest(chest) { return this.map[this.currentlevel].openChest(chest); }
-    itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
     showOverlapingTiles(hitBox) { return this.map[this.currentlevel].showOverlapyingTiles(hitBox);}
     getRoomFromPoint(pt) { return this.map[this.currentlevel].getRoomFromPoint(pt);}
     showRoom(room) {return this.map[this.currentlevel].showRoom(room);}
+    monsterCollisions(hitBox) { return this.map[this.currentlevel].monsterCollisions(hitBox); }
+    chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
+    itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
+    stairCollisions(hitBox) { return this.map[this.currentlevel].stairCollisions(hitBox); }
+
+    goDown(player) { 
+        this.currentlevel++; 
+        player.setLocation(this.map[this.currentlevel].stairsUp.x, this.map[this.currentlevel].stairsUp.y);
+    }
+    goUp(player) { 
+        this.currentlevel--; 
+        player.setLocation(this.map[this.currentlevel].stairsDown.x, this.map[this.currentlevel].stairsDown.y);
+    }
 
     removeItem(item) {
         this.map[this.currentlevel].removeItem(item);

@@ -10,7 +10,7 @@ import { PotionDictionary, potionColorText, potionEffect, potionEffectText, poti
 import { ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
 import { BackGround } from "./sprite_classes/background.js";
 import { CookieHandler, HighScore } from "./cookie.js";
-import { helpScreen } from "./sprite_classes/knownSprites.js";
+import { binary, helpScreen } from "./sprite_classes/knownSprites.js";
 
 
 export class MyGame extends Game {
@@ -29,7 +29,7 @@ export class MyGame extends Game {
         this.storyText.addLine("Skeleton used for player comes from FREE FANTASY ENEMIES PIXEL ART SPRITE PACK at graphpix.net");
         this.storyText.addLine("Dungeon graphics come from dungeon crawl tiles at OpenGameArt.org")
         this.storyText.addLine("");
-        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),1,this.potionDictionary, this.scrollDictionary);
+        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),3,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
         this.player.show();
         this.readyForInput = true;
@@ -51,9 +51,26 @@ export class MyGame extends Game {
         this.playerCanvas.handleInput(keys); // 'p' and 's'
         if ( this.InputHandler.useKey('q')) { this.quaffPotion(); }
         if ( this.InputHandler.useKey('r') ) { this.readScroll(); }
-        if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) { 
-            this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show(); 
-        }
+        if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) {  this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show();  }
+        if ( this.InputHandler.useKey('d') ) { this.useStairs(true); }
+        if ( this.InputHandler.useKey('u') ) { this.useStairs(false); }
+        if ( this.InputHandler.useKey('m') ) { this.dungeon.showLevel();} //Debug command to show the level
+    }
+
+    useStairs(goDown) {
+        let stairs = this.dungeon.stairCollisions(this.player.getHitBox());
+        let used = false;
+        stairs.forEach((stair) => { 
+            if (goDown && stair.frameX == binary.DOWN) {
+                used = true;
+                this.dungeon.goDown(this.player);
+            }
+            else if (goDown == false && stair.frameX == binary.UP) {
+                used = true;
+                this.dungeon.goUp(this.player);                
+            }
+        })
+        return used;
     }
 
     quaffPotion() {

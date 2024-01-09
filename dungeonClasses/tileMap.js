@@ -354,8 +354,14 @@ try {
 
     addStairsUp() {
         let pt = this.getRandomRoomPoint(0); //Player always is added to room 0
-        this.stairsDown = new stairDown(pt.x, pt.y);
-        console.log(this.stairsUp);
+        this.stairsUp = new stairUp(pt.x, pt.y);
+    }
+
+    stairCollisions(hitBox) {
+        let stairs = [];
+        if ( this.stairsDown != null && this.stairsDown.getHitBox().overlap(hitBox) ) { stairs.push(this.stairsDown); }
+        if (this.stairsUp != null && this.stairsUp.getHitBox().overlap(hitBox) )      { stairs.push(this.stairsUp); }
+        return stairs;
     }
 
     draw(context) {
