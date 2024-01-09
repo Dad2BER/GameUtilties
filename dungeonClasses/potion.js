@@ -6,7 +6,7 @@ export const potionColorText = ["Black", "Briliant Blue", "Brown", "CYAN", "EMER
                                 "ORANGE", "PINK", "RUBY", "SILVER", "Sky Blue", "Yellow", "White"];
 export const potionEffect = {RANDOM: 0, HEAL: 1, STRENGTH: 2, DEXTARITY: 3, POISON: 4};
 export const potionEffectText = ["Random", "Heal", "Strength", "Dextarty", "Poison"];
-export const potionNumberEffects = 4;
+export const potionNumberEffects = 5;
 
 export class Potion extends Sprite {
     constructor(x,y, color, effect) {
@@ -15,7 +15,7 @@ export class Potion extends Sprite {
         this.identified = false;
         this.color = color;
         this.effect = effect;
-        if (effect == potionEffect.RANDOM) { this.effect = diceBag.intBetween(1,NumberEffects); }
+        if (effect == potionEffect.RANDOM) { this.effect = diceBag.intBetween(1,potionNumberEffects); }
     }
 }
 
@@ -23,11 +23,12 @@ export class PotionDictionary {
     constructor() {
         this.potions = [];
         this.diceBag = new RandomNumber();
-        for(let i=1; i<=potionNumberEffects; i++) { //For every potion effect, find a random unused color to assign it to
-            //NOTE:  If the number of effects starts getting close to the number of colors thers are more efficient ways to implement this
+        for(let i=0; i<potionNumberEffects; i++) {
             let color = this.diceBag.intBetween(0, 12); 
             while (this.getEffect(color) != -1) { color = this.diceBag.intBetween(0, 12); }
-            this.potions.push(new Potion(0, 0, color, i));
+            let effect = this.diceBag.intBetween(0, potionNumberEffects-1);
+            while (this.getColor(effect) != -1) { effect = this.diceBag.intBetween(0, potionNumberEffects-1); }
+            this.potions.push(new Potion(0, 0, color, effect));
         }
     }
 

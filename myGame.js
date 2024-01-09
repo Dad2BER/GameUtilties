@@ -49,12 +49,11 @@ export class MyGame extends Game {
         let keys = this.InputHandler.keys;
         this.player.handleInput(keys); // Arrow keys
         this.playerCanvas.handleInput(keys); // 'p' and 's'
-        if (this.readyForInput) {
-            if ( keys.includes('q')) { this.quaffPotion(); }
-            if ( keys.includes('r') ) { this.readScroll(); }
-            if ( keys.includes('?') || keys.includes('Escape')) { this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show(); }
+        if ( this.InputHandler.useKey('q')) { this.quaffPotion(); }
+        if ( this.InputHandler.useKey('r') ) { this.readScroll(); }
+        if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) { 
+            this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show(); 
         }
-        this.readyForInput = keys.includes('q')==false && keys.includes('r')==false && keys.includes('?') == false && keys.includes('Escape')==false;
     }
 
     quaffPotion() {
@@ -96,7 +95,6 @@ export class MyGame extends Game {
 
     readScroll() {
         let effect = this.playerCanvas.readScroll();
-        let storyText = "";
         if (effect != null) {
             this.storyText.addLine("You read a " + scrollEffectText[effect] + " scroll");
             if (effect == scrollEffect.RANDOM) {
@@ -105,7 +103,23 @@ export class MyGame extends Game {
             }
             switch (effect) {
                 case scrollEffect.IDENTIFY:
-                    this.storyText.addLine("You feel like you should be able to identify something, but it does not work.");
+                    this.storyText.addLine("You understand a little more magic...");
+                    let item = this.playerCanvas.identifyItem();
+                    if (item != null) {
+                        switch(item.spriteType) {
+                            case 'potions':
+                                this.storyText.addLine("You know that " + potionColorText[item.color] + 
+                                                        " are " + potionEffectText[item.effect] + " potions");
+                                break;
+                            case 'scrolls':
+                                this.storyText.addLine("You know that " + scrollColorText[item.color] + 
+                                                        "are " + scrollEffectText[item.effect] + " scrolls");
+                                break;
+                            default:
+                                this.storyText.addLine("I don't know what you identified: " + item.spriteType);
+                                break;
+                        }
+                    }
                     break;
                 case scrollEffect.FIREBALL:
                     this.storyText.addLine("Fire courses though your hands, but nothing happens.");
@@ -174,6 +188,7 @@ export class MyGame extends Game {
                     }
                 }
                 if (monster.canAttack()) { //If the monster can attack then it does
+                    monster.show(); //Make sure the monster is not visible to the player.
                     let damage = monster.meleAttack() - this.player.defenceModifier;
                     if (damage > 0) {
                         this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );

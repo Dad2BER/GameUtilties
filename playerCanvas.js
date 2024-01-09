@@ -128,6 +128,23 @@ export class PlayerCanvas {
         return effect;
     }
 
+    identifyItem() {
+        let rVal = null;
+        this.potionDictionary.potions.forEach((potion) => {
+            if (potion.identified == false && rVal == null) {
+                potion.identified = true;
+                rVal = potion;
+            }
+        })
+        this.scrollDictionary.scrolls.forEach((scroll) => {
+            if (scroll.identified == false && rVal == null) {
+                scroll.identified = true;
+                rVal = potion;
+            }
+        })
+        return rVal;
+    }
+
     removePlayerItem(type, color) {
         let index = -1;
         this.player.items.forEach((item, i) => {

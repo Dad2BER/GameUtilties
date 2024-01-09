@@ -21,11 +21,12 @@ export class ScrollDictionary {
     constructor() {
         this.scrolls = [];
         this.diceBag = new RandomNumber();
-        for(let i=1; i<=scrollNumberEffects; i++) { //For every potion effect, find a random unused color to assign it to
-            //NOTE:  If the number of effects starts getting close to the number of colors thers are more efficient ways to implement this
+        for(let i=0; i<scrollNumberEffects; i++) {
             let color = this.diceBag.intBetween(0, 7); 
             while (this.getEffect(color) != -1) { color = this.diceBag.intBetween(0, 7); }
-            this.scrolls.push(new Scroll(0, 0, color, i));
+            let effect = this.diceBag.intBetween(0, scrollNumberEffects-1);
+            while (this.getColor(effect) != -1) { effect = this.diceBag.intBetween(0, scrollNumberEffects-1); }
+            this.scrolls.push(new Scroll(0, 0, color, effect));
         }
     }
 
