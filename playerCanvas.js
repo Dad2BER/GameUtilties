@@ -1,7 +1,7 @@
 import { potionColorText, potionEffectText } from "./dungeonClasses/potion.js";
 import { scrollColorText, scrollEffectText } from "./dungeonClasses/scroll.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
-import { overlayText } from "./text.js";
+import { overlayText, FontColors } from "./text.js";
 import { Point } from "./utilities.js";
 
 class statLabelText extends overlayText {
@@ -16,16 +16,9 @@ class potionLabelText extends overlayText {
     }
 }
 
-const redTrue = 'rgba(255, 0, 0, 1)';
-const redDark = 'rgba(255, 64, 64, 1)';
-const yellowTrue = 'rgba(255, 255, 0, 1)';
-const yellowAmber = 'rgba(255, 191, 0, 1)';
-const greenTrue = 'rgba(0, 255, 0, 1)';
-const greenDark = 'rgba(0, 128, 0, 1)';
-
 class rygText extends overlayText {
     constructor(locaton, redThreshold, yellowThreshold) {
-        super("", 'Arial', 12, locaton, 'left', redTrue, redDark, 0, 0, 0);
+        super("", 'Arial', 12, locaton, 'left', FontColors.redTrue, FontColors.redDark, 0, 0, 0);
         this.redThreshold = redThreshold;
         this.yellowThreshold = yellowThreshold;
     }
@@ -33,16 +26,16 @@ class rygText extends overlayText {
     setColor(value) {
         this.text = value; 
         if (value < this.redThreshold) {
-            this.fontColor = redTrue;
-            this.shadowColor = redDark;
+            this.fontColor = FontColors.redTrue;
+            this.shadowColor = FontColors.redDark;
         }
         else if (value < this.yellowThreshold) {
-            this.fontColor = yellowTrue;
-            this.shadowColor = yellowAmber;
+            this.fontColor = FontColors.yellowTrue;
+            this.shadowColor = FontColors.yellowAmber;
         }
         else {
-            this.fontColor = greenTrue;
-            this.shadowColor = greenDark;
+            this.fontColor = FontColors.greenTrue;
+            this.shadowColor = FontColors.greenDark;
         }
     }
 
@@ -85,7 +78,7 @@ export class PlayerCanvas {
         this.defenceText = new rygText(new Point(125, 52), 0, 0);
         this.defenceText.setColor(this.player.defenceModifier);
         this.goldText = new overlayText(this.player.gold, 
-                                           'Arial', 12, new Point(125,69), 'left', yellowAmber, yellowTrue, 0, 0, 0);
+                                           'Arial', 12, new Point(125,69), 'left', FontColors.yellowAmber, FontColors.yellowTrue, 0, 0, 0);
     
         this.potionIndex = 0;
         this.scrollIndex = 0;
