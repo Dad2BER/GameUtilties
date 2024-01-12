@@ -1,7 +1,25 @@
-import { Sprite, RandomeSpirte, AnimatedSprite } from "./sprite.js";
+import { Sprite, RandomeSpirte, AnimatedSprite, RotatingSprite } from "./sprite.js";
+export const spriteFacing = {LEFT:0, RIGHT:1, UP:2, DOWN:3};
 
 //Game Screens
 export class helpScreen extends Sprite { constructor(x,y) { super('help_screen', x, y, 240, 450, 0, 0); }}
+
+//Special Effects
+export class fireBall extends RotatingSprite{ 
+    constructor(x,y, direction, speed){ 
+        super('fire_ball', x, y, 32, 32, 37, 20);
+        this.direction = direction;
+        //handle movement variables as pixels per second
+        this.speed = speed/1000.0; //Convert speed to delta time milliseconds
+        switch(this.direction) {
+            case spriteFacing.LEFT: this.vx = -this.speed; break;
+            case spriteFacing.RIGHT: this.vx = this.speed; break;
+            case spriteFacing.UP: this.vy = -this.speed; break;
+            case spriteFacing.DOWN: this.vy = this.speed; break;
+            default: this.vx = 0; this.vy = 0; break;    
+        }
+    } 
+}
 
 // Skeleton
 export class skeletonWalkLeft extends AnimatedSprite { constructor(x,y) { super('skeleton_Walk_Left',x,y,128,80,8,15, true); } }

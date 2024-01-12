@@ -47,6 +47,7 @@ export class CookieHandler {
             top10Str += entry.playerName + ","+entry.comment+","+entry.score+","+entry.date;
         })
         this.setCookie("topTen", top10Str, 365);
+        return newTop10;
     }
 
     getTop10() {

@@ -1,4 +1,5 @@
 import { AnimatedSprite } from "./sprite.js";
+import { spriteFacing } from "./knownSprites.js";
 
 
 // Action Spirtes have a known set of actions in the sprite sheet:
@@ -10,7 +11,7 @@ import { AnimatedSprite } from "./sprite.js";
 export const spriteActions =   {WALK: 0, ATTACK: 1, IDLE: 2, HURT: 3, DIE: 4};
        const maxActionFrames = [8,       7,         7,       3,       6];
 export const actionYOffset =   [0,       4,         8,       9,       10];
-export const spriteFacing = {LEFT:0, RIGHT:1, UP:2, DOWN:3};
+
 
 // For more flexiiblity we could pass this in, but for now the number of animation frames
 // is hard codded to the following
@@ -24,7 +25,7 @@ export class ActionSprite extends AnimatedSprite{
         this.frameX = 0;
         this.facing = spriteFacing.LEFT;
         //handle movement variables as pixels per second
-        this.speed = speed/1000.0; //Convert speed to delta time milliseconds-009p
+        this.speed = speed/1000.0; //Convert speed to delta time milliseconds
     }
 
     setState(newAction) {

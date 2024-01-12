@@ -1,5 +1,6 @@
 import { Player } from "./myPlayer.js";
-import { spriteActions, spriteFacing } from "./sprite_classes/actionSprite.js";
+import { spriteActions } from "./sprite_classes/actionSprite.js";
+import { spriteFacing } from "./sprite_classes/knownSprites.js";
 
 class playerState {
     constructor(state, player) {

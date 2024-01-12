@@ -6,11 +6,11 @@ import { playerDamageText, monsterDamageText, statusText, youDiedText } from "./
 import { Point, RandomNumber, direction } from "./utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
-import { PotionDictionary, potionColorText, potionEffect, potionEffectText, potionNumberEffects} from "./dungeonClasses/potion.js";
-import { ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
+import { Potion, PotionDictionary, potionColorText, potionEffect, potionEffectText, potionNumberEffects} from "./dungeonClasses/potion.js";
+import { Scroll, ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
 import { BackGround } from "./sprite_classes/background.js";
 import { CookieHandler, HighScore } from "./cookie.js";
-import { binary, helpScreen } from "./sprite_classes/knownSprites.js";
+import { binary, fireBall, helpScreen } from "./sprite_classes/knownSprites.js";
 
 
 export class MyGame extends Game {
@@ -39,11 +39,12 @@ export class MyGame extends Game {
         this.runCount++;
         this.cookie.setCookie("runCount", this.runCount, 90);
        //this.cookie.clearTop10();
-        this.cookie.setTop10( new HighScore(this.runCount, "Hello", this.diceBag.intBetween(1,100), null) );
+        //this.cookie.setTop10( new HighScore(this.runCount, "Hello", this.diceBag.intBetween(1,100), null) );
         this.cookie.logCookies();
         this.helpScreen = new helpScreen(width/2, height/2);
         this.helpScreen.show();
         this.youDiedText = null;
+        this.rangeAttacks = [];
     }
     
     handleInput() {
@@ -58,6 +59,14 @@ export class MyGame extends Game {
         }
         if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) {  this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show();  }
         if ( this.InputHandler.useKey('m') ) { this.dungeon.showLevel();} //Debug command to show the level
+        if ( this.InputHandler.useKey('!') ) { 
+            this.potionDictionary.potions.forEach((potion) => {
+                this.player.addItem(new Potion(0,0,potion.color, potion.effect));
+            })
+            this.scrollDictionary.scrolls.forEach((scroll) => {
+                this.player.addItem(new Scroll(0,0,scroll.color, scroll.effect));
+            })
+        }
     }
 
     useStairs(goDown) {
@@ -101,6 +110,7 @@ export class MyGame extends Game {
                     let damage = this.diceBag.intBetween(1, 4);
                     this.storyText.addLine("You took " + damage + " damage.");
                     this.player.hitPoints -= damage;
+                    this.isPlayerDead("You drank yourself to death.");
                     break;
                 case potionEffect.STRENGTH:
                     this.storyText.addLine("You are stronger, you will do more damage.");
@@ -142,7 +152,10 @@ export class MyGame extends Game {
                     }
                     break;
                 case scrollEffect.FIREBALL:
-                    this.storyText.addLine("Fire courses though your hands, but nothing happens.");
+                    this.storyText.addLine("Fire courses though your hands...");
+                    let fb = new fireBall(this.player.x, this.player.y, this.player.facing, 50);
+                    fb.show();
+                    this.rangeAttacks.push( fb );
                     break;
                 case scrollEffect.MAP:
                     this.storyText.addLine("It looks to be a map to this level of the dungeon.");
@@ -205,10 +218,7 @@ export class MyGame extends Game {
                     this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );
                     this.storyText.addLine("Rat did " + damage + " damage to you!");
                     this.player.damagePlayer(damage);
-                    if (this.player.hitPoints <= 0) {
-                        this.storyText.addLine("You were killed by a rat.");
-                        this.youDiedText = new youDiedText("You Died!!!!", new Point(this.canvas.width/2, this.canvas.height/2));
-                    }
+                    this.isPlayerDead("You were killed by a rat.");
                 }
                 else {
                     this.overlayTexts.push( new monsterDamageText("0" , monster.getLocation()) );
@@ -253,6 +263,23 @@ export class MyGame extends Game {
         })
     }
 
+    updateRangeAttacks(deltaTime) {
+        this.rangeAttacks.forEach((missle) => {
+            missle.update(deltaTime);
+            let hitMosters = this.dungeon.monsterCollisions(missle.getHitBox());
+            hitMosters.forEach((monster, index) => {
+                this.storyText.addLine("Fireball hit " + index + " of " + hitMosters.length + " Rats.");
+            })
+            let mapTiles = this.dungeon.getOverlapTiles(missle.getHitBox());
+            mapTiles.forEach((tile) => {
+                if (tile.solid) {
+                    this.storyText.addLine("Fireball explodes as it hits a wall.");
+                    missle.markedForDeletion = true;
+                }
+            })
+        })
+    }
+
     update(timeStamp) {
         let deltaTime = super.update(timeStamp);
         if (deltaTime < 1000) { //The browser pauses the animation loop when we are not the focus, so ignore large time jumps
@@ -262,9 +289,12 @@ export class MyGame extends Game {
             this.dungeon.update(deltaTime); //This allows all the monsters to move and animations to run
             this.dungeon.openHitDoor(this.player.getHitBox());
             this.dungeon.adjustMovingObject(this.player);
+            //Dungeon maintains the animations of these, we are just checking for interactoin
             this.updateCombat();  //Monster attacks and Player Attacks
             this.updateChests();  //Open Chests
             this.updateItems();   //Pick Up Items
+            //Check on fireball updates
+            this.updateRangeAttacks(deltaTime); 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);
         }
@@ -279,6 +309,17 @@ export class MyGame extends Game {
         this.draw(this.ctx);
         return true;
     }
+
+    isPlayerDead(message) {
+        if (this.player.hitPoints <= 0) {
+            this.storyText.addLine(message);
+            this.youDiedText = new youDiedText("You Died!!!!", new Point(this.canvas.width/2, this.canvas.height/2));
+            let top10 = this.cookie.setTop10( new HighScore("Player", message, this.player.gold, null) );
+            top10.forEach((entry) => {
+                console.log(entry.playerName + " " + entry.comment + " " + entry.score);
+            })
+        }
+    }
     
     draw(context){
         super.draw(context);
@@ -289,6 +330,12 @@ export class MyGame extends Game {
             if (txt.markedForDeletion) { this.overlayTexts.splice(index, 1);}
         })
         this.player.draw(context);
+        this.rangeAttacks.forEach((missle, index) => { 
+            missle.draw(context); 
+            if (missle.markedForDeletion) {
+                this.rangeAttacks.splice(index, 1);
+            }
+        })
         if (this.helpScreen != null) { this.helpScreen.draw(context, false);}
         if (this.youDiedText != null) { this.youDiedText.draw(context); }
     }

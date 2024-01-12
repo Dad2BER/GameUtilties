@@ -61,9 +61,42 @@ export class Sprite {
         return new HitBox(this.drawX, this.drawY, this.width, this.height);
     }
 
+    isCollision(target) {
+        return this.getHitBox().overlap(target.getHitBox);
+    }
+
     isVisible() { return this.visible; }
     hide() { this.visible = false;}
     show() { this.visible = true;}
+}
+
+export class RotatingSprite extends Sprite{
+    constructor(spriteSheetImageID, x, y, spriteWidth, spriteHeight, degPerFrame, fps) {
+        super(spriteSheetImageID, x, y, spriteWidth, spriteHeight, 0, 0);
+        this.angle = 0;
+        this.va = degPerFrame; //Math.random() * 0.2 - 0.1;
+        this.fps = fps; //How many frames per second should display (how fast is the animation)
+        this.frameInterval = 1000/this.fps; //Based on the fps, we can determin how much time to leave between frames
+        this.frameTimer = 0; //Need to keep track of how long we have been on this frame
+    }
+
+    update(deltaTime) {
+        super.update(deltaTime);
+        if (this.frameTimer > this.frameInterval) {
+            this.angle += this.va*Math.PI/180;
+            this.frameTimer -= this.frameInterval;
+        }
+        else {
+            this.frameTimer += deltaTime;
+        }
+    }
+    draw(context) {
+        context.save();
+        context.translate(this.drawX, this.drawY); //Put canvas at center of image
+        context.rotate(this.angle); // Rotate canvas
+        context.drawImage(this.image, this.width/-2, this.height/-2, this.width, this.height); 
+        context.restore();
+    }
 }
 
 export class RandomeSpirte extends Sprite {
@@ -87,7 +120,6 @@ export class AnimatedSprite extends Sprite {
     restartAnimation() {
         this.frameX = 0;
         this.animationFinished = false;
-        this.frameTimer = 0;
     }
 
     update(deltaTime) {
@@ -103,6 +135,7 @@ export class AnimatedSprite extends Sprite {
             }
             else if (this.loop == true) {
                 this.restartAnimation();
+                this.frameTimer -= this.frameInterval;
             }
             else {
                 this.frameX = this.maxFrames -1;

@@ -31,6 +31,7 @@ export class Dungeon {
     chestCollisions(hitBox) { return this.map[this.currentlevel].chestCollisions(hitBox); }
     itemCollisions(hitBox) { return this.map[this.currentlevel].itemCollisions(hitBox); }
     stairCollisions(hitBox) { return this.map[this.currentlevel].stairCollisions(hitBox); }
+    getOverlapTiles(hitBox) { return this.map[this.currentlevel].getOverlapTiles(hitBox); }
 
     goDown(player) { 
         this.currentlevel++; 
