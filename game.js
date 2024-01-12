@@ -1,5 +1,5 @@
 import { InputHandler } from "./input.js";
-import { RandomNumber } from "./utilities.js";
+import { RandomNumber } from "./dungeonClasses/utilities.js";
 export class Game {
     //Every game has a canvas, width and height
     constructor(canvasID, width, height){

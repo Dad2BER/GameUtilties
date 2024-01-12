@@ -1,5 +1,5 @@
 import { Sprite } from "../sprite_classes/sprite.js";
-import { RandomNumber } from "../utilities.js";
+import { RandomNumber } from "./utilities.js";
 export const scrollColor = {UNKNOWN: -1, BLUE: 0, BROWN: 1, CYAN: 2, GREEN: 3, GRAY: 4, PURPLE: 5, RED: 6, YELLOW: 7 };
 export const scrollColorText = ["Blue", "Brown", "CYAN", "Green", "Gray", "Purple", "Red", "Yellow"];
 export const scrollEffect = {RANDOM: 0, IDENTIFY: 1, FIREBALL: 2, MAP: 3, CURSE: 4};
@@ -46,6 +46,9 @@ export class ScrollDictionary {
         return RVal;
     }
 
-    getRandom() { return this.scrolls[this.diceBag.intBetween(0, this.scrolls.length -1)]; }
+    getRandom() { 
+        let randomScroll = this.scrolls[this.diceBag.intBetween(0, this.scrolls.length -1)]; 
+        return new Scroll(0, 0, randomScroll.color, randomScroll.effect); 
+    }
 
 }

@@ -1,5 +1,5 @@
 import { Sprite } from "../sprite_classes/sprite.js";
-import { RandomNumber } from "../utilities.js";
+import { RandomNumber } from "./utilities.js";
 export const potionColor = {UNKNOWN: -1, BLACK: 0, BRILIANT_BLUE: 1, BROWN: 2, CYAN: 3, EMERALD: 4, MAGENTA: 5, 
                             ORANGE: 6, PINK: 7, RUBY: 8, SILVER: 9, SKY_BLUE: 10, YELLOW: 11, WHITE: 12 };
 export const potionColorText = ["Black", "Briliant Blue", "Brown", "CYAN", "EMERALD", "MAGENTA", 
@@ -48,6 +48,9 @@ export class PotionDictionary {
         return RVal;
     }
 
-    getRandom() { return this.potions[this.diceBag.intBetween(0, this.potions.length -1)]; }
+    getRandom() {
+        let randomPotion = this.potions[this.diceBag.intBetween(0, this.potions.length -1)];  
+        return new Potion(0, 0, randomPotion.color, randomPotion.effect); 
+    }
 
 }

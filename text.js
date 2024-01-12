@@ -1,4 +1,4 @@
-import { Point } from "./utilities.js";
+import { Point } from "./dungeonClasses/utilities.js";
 
 export const FontColors = {redTrue: 'rgba(255, 0, 0, 1)', redDark: 'rgba(255, 64, 64, 1)', 
                            yellowTrue: 'rgba(255, 255, 0, 1)', yellowAmber: 'rgba(255, 191, 0, 1)',

@@ -1,6 +1,6 @@
 import { MovingSprite } from "../sprite_classes/movingSprite.js";
 import { Sprite } from "../sprite_classes/sprite.js";
-import { RandomNumber, direction, sidedDice } from "../utilities.js";
+import { RandomNumber, direction, sidedDice } from "./utilities.js";
 
 export const monsterType = {RAT: 'rats', TROLL: 'trolls',GIANT: 'giants', ORC: 'orcs', DRAGON: 'dragons'};
 export const ratSubtype = {BROWN: 0, GREEN: 1, GREY: 2, ORANGE: 3, RED: 4};

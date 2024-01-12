@@ -3,7 +3,7 @@ import { Game } from "./game.js";
 import { Player } from "./myPlayer.js";
 import { Dungeon } from "./dungeonClasses/dungeon.js";
 import { playerDamageText, monsterDamageText, statusText, youDiedText } from "./text.js";
-import { Point, RandomNumber, direction } from "./utilities.js";
+import { Point, RandomNumber, direction } from "./dungeonClasses/utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
 import { Potion, PotionDictionary, potionColorText, potionEffect, potionEffectText, potionNumberEffects} from "./dungeonClasses/potion.js";
@@ -216,13 +216,13 @@ export class MyGame extends Game {
                 let damage = monster.meleAttack() - this.player.defenceModifier;
                 if (damage > 0) {
                     this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );
-                    this.storyText.addLine("Rat did " + damage + " damage to you!");
+                    this.storyText.addLine(monster.name + " did " + damage + " damage to you!");
                     this.player.damagePlayer(damage);
-                    this.isPlayerDead("You were killed by a rat.");
+                    this.isPlayerDead("You were killed by a " + monster.name);
                 }
                 else {
                     this.overlayTexts.push( new monsterDamageText("0" , monster.getLocation()) );
-                    this.storyText.addLine("Rat attacked and missed.");
+                    this.storyText.addLine(monster.name + " attacked and missed.");
                 }
             }
         })
@@ -268,15 +268,22 @@ export class MyGame extends Game {
             missle.update(deltaTime);
             let hitMosters = this.dungeon.monsterCollisions(missle.getHitBox());
             hitMosters.forEach((monster, index) => {
-                this.storyText.addLine("Fireball hit " + index + " of " + hitMosters.length + " Rats.");
-            })
-            let mapTiles = this.dungeon.getOverlapTiles(missle.getHitBox());
-            mapTiles.forEach((tile) => {
-                if (tile.solid) {
-                    this.storyText.addLine("Fireball explodes as it hits a wall.");
-                    missle.markedForDeletion = true;
+                let fireBallDamage = this.diceBag.d6() + 1;
+                if (monster.takeDamage(fireBallDamage) < 0) { //Did we kill the monster
+                    this.storyText.addLine("Fireball killed the " + monster.name);
+                    monster.markedForDeletion = true;
+                }
+                else {
+                    this.storyText.addLine("Fireball hit the " + monster.name + " for " + fireBallDamage + " damage");
                 }
             })
+            let mapTiles = this.dungeon.getOverlapTiles(missle.getHitBox());
+            let foundSolid = false;
+            mapTiles.forEach((tile) => { if (tile.solid) foundSolid = true; })
+            if (foundSolid) {
+                this.storyText.addLine("Fireball explodes as it hits a wall.");
+                missle.markedForDeletion = true;
+            }
         })
     }
 

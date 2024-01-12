@@ -1,5 +1,5 @@
 import { DirectionSprite } from "./directionSprite.js";
-import { direction } from "../utilities.js";
+import { direction } from "../dungeonClasses/utilities.js";
 
 export class MovingSprite extends DirectionSprite {
     constructor(leftSprite, rightSprite, upSprite, downSprite, facing, speed) {

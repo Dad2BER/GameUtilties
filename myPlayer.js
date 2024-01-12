@@ -1,5 +1,5 @@
 import { idle, walking, hurt, dead, meleeAttack } from "./myPlayerStates.js";
-import { RandomNumber } from "./utilities.js";
+import { RandomNumber } from "./dungeonClasses/utilities.js";
 import { ActionSprite, spriteActions} from "./sprite_classes/actionSprite.js";
 
 export class Player extends ActionSprite {

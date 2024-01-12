@@ -35,6 +35,7 @@ export class HitBox {
         this.y -= delta;
         this.width += 2*delta;
         this.height += 2*delta;
+        return this;
     }
 
     overlap(target) {
@@ -62,4 +63,8 @@ export class RandomNumber{
         return rValue;
     }
     percent() {return this.intBetween(1,100);}
+
+    ptInRect(x, y, width, height) { return new Point(this.intBetween(x, x+width), this.intBetween(y, y+height)); }
 }
+
+

@@ -1,4 +1,4 @@
-import { direction, Point } from "../utilities.js";
+import { direction, Point } from "../dungeonClasses/utilities.js";
 
 export class DirectionSprite {
     constructor(leftSprite, rightSprite, upSprite, downSprite, facing) {

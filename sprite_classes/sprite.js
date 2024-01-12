@@ -1,4 +1,4 @@
-import { HitBox, Point } from "../utilities.js";
+import { HitBox, Point } from "../dungeonClasses/utilities.js";
 
 export class Sprite {
     

@@ -1,10 +1,6 @@
 import { TileMap } from "./tileMap.js";
-import { JitterPoint, Point, direction } from "../utilities.js";
+import { LootGenerator } from "./lootGenerator.js";
 import { rat, ratSubtype } from "./monster.js";
-import { TreasureChest } from "./treasureChest.js";
-import { Potion } from "./potion.js";
-import { Scroll } from "./scroll.js";
-import { Gold } from "./gold.js";
 
 export class DungeonLevel extends TileMap {
     constructor(width, height, potionDictionary, scrollDictionary) {
@@ -15,6 +11,7 @@ export class DungeonLevel extends TileMap {
         this.diceBag = this.myRandom;
         this.potionDictionary = potionDictionary;
         this.scrollDictionary = scrollDictionary;
+        this.lootGenerator = new LootGenerator(this.potionDictionary, this.scrollDictionary);
         this.populateLevel();
         //this.showAll();
     }
@@ -31,63 +28,20 @@ export class DungeonLevel extends TileMap {
         this.showMonsters();
         this.showChests();
         this.showItems();
+        console.log(this.items);
     }
-
-    openChest(chest) {
-        chest.open();
-        let addPotions = this.diceBag.intBetween(0,2); //How many potions to put in this room
-        let addScrolls = this.diceBag.intBetween(0,2); // How many scrolls to put in this room
-        let addGold = this.diceBag.intBetween(0,2); //How many gold pilse to put in this room
-        for (let j=0; j<addPotions; j++) {
-            let randomPotion = this.potionDictionary.getRandom();
-            let pt = new JitterPoint(chest.x, chest.y, 32, 32);
-            this.items.push(new Potion(pt.x, pt.y, randomPotion.color));
-        }
-        for (let j=0; j<addScrolls; j++) {
-            let randomScroll = this.scrollDictionary.getRandom();
-            let pt = new JitterPoint(chest.x, chest.y, 32, 32);
-            this.items.push(new Scroll(pt.x, pt.y, randomScroll.color));
-        }
-        for (let j=0; j<addGold; j++) {
-            let pt = new JitterPoint(chest.x, chest.y, 32, 32);
-            this.items.push(new Gold(pt.x, pt.y, this.diceBag.d6()+1));
-        }
-    }
-
-
 
     populateLevel() {
         //Monsters go in every room, except the first (to make it safe for the player)
         for(let i=1; i<this.rooms.length; i++) {
-            let x = this.diceBag.intBetween(this.rooms[i].x, this.rooms[i].x+this.rooms[i].width-32)+16;
-            let y = this.diceBag.intBetween(this.rooms[i].y, this.rooms[i].y+this.rooms[i].height-32)+16;
-            let monster = new rat(x,y,ratSubtype.BROWN);
+            let pt = this.getRandomRoomPoint(i);
+            let monster = new rat(pt.x,pt.y,ratSubtype.BROWN);
             monster.setRandomDirection();
             this.monsters.push(monster);
-        }       
-       for(let i=0; i<this.rooms.length; i++) {
-            let addPotions = this.diceBag.intBetween(0,2); //How many potions to put in this room
-            let addScrolls = this.diceBag.intBetween(0,2); // How many scrolls to put in this room
-            let addChests = this.diceBag.intBetween(0,1); //How many Chests to put in this room
-            let addGold = this.diceBag.intBetween(0,2); //How many gold pilse to put in this room
-            for (let j=0; j<addChests; j++) {
-                let RandomPoint = this.getRandomRoomPoint(i);
-                this.treasureChests.push(new TreasureChest(RandomPoint.x,RandomPoint.y));
-            }
-            for (let j=0; j<addPotions; j++) {
-                let RandomPoint = this.getRandomRoomPoint(i);
-                let randomPotion = this.potionDictionary.getRandom();
-                this.items.push(new Potion(RandomPoint.x,RandomPoint.y, randomPotion.color));
-            }
-            for (let j=0; j<addScrolls; j++) {
-                let RandomPoint = this.getRandomRoomPoint(i);
-                let randomScroll = this.scrollDictionary.getRandom();
-                this.items.push(new Scroll(RandomPoint.x,RandomPoint.y, randomScroll.color));
-            }
-            for (let j=0; j<addGold; j++) {
-                let RandomPoint = this.getRandomRoomPoint(i);
-                this.items.push(new Gold(RandomPoint.x, RandomPoint.y, this.diceBag.d6()+1));
-            }
+        }
+        for(let i=0; i<this.rooms.length; i++) {
+            let rect = this.rooms[i].getHitBox();
+            this.lootGenerator.generateJitterLoot(this.items, rect.expand(-16), 2, 2, 2, 1);
         }
     }
     

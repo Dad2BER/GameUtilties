@@ -1,5 +1,5 @@
 import { randomeBrickBrown, randomGrayFloor, doorHorizontal, stairUp, stairDown } from "../sprite_classes/knownSprites.js";
-import { create2DArray, HitBox, RandomNumber, direction, Point } from "../utilities.js";
+import { create2DArray, HitBox, RandomNumber, direction, Point } from "./utilities.js";
 
 const tileType = { FLOOR: 0, WALL: 1 };
 
@@ -342,9 +342,9 @@ try {
 
         
     getRandomRoomPoint(roomIndex) {
-        let x = this.myRandom.intBetween(this.rooms[roomIndex].x, this.rooms[roomIndex].x+this.rooms[roomIndex].width-32)+16;
-        let y = this.myRandom.intBetween(this.rooms[roomIndex].y, this.rooms[roomIndex].y+this.rooms[roomIndex].height-32)+16;
-        return new Point(x,y);
+        let rect = this.rooms[roomIndex].getHitBox();
+        rect.expand(-32);
+        return this.myRandom.ptInRect(rect.x, rect.y, rect.width, rect.height);
     }
 
     addStairsDown() {
@@ -443,6 +443,7 @@ class Room {
     getHitBox() {
         return new HitBox(this.x, this.y, this.width, this.height);
     }
+
     containsPoint(pt) { 
         return this.x <= pt.x && (this.x+this.width) >= pt.x && this.y <= pt.y && (this.y + this.height) >= pt.y; 
     }

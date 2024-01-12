@@ -1,5 +1,5 @@
 import { Sprite } from "../sprite_classes/sprite.js";
-import { RandomNumber } from "../utilities.js";
+import { RandomNumber } from "./utilities.js";
 
 export class Gold extends Sprite {
     constructor(x,y, Quantity) {

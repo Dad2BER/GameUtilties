@@ -2,7 +2,7 @@ import { potionColorText, potionEffectText } from "./dungeonClasses/potion.js";
 import { scrollColorText, scrollEffectText } from "./dungeonClasses/scroll.js";
 import { skeletonIdle } from "./sprite_classes/knownSprites.js";
 import { overlayText, FontColors } from "./text.js";
-import { Point } from "./utilities.js";
+import { Point } from "./dungeonClasses/utilities.js";
 
 class statLabelText extends overlayText {
     constructor(displayText, location) {
