@@ -7,7 +7,7 @@ export class helpScreen extends Sprite { constructor(x,y) { super('help_screen',
 //Special Effects
 export class fireBall extends RotatingSprite{ 
     constructor(x,y, direction, speed){ 
-        super('fire_ball', x, y, 32, 32, 37, 20);
+        super('fire_ball', x, y, 32, 32, 13, 30);
         this.direction = direction;
         //handle movement variables as pixels per second
         this.speed = speed/1000.0; //Convert speed to delta time milliseconds

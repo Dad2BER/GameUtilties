@@ -73,7 +73,10 @@ export class Sprite {
 export class RotatingSprite extends Sprite{
     constructor(spriteSheetImageID, x, y, spriteWidth, spriteHeight, degPerFrame, fps) {
         super(spriteSheetImageID, x, y, spriteWidth, spriteHeight, 0, 0);
-        this.angle = 0;
+        this.angles = [];
+        for(let i=0; i< 360; i += 90) {
+            this.angles.push(i);
+        }
         this.va = degPerFrame; //Math.random() * 0.2 - 0.1;
         this.fps = fps; //How many frames per second should display (how fast is the animation)
         this.frameInterval = 1000/this.fps; //Based on the fps, we can determin how much time to leave between frames
@@ -83,7 +86,7 @@ export class RotatingSprite extends Sprite{
     update(deltaTime) {
         super.update(deltaTime);
         if (this.frameTimer > this.frameInterval) {
-            this.angle += this.va*Math.PI/180;
+            for(let i=0; i<this.angles.length; i++) { this.angles[i] += this.va*Math.PI/180 + Math.random(); }
             this.frameTimer -= this.frameInterval;
         }
         else {
@@ -91,11 +94,13 @@ export class RotatingSprite extends Sprite{
         }
     }
     draw(context) {
-        context.save();
-        context.translate(this.x, this.y); //Put canvas at center of image
-        context.rotate(this.angle); // Rotate canvas
-        context.drawImage(this.image, this.width/-2, this.height/-2, this.width, this.height); 
-        context.restore();
+        this.angles.forEach((angle) => {
+            context.save();
+            context.translate(this.x, this.y); //Put canvas at center of image
+            context.rotate(angle); // Rotate canvas
+            context.drawImage(this.image, this.width/-2, this.height/-2, this.width, this.height); 
+            context.restore();
+        })
     }
 }
 
