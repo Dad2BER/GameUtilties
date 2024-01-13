@@ -13,30 +13,10 @@ export class Dungeon {
         this.currentLevel = this.map[this.levelIndex];
     }
     
-    update(deltaTime) { this.currentLevel.update(deltaTime); }
+    // We don't call these directly from myGame, in case we ever add other items to Dungeon
+    // or if we ever want to update more than just the current level
+    update(deltaTime) { this.currentLevel.update(deltaTime); } 
     draw(context) { this.currentLevel.draw(context); }
-    adjustMovingObject(object) { return this.currentLevel.adjustMovingObject(object); }
-    openHitDoor(hitBox) { this.currentLevel.openHitDoor(hitBox); }
-
-    getRoom(levelIndex, roomIndex) { return this.map[levelIndex].rooms[roomIndex]; }
-
-    levelRooms() { return this.currentLevel.rooms; }
-    levelChests() { return this.currentLevel.treasureChests; }
-    levelItems() { return this.currentLevel.items; }
-    levelMonsters() { return this.currentLevel.monsters; }
-    openChest(chest) { 
-        chest.open();
-        let rect = chest.getHitBox();
-        level.lootGenerator.generateJitterLoot(this.currentLevel.items, rect.expand(16), 2, 2, 2, 0);
-    }
-    showOverlapingTiles(hitBox) { return this.currentLevel.showOverlapyingTiles(hitBox);}
-    getRoomFromPoint(pt) { return this.currentLevel.getRoomFromPoint(pt);}
-    showRoom(room) {return this.currentLevel.showRoom(room);}
-    monsterCollisions(hitBox) { return this.currentLevel.monsterCollisions(hitBox); }
-    chestCollisions(hitBox) { return this.currentLevel.chestCollisions(hitBox); }
-    itemCollisions(hitBox) { return this.currentLevel.itemCollisions(hitBox); }
-    stairCollisions(hitBox) { return this.currentLevel.stairCollisions(hitBox); }
-    getOverlapTiles(hitBox) { return this.currentLevel.getOverlapTiles(hitBox); }
 
     goDown(player) { 
         this.levelIndex++; 
@@ -49,27 +29,12 @@ export class Dungeon {
         player.setLocation(this.currentLevel.stairsDown.x, this.currentLevel.stairsDown.y);
     }
 
-    removeItem(item) {
-        this.currentLevel.removeItem(item);
-    }
-
     addPlayer(player) {
         //Player goes in the first room
         this.player = player;
         let room = this.currentLevel.rooms[0];
         this.player.setLocation(room.x + Math.floor(room.width/2), room.y + Math.floor(room.height/2));
     }
-
-    showLevel() { this.currentLevel.showAll(); }
-    showLevelDetail(showMap, showMonsters, showChests, showPotions, showScrolls, showGold) {
-        if (showMap)      this.currentLevel.showMap();
-        if (showMonsters) this.currentLevel.showMonsters();
-        if (showChests)   this.currentLevel.showChests();
-        if (showPotions)  this.currentLevel.showPotions();
-        if (showScrolls)  this.currentLevel.showScrolls();
-        if (showGold)     this.currentLevel.showGold();
-    }
-
 
 }
 

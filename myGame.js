@@ -6,8 +6,8 @@ import { playerDamageText, monsterDamageText, statusText, youDiedText } from "./
 import { Point, RandomNumber, direction } from "./dungeonClasses/utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
-import { Potion, PotionDictionary, potionColorText, potionEffect, potionEffectText, potionNumberEffects} from "./dungeonClasses/potion.js";
-import { Scroll, ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText, scrollNumberEffects } from "./dungeonClasses/scroll.js";
+import { Potion, PotionDictionary, potionColorText, potionEffect, potionEffectText} from "./dungeonClasses/potion.js";
+import { Scroll, ScrollDictionary, scrollColorText, scrollEffect, scrollEffectText } from "./dungeonClasses/scroll.js";
 import { BackGround } from "./sprite_classes/background.js";
 import { CookieHandler, HighScore } from "./cookie.js";
 import { binary, fireBall, helpScreen } from "./sprite_classes/knownSprites.js";
@@ -58,7 +58,7 @@ export class MyGame extends Game {
             if ( this.InputHandler.useKey('u') ) { this.useStairs(false); }
         }
         if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) {  this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show();  }
-        if ( this.InputHandler.useKey('m') ) { this.dungeon.showLevel();} //Debug command to show the level
+        if ( this.InputHandler.useKey('m') ) { this.dungeon.currentLevel.showLevel();} //Debug command to show the level
         if ( this.InputHandler.useKey('!') ) { 
             this.potionDictionary.potions.forEach((potion) => {
                 this.player.addItem(new Potion(0,0,potion.color, potion.effect));
@@ -70,7 +70,7 @@ export class MyGame extends Game {
     }
 
     useStairs(goDown) {
-        let stairs = this.dungeon.stairCollisions(this.player.getHitBox());
+        let stairs = this.dungeon.currentLevel.stairCollisions(this.player.getHitBox());
         let used = false;
         stairs.forEach((stair) => { 
             if (goDown && stair.frameX == binary.DOWN) {
@@ -91,7 +91,7 @@ export class MyGame extends Game {
             this.storyText.addLine("You drank a " + potionEffectText[effect] + " potion.");
             if (effect == potionEffect.RANDOM) {
                 this.storyText.addLine("Wild uncontrollable things happen...");
-                while (effect == potionEffect.RANDOM) { effect = this.diceBag.intBetween(1, potionNumberEffects); } //Now we pick something else
+                while (effect == potionEffect.RANDOM) { effect = this.diceBag.intBetween(1, potionEffectText.length); } //Now we pick something else
             }
             switch(effect) {
                 case potionEffect.DEXTARITY:
@@ -129,7 +129,7 @@ export class MyGame extends Game {
             this.storyText.addLine("You read a " + scrollEffectText[effect] + " scroll");
             if (effect == scrollEffect.RANDOM) {
                 this.storyText.addLine("Wild uncontrollable things happen...");
-                while (effect == scrollEffect.RANDOM) { effect = this.diceBag.intBetween(1, scrollNumberEffects); } //Now we pick something else
+                while (effect == scrollEffect.RANDOM) { effect = this.diceBag.intBetween(1, scrollEffectText.length); } //Now we pick something else
             }
             switch (effect) {
                 case scrollEffect.IDENTIFY:
@@ -162,19 +162,19 @@ export class MyGame extends Game {
                     let random = this.diceBag.d10();
                     if (random < 6) {
                         this.storyText.addLine("You can now see all the rooms, doors, and stairs.");
-                        this.dungeon.showLevelDetail(true, false, false, false, false, false);
+                        this.dungeon.currentLevel.showLevelDetail(true, false, false, false, false, false);
                     }
                     else if (random < 8) {
                         this.storyText.addLine("The map includes where treasure chests are.");
-                        this.dungeon.showLevelDetail(true, false, true, false, false, false);
+                        this.dungeon.currentLevel.showLevelDetail(true, false, true, false, false, false);
                     }
                     else if (random < 9) {
                         this.storyText.addLine("The map is recent and includes all treasure.");
-                        this.dungeon.showLevelDetail(true, false, true, true, true, true);
+                        this.dungeon.currentLevel.showLevelDetail(true, false, true, true, true, true);
                     }
                     else {
                         this.storyText.addLine("The map is magic and shows everything.");
-                        this.dungeon.showLevelDetail(true, true, true, true, true, true);
+                        this.dungeon.currentLevel.showLevelDetail(true, true, true, true, true, true);
                     }
                     break;
                 case scrollEffect.CURSE:
@@ -189,7 +189,7 @@ export class MyGame extends Game {
     }
 
     updateCombat() {
-        let monsters = this.dungeon.monsterCollisions(this.player.getHitBox());
+        let monsters = this.dungeon.currentLevel.monsterCollisions(this.player.getHitBox());
         monsters.forEach((monster)=> { 
             //Notice that the player can only attack monsters they overlap with, so this is a mele attack
             //Also the canAttack will get set to false after the first attack so player will only attack the first monster
@@ -228,21 +228,17 @@ export class MyGame extends Game {
         })
     }
 
-    updateChests() {
-        let chests = this.dungeon.chestCollisions(this.player.getHitBox());
-        chests.forEach((chest)=> {
-            if (!chest.isOpen) { 
-                this.dungeon.openChest(chest);
-                this.overlayTexts.push( new statusText("Open" , chest.getLocation()) );
-                this.storyText.addLine("You open a chest...");
-            }
-        }) 
-    }
-
     updateItems() {
-        let items = this.dungeon.itemCollisions(this.player.getHitBox());
+        let items = this.dungeon.currentLevel.itemCollisions(this.player.getHitBox());
         items.forEach((item, index) => {
             switch(item.spriteType) {
+                case "chest":
+                    if (!item.isOpen) { 
+                        this.dungeon.currentLevel.openChest(item);
+                        this.overlayTexts.push( new statusText("Open" , item.getLocation()) );
+                        this.storyText.addLine("You open a chest...");
+                    }
+                    break;
                 case "potions": 
                     this.storyText.addLine("You have collected a " + potionColorText[item.color] + " potion.");
                     this.player.addItem(item);
@@ -259,14 +255,14 @@ export class MyGame extends Game {
                     this.storyText.addLine("You have collected an unkown item: " + item.spriteType);
                     break;
             }
-            this.dungeon.removeItem(item);
+            this.dungeon.currentLevel.removeItem(item);
         })
     }
 
     updateRangeAttacks(deltaTime) {
         this.rangeAttacks.forEach((missle) => {
             missle.update(deltaTime);
-            let hitMosters = this.dungeon.monsterCollisions(missle.getHitBox());
+            let hitMosters = this.dungeon.currentLevel.monsterCollisions(missle.getHitBox());
             hitMosters.forEach((monster, index) => {
                 let fireBallDamage = this.diceBag.d6() + 1;
                 if (monster.takeDamage(fireBallDamage) < 0) { //Did we kill the monster
@@ -277,7 +273,7 @@ export class MyGame extends Game {
                     this.storyText.addLine("Fireball hit the " + monster.name + " for " + fireBallDamage + " damage");
                 }
             })
-            let mapTiles = this.dungeon.getOverlapTiles(missle.getHitBox());
+            let mapTiles = this.dungeon.currentLevel.getOverlapTiles(missle.getHitBox());
             let foundSolid = false;
             mapTiles.forEach((tile) => { if (tile.solid) foundSolid = true; })
             if (foundSolid) {
@@ -294,23 +290,22 @@ export class MyGame extends Game {
             this.handleInput();
             this.player.update(deltaTime); //This allows the player to move and animate, but we may reset them later
             this.dungeon.update(deltaTime); //This allows all the monsters to move and animations to run
-            this.dungeon.openHitDoor(this.player.getHitBox());
-            this.dungeon.adjustMovingObject(this.player);
+            this.dungeon.currentLevel.openHitDoor(this.player.getHitBox());
+            this.dungeon.currentLevel.adjustMovingObject(this.player);
             //Dungeon maintains the animations of these, we are just checking for interactoin
             this.updateCombat();  //Monster attacks and Player Attacks
-            this.updateChests();  //Open Chests
             this.updateItems();   //Pick Up Items
             //Check on fireball updates
             this.updateRangeAttacks(deltaTime); 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);
         }
-        let playerRoom = this.dungeon.getRoomFromPoint(this.player.getLocation());
-        if (playerRoom != null) { this.dungeon.showRoom(playerRoom); }
+        let playerRoom = this.dungeon.currentLevel.getRoomFromPoint(this.player.getLocation());
+        if (playerRoom != null) { this.dungeon.currentLevel.showRoom(playerRoom); }
         else {
             let viewTileBox = this.player.getHitBox();
             viewTileBox.expand(31);
-            this.dungeon.showOverlapingTiles(viewTileBox)
+            this.dungeon.currentLevel.showOverlapingTiles(viewTileBox)
         }
         if (this.youDiedText != null) { this.youDiedText.update(deltaTime); }
         this.draw(this.ctx);

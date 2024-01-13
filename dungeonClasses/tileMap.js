@@ -391,7 +391,7 @@ try {
         })
     }
 
-    showOverlapyingTiles(box) {
+    showOverlapingTiles(box) {
         let tiles = this.getOverlapTiles(box);
         tiles.forEach((tile) => {tile.show();});
         this.doors.forEach((door) => {
@@ -418,7 +418,7 @@ try {
     showRoom(room) {
         let expandedRoom = room.getHitBox();
         expandedRoom.expand(31);
-        this.showOverlapyingTiles(expandedRoom);
+        this.showOverlapingTiles(expandedRoom);
     }
 
 }

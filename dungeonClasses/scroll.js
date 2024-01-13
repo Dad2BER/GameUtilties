@@ -4,7 +4,6 @@ export const scrollColor = {UNKNOWN: -1, BLUE: 0, BROWN: 1, CYAN: 2, GREEN: 3, G
 export const scrollColorText = ["Blue", "Brown", "CYAN", "Green", "Gray", "Purple", "Red", "Yellow"];
 export const scrollEffect = {RANDOM: 0, IDENTIFY: 1, FIREBALL: 2, MAP: 3, CURSE: 4};
 export const scrollEffectText = ["Random", "Identify", "Fireball", "Map", "Curse"];
-export const scrollNumberEffects = 4;
 
 export class Scroll extends Sprite {
     constructor(x,y, color, effect) {
@@ -13,7 +12,7 @@ export class Scroll extends Sprite {
         this.identified = false;
         this.color = color;
         this.effect = effect;
-        if (effect == scrollEffect.RANDOM) { this.effect = diceBag.intBetween(1,scrollNumberEffects); }
+        if (effect == scrollEffect.RANDOM) { this.effect = diceBag.intBetween(1,scrollEffectText.length); }
     }
 }
 
@@ -21,11 +20,11 @@ export class ScrollDictionary {
     constructor() {
         this.scrolls = [];
         this.diceBag = new RandomNumber();
-        for(let i=0; i<scrollNumberEffects; i++) {
+        for(let i=0; i<scrollEffectText.length; i++) {
             let color = this.diceBag.intBetween(0, 7); 
             while (this.getEffect(color) != -1) { color = this.diceBag.intBetween(0, 7); }
-            let effect = this.diceBag.intBetween(0, scrollNumberEffects-1);
-            while (this.getColor(effect) != -1) { effect = this.diceBag.intBetween(0, scrollNumberEffects-1); }
+            let effect = this.diceBag.intBetween(0, scrollEffectText.length-1);
+            while (this.getColor(effect) != -1) { effect = this.diceBag.intBetween(0, scrollEffectText.length-1); }
             this.scrolls.push(new Scroll(0, 0, color, effect));
         }
     }

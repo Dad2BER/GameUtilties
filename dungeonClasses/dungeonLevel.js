@@ -23,6 +23,16 @@ export class DungeonLevel extends TileMap {
     showScrolls()  { this.items.forEach((item)=> { if (item.spriteType == "scrolls") item.show(); }); }
     showGold()     { this.items.forEach((item)=> { if (item.spriteType == "gold")    item.show(); })  }
     showMap()      { super.showAll()                                                                  }
+
+    showLevelDetail(showMap, showMonsters, showChests, showPotions, showScrolls, showGold) {
+        if (showMap)      this.showMap();
+        if (showMonsters) this.showMonsters();
+        if (showChests)   this.showChests();
+        if (showPotions)  this.showPotions();
+        if (showScrolls)  this.showScrolls();
+        if (showGold)     this.showGold();
+    }
+
     showAll() {
         this.showMap();
         this.showMonsters();
@@ -92,12 +102,17 @@ export class DungeonLevel extends TileMap {
     chestCollisions(hitBox) { return this.overlapItems(this.treasureChests, hitBox); }
     itemCollisions(hitBox) { return this.overlapItems(this.items, hitBox); }
 
-    removeFromList(list, thing) {
-        
-    }
     removeItem(item) { this.items.splice(this.items.indexOf(item), 1); }
     removeMonster(monster) { this.monster.splice(this.monsters.indexOf(monster), 1); }
     removeChest(chest) {this.treasureChests.splice(this.treasureChests.indexOf(chest), 1); }
+
+    openChest(chest) { 
+        chest.open();
+        let rect = chest.getHitBox();
+        this.lootGenerator.generateJitterLoot(this.items, rect.expand(16), 2, 2, 2, 0);
+    }
+
+
 
     
     showRoom(room) {
