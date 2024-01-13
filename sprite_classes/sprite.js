@@ -92,7 +92,7 @@ export class RotatingSprite extends Sprite{
     }
     draw(context) {
         context.save();
-        context.translate(this.drawX, this.drawY); //Put canvas at center of image
+        context.translate(this.x, this.y); //Put canvas at center of image
         context.rotate(this.angle); // Rotate canvas
         context.drawImage(this.image, this.width/-2, this.height/-2, this.width, this.height); 
         context.restore();

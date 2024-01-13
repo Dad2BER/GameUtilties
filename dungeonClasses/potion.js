@@ -1,6 +1,6 @@
 import { Sprite } from "../sprite_classes/sprite.js";
 import { RandomNumber } from "./utilities.js";
-export const potionColor = {UNKNOWN: -1, BLACK: 0, BRILIANT_BLUE: 1, BROWN: 2, CYAN: 3, EMERALD: 4, MAGENTA: 5, 
+export const potionColor = {BLACK: 0, BRILIANT_BLUE: 1, BROWN: 2, CYAN: 3, EMERALD: 4, MAGENTA: 5, 
                             ORANGE: 6, PINK: 7, RUBY: 8, SILVER: 9, SKY_BLUE: 10, YELLOW: 11, WHITE: 12 };
 export const potionColorText = ["Black", "Briliant Blue", "Brown", "CYAN", "EMERALD", "MAGENTA", 
                                 "ORANGE", "PINK", "RUBY", "SILVER", "Sky Blue", "Yellow", "White"];
@@ -14,7 +14,6 @@ export class Potion extends Sprite {
         this.identified = false;
         this.color = color;
         this.effect = effect;
-        if (effect == potionEffect.RANDOM) { this.effect = diceBag.intBetween(1,potionEffectText.length); }
     }
 }
 
@@ -23,8 +22,8 @@ export class PotionDictionary {
         this.potions = [];
         this.diceBag = new RandomNumber();
         for(let i=0; i<potionEffectText.length; i++) {
-            let color = this.diceBag.intBetween(0, 12); 
-            while (this.getEffect(color) != -1) { color = this.diceBag.intBetween(0, 12); }
+            let color = this.diceBag.intBetween(0, potionColorText.length-1); 
+            while (this.getEffect(color) != -1) { color = this.diceBag.intBetween(0, potionColorText.length-1); }
             let effect = this.diceBag.intBetween(0, potionEffectText.length-1);
             while (this.getColor(effect) != -1) { effect = this.diceBag.intBetween(0, potionEffectText.length-1); }
             this.potions.push(new Potion(0, 0, color, effect));
@@ -40,7 +39,7 @@ export class PotionDictionary {
     }
 
     getColor(effect) {
-        let RVal = potionColor.UNKNOWN;
+        let RVal = -1;
         this.potions.forEach((potion) => {
             if (potion.effect == effect) { RVal = potion.color; }
         })
