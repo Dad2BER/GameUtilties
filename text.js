@@ -3,7 +3,7 @@ import { Point } from "./dungeonClasses/utilities.js";
 export const FontColors = {redTrue: 'rgba(255, 0, 0, 1)', redDark: 'rgba(255, 64, 64, 1)', 
                            yellowTrue: 'rgba(255, 255, 0, 1)', yellowAmber: 'rgba(255, 191, 0, 1)',
                            greenTrue: 'rgba(0, 255, 0, 1)', greenDark: 'rgba(0, 128, 0, 1)',
-                           black: 'rgba(0, 0, 0, 1)'                  
+                           black: 'rgba(0, 0, 0, 1)', white: 'rgba(255, 255, 255, 1'                 
                         }
 
 export class overlayText {
@@ -47,6 +47,12 @@ export class overlayText {
     }
 }
 
+export class gameStats extends overlayText {
+    constructor(displayText, location) {
+        super(displayText, 'Helvetica', 15, location, 'center',FontColors.white, FontColors.black, 0, 0, 15)
+    }
+}
+
 export class statusText extends overlayText {
     constructor(displayText, location) {
         super(displayText, 'Helvetica', 15, location, 'center','rgba(255,0,0,1)', 'rgba(255,128,129,1)', 0, 0, 5)
@@ -67,6 +73,14 @@ export class playerDamageText extends overlayText {
               new Point(location.x + Math.floor(Math.random() * 10) - 5, location.y + Math.floor(Math.random()*10)-5), 
               'center','rgba(255,255,0,1)', 'rgba(128,128,129,1)', Math.floor(Math.random()*50) - 25, -50, 5);
     }
+}
+
+export class levelChangeText extends overlayText {
+    constructor(displayText, location) {
+        super(displayText, 'Helvetica', 35, 
+              new Point(location.x + Math.floor(Math.random() * 10) - 5, location.y + Math.floor(Math.random()*10)-5), 
+              'center',FontColors.white, FontColors.black, Math.floor(Math.random()*50) - 25, -50, 5);
+    } 
 }
 
 export class youDiedText extends overlayText {

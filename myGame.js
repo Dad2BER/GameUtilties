@@ -2,7 +2,7 @@
 import { Game } from "./game.js";
 import { Player } from "./myPlayer.js";
 import { Dungeon } from "./dungeonClasses/dungeon.js";
-import { playerDamageText, monsterDamageText, statusText, youDiedText } from "./text.js";
+import { playerDamageText, monsterDamageText, statusText, youDiedText, levelChangeText, gameStats } from "./text.js";
 import { Point, RandomNumber, direction } from "./dungeonClasses/utilities.js";
 import { PlayerCanvas } from "./playerCanvas.js";
 import { StoryText } from "./storyText.js";
@@ -29,7 +29,7 @@ export class MyGame extends Game {
         this.storyText.addLine("Skeleton used for player comes from FREE FANTASY ENEMIES PIXEL ART SPRITE PACK at graphpix.net");
         this.storyText.addLine("Dungeon graphics come from dungeon crawl tiles at OpenGameArt.org")
         this.storyText.addLine("");
-        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),3,this.potionDictionary, this.scrollDictionary);
+        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),10,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
         this.player.show();
         this.readyForInput = true;
@@ -45,6 +45,11 @@ export class MyGame extends Game {
         this.helpScreen.show();
         this.youDiedText = null;
         this.rangeAttacks = [];
+        this.fpsText = new gameStats("FPS: ", new Point(40,20));
+        this.playerName = prompt("Please enter your name", "Player"+this.runCount);
+        if (this.playerName == null) {
+            this.playerName = "Player"+this.runCount;
+        } 
     }
     
     handleInput() {
@@ -76,12 +81,17 @@ export class MyGame extends Game {
             if (goDown && stair.frameX == binary.DOWN) {
                 used = true;
                 this.dungeon.goDown(this.player);
+                this.storyText.addLine("You decend to level " + (this.dungeon.levelIndex+1).toString());
             }
             else if (goDown == false && stair.frameX == binary.UP) {
                 used = true;
                 this.dungeon.goUp(this.player);                
+                this.storyText.addLine("You climb back to level " + (this.dungeon.levelIndex+1).toString());
             }
         })
+        if (used) {
+            this.overlayTexts.push( new levelChangeText( "Level " + (this.dungeon.levelIndex+1).toString(), this.player.getLocation() ) );
+        }
         return used;
     }
 
@@ -179,7 +189,7 @@ export class MyGame extends Game {
                     break;
                 case scrollEffect.CURSE:
                     this.storyText.addLine("Life sucks...you feel weaker.")
-                    this.player.damageModifier -= 1;
+                    this.player.defenceModifier -= 1;
                     break;
             }
         }
@@ -299,6 +309,8 @@ export class MyGame extends Game {
             this.updateRangeAttacks(deltaTime); 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);
+            let fps = 1000/deltaTime;
+            this.fpsText.text = "FPS: " + Math.floor(fps);
         }
         let playerRoom = this.dungeon.currentLevel.getRoomFromPoint(this.player.getLocation());
         if (playerRoom != null) { this.dungeon.currentLevel.showRoom(playerRoom); }
@@ -316,9 +328,9 @@ export class MyGame extends Game {
         if (this.player.hitPoints <= 0) {
             this.storyText.addLine(message);
             this.youDiedText = new youDiedText("You Died!!!!", new Point(this.canvas.width/2, this.canvas.height/2));
-            let top10 = this.cookie.setTop10( new HighScore("Player", message, this.player.gold, null) );
+            let top10 = this.cookie.setTop10( new HighScore(this.playerName, message, this.player.gold, null) );
             top10.forEach((entry) => {
-                console.log(entry.playerName + " " + entry.comment + " " + entry.score);
+                this.storyText.addLine(entry.playerName + " " + entry.comment + " " + entry.score);
             })
         }
     }
@@ -340,6 +352,7 @@ export class MyGame extends Game {
         })
         if (this.helpScreen != null) { this.helpScreen.draw(context, false);}
         if (this.youDiedText != null) { this.youDiedText.draw(context); }
+        this.fpsText.draw(context);
     }
 
 }
