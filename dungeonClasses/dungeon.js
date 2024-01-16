@@ -9,6 +9,7 @@ export class Dungeon {
             this.map[level] = new DungeonLevel(width, height, potionDictionary, scrollDictionary);
             if (level < numberLevels-1) { this.map[level].addStairsDown(); } //Bottom of the dungeon, can't go down
             if (level > 0) { this.map[level].addStairsUp(); } //Top of the dungeon, can't go up
+            this.map[level].populateLevel(level);
         }
         this.currentLevel = this.map[this.levelIndex];
     }

@@ -13,6 +13,14 @@ export class LootGenerator {
         this.diceBag = new RandomNumber();
     }
 
+    generateDifficultyLoot(list, rect, difficulty) {
+        let maxGold = Math.floor(difficulty/5)+1;
+        let maxPotions = difficulty < 7 ? 1 : 2;
+        let maxScrolls = difficulty < 3 ? 1 : 2;
+        let maxChests = difficulty < 2 ? 0 : 1;
+        this.generateJitterLoot(list, rect, maxGold, maxPotions, maxScrolls, maxChests);
+    }
+
     generateLoot(list, maxGold, maxPotions, maxScrolls, maxChests) {
         let addGold = this.diceBag.intBetween(0,maxGold); //How many potions 
         let addPotions = this.diceBag.intBetween(0,maxPotions); // How many scrolls 

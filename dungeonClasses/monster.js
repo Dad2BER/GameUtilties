@@ -4,13 +4,15 @@ import { RandomNumber, direction, sidedDice } from "./utilities.js";
 
 export const monsterType = {RAT: 'rats', TROLL: 'trolls',GIANT: 'giants', ORC: 'orcs', DRAGON: 'dragons'};
 export const ratSubtype = {BROWN: 0, GREEN: 1, GREY: 2, ORANGE: 3, RED: 4};
+export const ratSubtypeNames = ["Brown", "Green", "Grey", "Orange", "Red"];
 export const trollSubtype = {NORMAL: 0, DEEP: 1, BERSERKER: 2, MAGE: 3, SHAMAN: 4, IRON: 5, MOON: 6, ROCK: 7}
+export const trollSubtypeNames = ["Normal", "Deep", "Berserker", "Mage", "Shaman", "Iron", "Moon", "Rock"];
 const diceBag = new RandomNumber();
 
 class Monster extends MovingSprite{
     constructor(x,y,type,subtype, speed, hitPoints, meleDamage, rangeDamage) {
-        super(new Sprite(type,x,y,32,32,0,subtype,0), new Sprite(type,x,y,32,32,0,subtype,0), 
-              new Sprite(type,x,y,32,32,0,subtype,0), new Sprite(type,x,y,32,32,0,subtype,0), 
+        super(new Sprite(type,x,y,32,32,subtype,0,0), new Sprite(type,x,y,32,32,subtype,0,0), 
+              new Sprite(type,x,y,32,32,subtype,0,0), new Sprite(type,x,y,32,32,subtype,0,0), 
               direction.LEFT,speed);
         this.wander = false;
         this.markedForDeletion = false;
@@ -23,8 +25,8 @@ class Monster extends MovingSprite{
         this.subtype = subtype;
         this.name = "";
         switch(this.type) {
-            case monsterType.RAT: this.name = "Rat"; break;
-            case monsterType.TROLL: this.name = "Troll"; break;
+            case monsterType.RAT: this.name = ratSubtypeNames[subtype] + " Rat"; break;
+            case monsterType.TROLL: this.name = trollSubtypeNames[subtype] + " Troll"; break;
             case monsterType.GIANT: this.name = "Giant"; break;
             case monsterSpeed.ORC: this.name = "Orc"; break;
             case monsterType.DRAGON: this.name = "Dragon"; break;

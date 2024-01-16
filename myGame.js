@@ -45,7 +45,7 @@ export class MyGame extends Game {
         this.helpScreen.show();
         this.youDiedText = null;
         this.rangeAttacks = [];
-        this.fpsText = new gameStats("FPS: ", new Point(40,20));
+        //this.fpsText = new gameStats("FPS: ", new Point(40,20));
         this.playerName = prompt("Please enter your name", "Player"+this.runCount);
         if (this.playerName == null) {
             this.playerName = "Player"+this.runCount;
@@ -309,8 +309,10 @@ export class MyGame extends Game {
             this.updateRangeAttacks(deltaTime); 
             this.overlayTexts.forEach((txt) => {txt.update(deltaTime);  })
             this.playerCanvas.update(deltaTime);
-            let fps = 1000/deltaTime;
-            this.fpsText.text = "FPS: " + Math.floor(fps);
+            if (this.fpsText != null) {
+                let fps = 1000/deltaTime;
+                this.fpsText.text = "FPS: " + Math.floor(fps);
+            }
         }
         let playerRoom = this.dungeon.currentLevel.getRoomFromPoint(this.player.getLocation());
         if (playerRoom != null) { this.dungeon.currentLevel.showRoom(playerRoom); }
@@ -329,6 +331,7 @@ export class MyGame extends Game {
             this.storyText.addLine(message);
             this.youDiedText = new youDiedText("You Died!!!!", new Point(this.canvas.width/2, this.canvas.height/2));
             let top10 = this.cookie.setTop10( new HighScore(this.playerName, message, this.player.gold, null) );
+            this.storyText.addLine("-----> TOP TEN <-----");
             top10.forEach((entry) => {
                 this.storyText.addLine(entry.playerName + " " + entry.comment + " " + entry.score);
             })
@@ -352,7 +355,7 @@ export class MyGame extends Game {
         })
         if (this.helpScreen != null) { this.helpScreen.draw(context, false);}
         if (this.youDiedText != null) { this.youDiedText.draw(context); }
-        this.fpsText.draw(context);
+        if (this.fpsText != null) { this.fpsText.draw(context); }
     }
 
 }

@@ -1,6 +1,6 @@
 import { TileMap } from "./tileMap.js";
 import { LootGenerator } from "./lootGenerator.js";
-import { rat, ratSubtype } from "./monster.js";
+import { rat, troll, giant, orc, dragon, ratSubtypeNames, trollSubtypeNames } from "./monster.js";
 
 export class DungeonLevel extends TileMap {
     constructor(width, height, potionDictionary, scrollDictionary) {
@@ -12,8 +12,7 @@ export class DungeonLevel extends TileMap {
         this.potionDictionary = potionDictionary;
         this.scrollDictionary = scrollDictionary;
         this.lootGenerator = new LootGenerator(this.potionDictionary, this.scrollDictionary);
-        this.populateLevel();
-        //this.showAll();
+//        this.populateLevel();
     }
 
     showMonsters() { this.monsters.forEach((monster) => monster.show()  );                            }
@@ -41,17 +40,56 @@ export class DungeonLevel extends TileMap {
         console.log(this.items);
     }
 
-    populateLevel() {
+    pickMonster(pt, difficulty) {
+        let empty = 0;
+        let ratPct = 0;
+        let trollPct = 0;
+        let giantPct = 0;
+        let orcPct = 0;
+        let dragonPct = 100;
+        switch(difficulty) {
+            case  0: empty = 25; ratPct = 100; trollPct =   0; giantPct =   0; orcPct =   0; dragonPct =   0; break;
+            case  1: empty = 10; ratPct =  90; trollPct = 100; giantPct =   0; orcPct =   0; dragonPct =   0; break;
+            case  2: empty = 10; ratPct =  80; trollPct =  90; giantPct = 100; orcPct =   0; dragonPct =   0; break;
+            case  3: empty = 10; ratPct =  60; trollPct =  80; giantPct = 100; orcPct =   0; dragonPct =   0; break;
+            case  4: empty =  5; ratPct =  40; trollPct =  70; giantPct = 100; orcPct =   0; dragonPct =   0; break;
+            case  5: empty =  5; ratPct =  20; trollPct =  60; giantPct =  90; orcPct = 100; dragonPct =   0; break;
+            case  6: empty =  5; ratPct =  10; trollPct =  50; giantPct =  80; orcPct = 100; dragonPct =   0; break;
+            case  7: empty =  0; ratPct =   5; trollPct =  40; giantPct =  70; orcPct = 100; dragonPct =   0; break;
+            case  8: empty =  0; ratPct =   5; trollPct =  30; giantPct =  60; orcPct =  90; dragonPct = 100; break;
+            case  9: empty =  0; ratPct =   5; trollPct =  20; giantPct =  50; orcPct =  80; dragonPct = 100; break;
+            case 10: empty =  0; ratPct =   5; trollPct =  10; giantPct =  40; orcPct =  70; dragonPct = 100; break;
+            case 11: empty =  0; ratPct =   5; trollPct =  10; giantPct =  30; orcPct =  60; dragonPct = 100; break;
+            case 12: empty =  0; ratPct =   5; trollPct =  10; giantPct =  20; orcPct =  50; dragonPct = 100; break;
+            case 13: empty =  0; ratPct =   5; trollPct =  10; giantPct =  20; orcPct =  40; dragonPct = 100; break;
+            case 14: empty =  0; ratPct =   5; trollPct =  10; giantPct =  20; orcPct =  30; dragonPct = 100; break;
+            case 15: empty =  0; ratPct =   5; trollPct =  10; giantPct =  20; orcPct =  30; dragonPct = 100; break;
+            default: empty =  0; ratPct =   0; trollPct =   0; giantPct =   0; orcPct =   0; dragonPct = 100; break;
+        }
+        let percent = this.diceBag.percent();
+        let rMonster = null;
+        if (percent < empty) { rMonster = null; } 
+        else if (percent < ratPct) { rMonster = new rat(pt.x, pt.y, this.diceBag.intBetween(0, ratSubtypeNames.length-1)); }
+        else if (percent < trollPct) { rMonster = new troll(pt.x, pt.y, this.diceBag.intBetween(0, trollSubtypeNames.length-1)); }
+        else if (percent < giantPct) { rMonster = new giant(pt.x, pt.y, 0); }
+        else if (percent < orcPct) { rMonster = new orc(pt.x, pt.y, 0); }
+        else { rMonster = new dragon(pt.x, pt.y, 0); }
+        return rMonster;
+    }
+
+    populateLevel(difficulty) {
         //Monsters go in every room, except the first (to make it safe for the player)
         for(let i=1; i<this.rooms.length; i++) {
             let pt = this.getRandomRoomPoint(i);
-            let monster = new rat(pt.x,pt.y,ratSubtype.BROWN);
-            monster.setRandomDirection();
-            this.monsters.push(monster);
+            let monster = this.pickMonster(pt, difficulty);
+            if (monster != null) {
+                monster.setRandomDirection();
+                this.monsters.push(monster);
+            }
         }
         for(let i=0; i<this.rooms.length; i++) {
             let rect = this.rooms[i].getHitBox();
-            this.lootGenerator.generateJitterLoot(this.items, rect.expand(-16), 2, 2, 2, 1);
+            this.lootGenerator.generateDifficultyLoot(this.items, rect.expand(-16), difficulty);
         }
     }
     
