@@ -212,6 +212,7 @@ export class MyGame extends Game {
                     if (monster.takeDamage(playerDamage) < 0) { //Did we kill the monster
                         this.storyText.addLine("You killed the " + monster.name);
                         monster.markedForDeletion = true;
+                        this.dungeon.currentLevel.lootGenerator.generateJitterLoot(this.dungeon.currentLevel.items, monster.getHitBox().expand(16),1,0,0,0);
                     }
                     else {
                         this.storyText.addLine("You hit the " + monster.name + " for " + playerDamage + " damage");
