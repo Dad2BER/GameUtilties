@@ -332,7 +332,9 @@ export class MyGame extends Game {
             this.storyText.addLine(message);
             this.youDiedText = new youDiedText("You Died!!!!", new Point(this.canvas.width/2, this.canvas.height/2));
             let top10 = this.cookie.setTop10( new HighScore(this.playerName, message, this.player.gold, null) );
-            this.storyText.addLine("-----> TOP TEN <-----");
+            this.storyText.addLine("===============================");
+            this.storyText.addLine("==========> TOP TEN <==========");
+            this.storyText.addLine("===============================");
             top10.forEach((entry) => {
                 this.storyText.addLine(entry.playerName + " " + entry.comment + " " + entry.score);
             })

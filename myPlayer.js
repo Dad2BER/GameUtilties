@@ -4,7 +4,7 @@ import { ActionSprite, spriteActions} from "./sprite_classes/actionSprite.js";
 
 export class Player extends ActionSprite {
     constructor(x,y) {
-        super('skeleton_sheet_small',x,y,32,32,30);
+        super('skeleton_sheet_small',x,y,32,32,50);
         this.states = [new walking(this), new meleeAttack(this), new idle(this), 
                        new hurt(this), new dead(this) ]
         this.setState(spriteActions.IDLE);
