@@ -63,7 +63,7 @@ export class MyGame extends Game {
             if ( this.InputHandler.useKey('u') ) { this.useStairs(false); }
         }
         if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) {  this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show();  }
-        if ( this.InputHandler.useKey('m') ) { this.dungeon.currentLevel.showLevel();} //Debug command to show the level
+        if ( this.InputHandler.useKey('m') ) { this.dungeon.currentLevel.showMap();} //Debug command to show the level
         if ( this.InputHandler.useKey('!') ) { 
             this.potionDictionary.potions.forEach((potion) => {
                 this.player.addItem(new Potion(0,0,potion.color, potion.effect));
@@ -242,6 +242,7 @@ export class MyGame extends Game {
     updateItems() {
         let items = this.dungeon.currentLevel.itemCollisions(this.player.getHitBox());
         items.forEach((item, index) => {
+            let  removeItem = true;
             switch(item.spriteType) {
                 case "chest":
                     if (!item.isOpen) { 
@@ -249,6 +250,7 @@ export class MyGame extends Game {
                         this.overlayTexts.push( new statusText("Open" , item.getLocation()) );
                         this.storyText.addLine("You open a chest...");
                     }
+                    removeItem = false; //Chests don't get removed
                     break;
                 case "potions": 
                     this.storyText.addLine("You have collected a " + potionColorText[item.color] + " potion.");
@@ -266,7 +268,7 @@ export class MyGame extends Game {
                     this.storyText.addLine("You have collected an unkown item: " + item.spriteType);
                     break;
             }
-            this.dungeon.currentLevel.removeItem(item);
+            if (removeItem) { this.dungeon.currentLevel.removeItem(item); }
         })
     }
 

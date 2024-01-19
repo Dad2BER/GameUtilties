@@ -6,7 +6,6 @@ export class DungeonLevel extends TileMap {
     constructor(width, height, potionDictionary, scrollDictionary) {
         super(width, height);
         this.monsters = [];
-        this.treasureChests = [];
         this.items = [];
         this.diceBag = this.myRandom;
         this.potionDictionary = potionDictionary;
@@ -16,8 +15,8 @@ export class DungeonLevel extends TileMap {
     }
 
     showMonsters() { this.monsters.forEach((monster) => monster.show()  );                            }
-    showChests()   { this.treasureChests.forEach((chest)=> chest.show() );                            }
     showItems()    { this.items.forEach((item)=> item.show()            );                            } 
+    showChests()   { this.items.forEach((item)=> { if (item.spriteType == "chest")   item.show(); }); }
     showPotions()  { this.items.forEach((item)=> { if (item.spriteType == "potions") item.show(); }); }
     showScrolls()  { this.items.forEach((item)=> { if (item.spriteType == "scrolls") item.show(); }); }
     showGold()     { this.items.forEach((item)=> { if (item.spriteType == "gold")    item.show(); })  }
@@ -101,7 +100,6 @@ export class DungeonLevel extends TileMap {
                 monster.setRandomDirection();
             }
         })
-        this.treasureChests.forEach((chest)=> { chest.update(deltaTime); })
         this.items.forEach((item)=> { item.update(deltaTime); })
     }
 
@@ -114,10 +112,6 @@ export class DungeonLevel extends TileMap {
                 console.log("monster deleted");
             }
         })
-        this.treasureChests.forEach((chest)=> {
-            chest.draw(context);
-            if (chest.markedForDeletion) { this.treasureChests.splice(index, 1);}
-        }) 
         this.items.forEach((item)=> {
             item.draw(context);
             if (item.markedForDeletion) { this.items.splice(index, 1);}
@@ -137,12 +131,10 @@ export class DungeonLevel extends TileMap {
 
     //Return a list of all the monsters that overlap with this hitBox
     monsterCollisions(hitBox) { return this.overlapItems(this.monsters, hitBox); }
-    chestCollisions(hitBox) { return this.overlapItems(this.treasureChests, hitBox); }
-    itemCollisions(hitBox) { return this.overlapItems(this.items, hitBox); }
+    itemCollisions(hitBox)    { return this.overlapItems(this.items, hitBox); }
 
     removeItem(item) { this.items.splice(this.items.indexOf(item), 1); }
     removeMonster(monster) { this.monster.splice(this.monsters.indexOf(monster), 1); }
-    removeChest(chest) {this.treasureChests.splice(this.treasureChests.indexOf(chest), 1); }
 
     openChest(chest) { 
         chest.open();
@@ -157,7 +149,6 @@ export class DungeonLevel extends TileMap {
         super.showRoom(room);
         let roomRect = room.getHitBox();
         this.monsterCollisions(roomRect).forEach((monster) => {monster.show();})
-        this.chestCollisions(roomRect).forEach((chest) => {chest.show();})
         this.itemCollisions(roomRect).forEach((item) => {item.show();})
     }
 }
