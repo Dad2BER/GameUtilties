@@ -68,10 +68,10 @@ export class DungeonLevel extends TileMap {
         let percent = this.diceBag.percent();
         let rMonster = null;
         if (percent < empty) { rMonster = null; } 
-        else if (percent < ratPct) { rMonster = new rat(pt.x, pt.y, this.diceBag.intBetween(0, ratSubtypeNames.length-1)); }
-        else if (percent < trollPct) { rMonster = new troll(pt.x, pt.y, this.diceBag.intBetween(0, trollSubtypeNames.length-1)); }
-        else if (percent < giantPct) { rMonster = new giant(pt.x, pt.y, 0); }
-        else if (percent < orcPct) { rMonster = new orc(pt.x, pt.y, 0); }
+        else if (percent <= ratPct) { rMonster = new rat(pt.x, pt.y, this.diceBag.intBetween(0, ratSubtypeNames.length-1)); }
+        else if (percent <= trollPct) { rMonster = new troll(pt.x, pt.y, this.diceBag.intBetween(0, trollSubtypeNames.length-1)); }
+        else if (percent <= giantPct) { rMonster = new giant(pt.x, pt.y, 0); }
+        else if (percent <= orcPct) { rMonster = new orc(pt.x, pt.y, 0); }
         else { rMonster = new dragon(pt.x, pt.y, 0); }
         return rMonster;
     }
