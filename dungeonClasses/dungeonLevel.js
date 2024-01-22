@@ -109,7 +109,6 @@ export class DungeonLevel extends TileMap {
             monster.draw(context); 
             if (monster.markedForDeletion) { 
                 this.monsters.splice(index, 1);
-                console.log("monster deleted");
             }
         })
         this.items.forEach((item)=> {

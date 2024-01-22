@@ -59,7 +59,7 @@ export class ActionSprite extends AnimatedSprite{
                     this.vx = 0;
                     this.vy = 0;
                     this.loop = false;
-                    this.endAnimationDelay = 1000;
+                    this.endAnimationDelay = 100;
                 break;
                 case spriteActions.DIE:
                     this.vx = 0;

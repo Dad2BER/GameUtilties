@@ -1,6 +1,7 @@
 import { MovingSprite } from "../sprite_classes/movingSprite.js";
 import { Sprite } from "../sprite_classes/sprite.js";
-import { RandomNumber, direction, sidedDice } from "./utilities.js";
+import { debugText } from "../text.js";
+import { RandomNumber, direction, sidedDice, Point } from "./utilities.js";
 
 export const monsterType = {RAT: 'rats', TROLL: 'trolls',GIANT: 'giants', ORC: 'orcs', DRAGON: 'dragons'};
 export const ratSubtype = {BROWN: 0, GREEN: 1, GREY: 2, ORANGE: 3, RED: 4};
@@ -31,12 +32,26 @@ class Monster extends MovingSprite{
             case monsterType.DRAGON: this.name = "Dragon"; break;
             default: this.name = "Unkown"; break;
         }
+        //this.debugTxt = new debugText("Debug", new Point(x,y));
+        this.debugTxt = null;
     }
 
     update(deltaTime) {
         super.update(deltaTime);
         this.attackCoolDown -= deltaTime;
         if (this.attackCoolDown < 0 ) { this.attackCoolDown = 0; }
+        if (this.debugTxt != null) {
+            this.debugTxt.location.x = this.x;
+            this.debugTxt.location.y = this.y;
+        }
+    }
+
+    draw(context) {
+        super.draw(context, this.debugTxt != null);
+        if (this.debugTxt != null) {
+            this.debugTxt.text = Math.floor(this.attackCoolDown);
+            this.debugTxt.draw(context);
+        }
     }
 
     canAttack() {
@@ -65,19 +80,19 @@ class Monster extends MovingSprite{
 
 }    
 
-const monsterSpeed = {RAT: 15, TROLL: 10, GIANT: 10, ORC: 12, DRAGON: 17};
+const monsterSpeed = {RAT: 20, TROLL: 15, GIANT: 15, ORC: 17, DRAGON: 25};
 export class rat extends Monster{ constructor(x,y,subtype) { super(x,y,
                  monsterType.RAT,subtype, monsterSpeed.RAT, 
-                 diceBag.roll(1, sidedDice.d4), diceBag.roll(1, sidedDice.d4), 1000); }}
+                 diceBag.roll(1, sidedDice.d4), diceBag.roll(1, sidedDice.d4), 2000); }}
 export class troll extends Monster{ constructor(x,y,subtype) { super(x,y,
                  monsterType.TROLL, subtype, monsterSpeed.TROLL,
-                 diceBag.roll(1, sidedDice.d6), diceBag.roll(1, sidedDice.d8), 2000); }}
+                 diceBag.roll(1, sidedDice.d6), diceBag.roll(1, sidedDice.d8), 3000); }}
 export class giant extends Monster{ constructor(x,y,subtype) { super(x,y,
                  monsterType.GIANT, subtype, monsterSpeed.GIANT,
-                 diceBag.roll(2, sidedDice.d8), diceBag.roll(1, sidedDice.d8), 2000); }}
+                 diceBag.roll(2, sidedDice.d8), diceBag.roll(1, sidedDice.d8), 3000); }}
 export class orc extends Monster{ constructor(x,y,subtype) { super(x,y,
                  monsterType.ORC, subtype, monsterSpeed.ORC,
-                 diceBag.roll(2, sidedDice.d6), diceBag.roll(1, sidedDice.d6), diceBag.intBetween(100, 500)); }}
+                 diceBag.roll(2, sidedDice.d6), diceBag.roll(1, sidedDice.d6), diceBag.intBetween(500, 1500)); }}
 export class dragon extends Monster{ constructor(x,y,subtype) { super(x,y,
                 monsterType.DRAGON, subtype, monsterSpeed.DRAGON,
                 diceBag.roll(3, sidedDice.d10), diceBag.roll(1, sidedDice.d10), diceBag.intBetween(100,1000)); }}

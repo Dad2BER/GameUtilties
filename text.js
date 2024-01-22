@@ -89,4 +89,10 @@ export class youDiedText extends overlayText {
     }
 }
 
+export class debugText extends overlayText {
+    constructor(displayText, location) {
+        super(displayText, 'Helvetica', 20, location, 'center', FontColors.white, FontColors.black, 0, 0, 0);
+    }
+}
+
 

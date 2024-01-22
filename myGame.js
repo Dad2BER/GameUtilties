@@ -223,7 +223,7 @@ export class MyGame extends Game {
                 }
             }
             if (monster.canAttack() && this.player.hitPoints > 0) { //If the monster can attack then it does
-                monster.show(); //Make sure the monster is not visible to the player.
+                monster.show(); //Make sure the monster is visible to the player.
                 let damage = monster.meleAttack() - this.player.defenceModifier;
                 if (damage > 0) {
                     this.overlayTexts.push( new monsterDamageText(damage , monster.getLocation()) );
