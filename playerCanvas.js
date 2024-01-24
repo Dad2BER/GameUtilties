@@ -69,7 +69,7 @@ export class PlayerCanvas {
         this.statLabels = [];
         this.statLabels.push(new statLabelText("H.P.:", new Point(120, 20)) );
         this.statLabels.push(new statLabelText("Damage:", new Point(120, 37)) );
-        this.statLabels.push(new statLabelText("Defence:", new Point(120, 54)) );
+        this.statLabels.push(new statLabelText("Defense:", new Point(120, 54)) );
         this.statLabels.push(new statLabelText("Gold:", new Point(120, 71)) );
         this.hpText = new rygText(new Point(125, 18), 5, 10);  
         this.hpText.setColor(this.player.hitPoints);
@@ -132,7 +132,7 @@ export class PlayerCanvas {
         this.scrollDictionary.scrolls.forEach((scroll) => {
             if (scroll.identified == false && rVal == null) {
                 scroll.identified = true;
-                rVal = potion;
+                rVal = scroll;
             }
         })
         return rVal;
@@ -162,14 +162,14 @@ export class PlayerCanvas {
         this.hpText.text =  this.player.hitPoints + " / " + this.player.maxHitPoints
         // Potions
         this.potionDictionary.potions.forEach((potion, index) => {
-            let effect = "Unkown"
+            let effect = "Unknown"
             if (potion.identified) {effect = potionEffectText[potion.effect];}
             let qty = this.playerItemCount("potions", potion.color);
             this.potionDesciprions[index].text = qty + " " + effect
         })
         // Scrolls
         this.scrollDictionary.scrolls.forEach((scroll, index) => {
-            let effect = "Unkown"
+            let effect = "Unknown"
             if (scroll.identified) {effect = scrollEffectText[scroll.effect];}
             let qty = this.playerItemCount("scrolls", scroll.color);
             this.scrollDesciprions[index].text = qty + " " + effect

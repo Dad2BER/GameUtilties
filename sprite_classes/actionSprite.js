@@ -69,7 +69,7 @@ export class ActionSprite extends AnimatedSprite{
 
                 break;
                 default:
-                    console.log("setState:  ERROR Unkown newAction" + newAction);
+                    console.log("setState:  ERROR Unknown newAction" + newAction);
                 break;
             }
             this.restartAnimation();

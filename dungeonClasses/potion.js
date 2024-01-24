@@ -5,7 +5,7 @@ export const potionColor = {BLACK: 0, BRILIANT_BLUE: 1, BROWN: 2, CYAN: 3, EMERA
 export const potionColorText = ["Black", "Briliant Blue", "Brown", "CYAN", "EMERALD", "MAGENTA", 
                                 "ORANGE", "PINK", "RUBY", "SILVER", "Sky Blue", "Yellow", "White"];
 export const potionEffect = {RANDOM: 0, HEAL: 1, STRENGTH: 2, DEXTARITY: 3, POISON: 4};
-export const potionEffectText = ["Random", "Heal", "Strength", "Dextarty", "Poison"];
+export const potionEffectText = ["Random", "Heal", "Strength", "Dexterity", "Poison"];
 
 export class Potion extends Sprite {
     constructor(x,y, color, effect) {

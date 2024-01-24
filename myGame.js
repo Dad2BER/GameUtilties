@@ -29,7 +29,7 @@ export class MyGame extends Game {
         this.storyText.addLine("Skeleton used for player comes from FREE FANTASY ENEMIES PIXEL ART SPRITE PACK at graphpix.net");
         this.storyText.addLine("Dungeon graphics come from dungeon crawl tiles at OpenGameArt.org")
         this.storyText.addLine("");
-        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),10,this.potionDictionary, this.scrollDictionary);
+        this.dungeon = new Dungeon(Math.floor(width/32), Math.floor(height/32),15,this.potionDictionary, this.scrollDictionary);
         this.dungeon.addPlayer(this.player);
         this.player.show();
         this.readyForInput = true;
@@ -57,12 +57,13 @@ export class MyGame extends Game {
             let keys = this.InputHandler.keys;
             this.player.handleInput(keys); // Arrow keys
             this.playerCanvas.handleInput(keys); // 'p' and 's'
-            if ( this.InputHandler.useKey('q')) { this.quaffPotion(); }
-            if ( this.InputHandler.useKey('r') ) { this.readScroll(); }
-            if ( this.InputHandler.useKey('d') ) { this.useStairs(true); }
-            if ( this.InputHandler.useKey('u') ) { this.useStairs(false); }
+            if ( this.InputHandler.useKey('q') || this.InputHandler.useKey('Q') ) { this.quaffPotion(); }
+            if ( this.InputHandler.useKey('r') || this.InputHandler.useKey('R') ) { this.readScroll(); }
+            if ( this.InputHandler.useKey('d') || this.InputHandler.useKey('D') ) { this.useStairs(true); }
+            if ( this.InputHandler.useKey('u') || this.InputHandler.useKey('U') ) { this.useStairs(false); }
         }
         if ( this.InputHandler.useKey('?') || this.InputHandler.useKey('Escape') ) {  this.helpScreen.isVisible() ? this.helpScreen.hide() : this.helpScreen.show();  }
+        /*
         if ( this.InputHandler.useKey('m') ) { this.dungeon.currentLevel.showMap();} //Debug command to show the level
         if ( this.InputHandler.useKey('!') ) { 
             this.potionDictionary.potions.forEach((potion) => {
@@ -72,6 +73,7 @@ export class MyGame extends Game {
                 this.player.addItem(new Scroll(0,0,scroll.color, scroll.effect));
             })
         }
+        */
     }
 
     useStairs(goDown) {
@@ -209,7 +211,7 @@ export class MyGame extends Game {
                 let playerDamage = this.player.attack(monster);
                 this.overlayTexts.push( new playerDamageText(playerDamage.toString() , this.player.getLocation()) );
                 if (playerDamage > 0) {
-                    if (monster.takeDamage(playerDamage) < 0) { //Did we kill the monster
+                    if (monster.takeDamage(playerDamage) <= 0) { //Did we kill the monster
                         this.storyText.addLine("You killed the " + monster.name);
                         monster.markedForDeletion = true;
                         this.dungeon.currentLevel.lootGenerator.generateJitterLoot(this.dungeon.currentLevel.items, monster.getHitBox().expand(16),1,0,0,0);
@@ -265,7 +267,7 @@ export class MyGame extends Game {
                     this.player.gold += item.Quantity;
                     break;
                 default:
-                    this.storyText.addLine("You have collected an unkown item: " + item.spriteType);
+                    this.storyText.addLine("You have collected an unknown item: " + item.spriteType);
                     break;
             }
             if (removeItem) { this.dungeon.currentLevel.removeItem(item); }
