@@ -21,6 +21,12 @@ export class Player extends ActionSprite {
         this.attackCoolDown = 0;
     }
 
+    resetStats() {
+        this.damageModifier = 0;
+        this.defenceModifier = 0;
+        this.hitPoints = this.maxHitPoints;
+    }
+
     update(deltaTime) {
         super.update(deltaTime);
         if (this.attackCoolDown > 0) {this.attackCoolDown -= deltaTime;}

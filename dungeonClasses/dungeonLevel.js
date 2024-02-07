@@ -73,6 +73,11 @@ export class DungeonLevel extends TileMap {
         else if (percent <= giantPct) { rMonster = new giant(pt.x, pt.y, 0); }
         else if (percent <= orcPct) { rMonster = new orc(pt.x, pt.y, 0); }
         else { rMonster = new dragon(pt.x, pt.y, 0); }
+        if (rMonster != null) {
+            let difficultyMultiplier = Math.sqrt(difficulty)+1;
+            rMonster.hitPoints = Math.floor(difficultyMultiplier)*rMonster.hitPoints;
+            rMonster.meleDamage += difficulty;
+        }
         return rMonster;
     }
 

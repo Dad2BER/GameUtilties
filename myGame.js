@@ -103,7 +103,15 @@ export class MyGame extends Game {
             this.storyText.addLine("You drank a " + potionEffectText[effect] + " potion.");
             if (effect == potionEffect.RANDOM) {
                 this.storyText.addLine("Wild uncontrollable things happen...");
-                while (effect == potionEffect.RANDOM) { effect = this.diceBag.intBetween(1, potionEffectText.length); } //Now we pick something else
+                if (this.diceBag.percent() < 20) { //Potentail to reset all stats
+                    this.storyText.addLine("For better or worse, you feel normal again.");
+                    this.player.resetStats();
+                }
+                else { //Pick something else
+                    while (effect == potionEffect.RANDOM) { 
+                        effect = this.diceBag.intBetween(1, potionEffectText.length); 
+                    } 
+                }
             }
             switch(effect) {
                 case potionEffect.DEXTARITY:
